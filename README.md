@@ -2,7 +2,7 @@
 
 [Heroku link][heroku] **Song:** This should be a link to your production site
 
-[heroku]: http://www.herokuapp.com
+[heroku]: salty-falls-17641.herokuapp.com
 
 ## Minimum Viable Product
 
