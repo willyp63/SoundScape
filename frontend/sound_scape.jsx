@@ -6,17 +6,9 @@ const Router = ReactRouter.Router;
 const Route = ReactRouter.Route;
 const IndexRoute = ReactRouter.IndexRoute;
 const hashHistory = ReactRouter.hashHistory;
+const App = require('./components/app');
 
-const App = React.createClass({
-  render () {
-    return (
-      <div>
-        SOUND SCAPE
-        {this.props.children}
-      </div>
-    );
-  }
-});
+const SessionActions = require('./actions/session_actions');
 
 const routes = (
   <Route path="/" component={App}>
@@ -24,6 +16,7 @@ const routes = (
 );
 
 document.addEventListener("DOMContentLoaded", function () {
+  SessionActions.receiveCurrentUser(window.currentUser);
   ReactDOM.render(<Router history={hashHistory}>{routes}</Router>,
                   document.getElementById('root'));
 });
