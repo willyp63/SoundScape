@@ -14,6 +14,9 @@ module.exports = React.createClass({
   componentWillUnmount () {
     _listeners.forEach(listener => listener.remove());
   },
+  componentWillReceiveProps (newProps) {
+    this.setState({errors: undefined, user: {username: "", password: ""}});
+  },
   _onChange (e) {
     const newUser = this.state.user;
     newUser[e.target.id] = e.target.value;
@@ -49,25 +52,25 @@ module.exports = React.createClass({
               <h4 className="modal-title">{formTitle}</h4>
             </div>
             <div className="modal-body text-center">
-              {this.state.errors ?
-                <ul>{
-                  this.state.errors.map(errorMsg => {
-                    return <li key={errorMsg}>{errorMsg}</li>;
-                  })
-                }</ul> : ""
-              }
-              <label for="username">Username</label>
-              <input type="text" id="username"
-                     value={this.state.user.username}
-                     onChange={this._onChange} />
+              <form onSubmit={this._onSubmit}>
+                <label for="username">Username</label>
+                <input type="text" id="username"
+                       value={this.state.user.username}
+                       onChange={this._onChange} />
 
-              <label for="password">Password</label>
-              <input type="text" id="password"
-                     value={this.state.user.password}
-                     onChange={this._onChange} />
-            </div>
-            <div className="modal-footer">
-              <button type="button" className="btn btn-default" onClick={this._onSubmit}>{formTitle}</button>
+                <label for="password">Password</label>
+                <input type="text" id="password"
+                       value={this.state.user.password}
+                       onChange={this._onChange} />
+                 {this.state.errors ?
+                   <ul className="list-unstyled">{
+                     this.state.errors.map(errorMsg => {
+                       return <li key={errorMsg} className="error-msg">{errorMsg}</li>;
+                     })
+                   }</ul> : ""
+                 }
+                 <input type="submit" value={formTitle} className="btn btn-default"/>
+              </form>
             </div>
           </div>
         </div>

@@ -25,7 +25,11 @@ ErrorStore.__onDispatch = function (payload) {
 function setErrors (errors) {
   _errors = [];
   Object.keys(errors).forEach(name => {
-    _errors.push(name + " " + errors[name]);
+    if (name === 'base') {
+      _errors.push(errors[name]);
+    } else {
+      _errors.push(name + " " + errors[name]);
+    }
   });
 }
 

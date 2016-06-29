@@ -8,6 +8,7 @@ $navbar-default-bg: #666666;
 }
 
 .navbar a {
+  font-size: 18px;
   color: #ccc !important;
 }
 
@@ -15,16 +16,20 @@ $navbar-default-bg: #666666;
   color: #fff !important;
 }
 
-.modal input {
+.modal input[type="text"] {
   display: block;
   width: 50%;
   margin: 10px auto;
 }
 
+.error-msg {
+  color: red;
+}
+
 #logo {
   float: left;
   font-size: 1.7em;
-  color: #fff;
+  color: #ccc;
   text-transform: uppercase;
   letter-spacing: -1px;
   font-weight: bold;
