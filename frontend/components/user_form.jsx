@@ -71,7 +71,7 @@ module.exports = React.createClass({
                      })
                    }</ul> : ""
                  }
-                 <input type="submit" value={formTitle} className="btn btn-default"/>
+                 <input type="submit" value={formTitle} className="btn btn-success"/>
               </form>
             </div>
           </div>

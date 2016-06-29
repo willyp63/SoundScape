@@ -59,54 +59,47 @@ module.exports = React.createClass({
       <div>
         <nav className="navbar navbar-default navbar-fixed-top">
           <div className="container-fluid">
-            <div className="navbar-header">
-              <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span className="sr-only">Toggle navigation</span>
-                <span className="icon-bar"></span>
-                <span className="icon-bar"></span>
-                <span className="icon-bar"></span>
-              </button>
-              <a className="navbar-brand" id="logo" href="#">SoundScape</a>
-            </div>
-
-            <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-              <form className="navbar-form navbar-left" role="search">
-                <div className="form-group">
-                  <input type="text" className="form-control" placeholder="Search"/>
-                </div>
-                <button type="submit" className="btn btn-default">
-                  <i className="glyphicon glyphicon-search"></i>
-                </button>
-              </form>
-              { this.state.currentUser ?
-                <ul className="nav navbar-nav navbar-right">
-                  <li className="my-nav-item"><a onClick={this._upload} href="#">Upload</a></li>
-                  <li className="dropdown my-nav-item">
-                    <a href="#" className="dropdown-toggle"
-                                data-toggle="dropdown"
-                                role="button"
-                                aria-haspopup="true"
-                                aria-expanded="false">
-                      {this.state.currentUser.username}
-                      <span className="caret"></span>
-                    </a>
-                    <ul className="dropdown-menu">
-                      <li><a href="#">Action</a></li>
-                      <li><a href="#">Another action</a></li>
-                      <li><a href="#">Something else here</a></li>
-                      <li role="separator" className="divider"></li>
-                      <li><a onClick={this._logout} href="#">Log Out</a></li>
-                    </ul>
-                  </li>
-                </ul> :
-                <ul className="nav navbar-nav navbar-right">
-                  <li><a href="#"
-                         onClick={this._signup}>Sign Up</a></li>
-                  <li><a href="#"
-                         onClick={this._login}>Log In</a></li>
-                </ul>
-              }
-            </div>
+            <a className="navbar-brand" id="logo" href="#">
+              <img src="assets/logo.png" alt="SoundScape logo"></img>
+            </a>
+            <ul className="nav navbar-nav">
+              <li className="active"><a href="#">Home</a></li>
+              <li><a href="#">Collection</a></li>
+            </ul>
+            <form className="navbar-form navbar-left" role="search">
+              <div className="form-group">
+                <input type="text" className="form-control search-input" placeholder="Search for Tracks">
+                </input>
+              </div>
+              <i className="glyphicon glyphicon-search search-button"></i>
+            </form>
+            { this.state.currentUser ?
+              <ul className="nav navbar-nav navbar-right">
+                <li><a onClick={this._upload} href="#">Upload</a></li>
+                <li className="dropdown porfile-link">
+                  <a href="#" className="dropdown-toggle"
+                              data-toggle="dropdown"
+                              role="button"
+                              aria-haspopup="true"
+                              aria-expanded="false">
+                    <img className="profile-badge" src="assets/sample.jpeg"/>
+                    {this.state.currentUser.username}
+                    <span className="caret"></span>
+                  </a>
+                  <ul className="dropdown-menu">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li role="separator" className="divider"></li>
+                    <li><a onClick={this._logout} href="#">Log Out</a></li>
+                  </ul>
+                </li>
+              </ul> :
+              <ul className="nav navbar-nav navbar-right">
+                <li><a href="#" onClick={this._signup}>Sign Up</a></li>
+                <li><a href="#" onClick={this._login}>Log In</a></li>
+              </ul>
+            }
           </div>
         </nav>
         <UserForm formType={this.state.formType}/>

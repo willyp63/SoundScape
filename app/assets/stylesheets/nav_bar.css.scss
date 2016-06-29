@@ -1,0 +1,76 @@
+.navbar {
+  border: none;
+}
+
+.navbar a {
+  font-size: 18px;
+  color: #ccc !important;
+}
+
+.navbar a:hover {
+  color: #fff !important;
+}
+
+.navbar .active > a {
+  color: #fff !important;
+}
+
+.search-button {
+  position: absolute;
+  transform: translate(-100%, 7px);
+  width: 34px;
+  height: 34px;
+  font-size: 17px;
+  line-height: 34px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.search-input {
+  width: 350px !important;
+}
+
+.navbar-nav > li > .dropdown-menu {
+  background-color: #111;
+  border: none;
+}
+
+.navbar-nav > li > .dropdown-menu a{
+  color: #ccc;
+}
+
+.navbar-nav > li > .dropdown-menu a:hover{
+  background-color: #333;
+}
+
+.divider {
+  background-color: #ccc !important;
+}
+
+.porfile-link {
+  margin-left: 50px;
+}
+
+.profile-badge {
+  position: absolute;
+  border-radius: 20px;
+  top: 5px;
+  left: -32px;
+}
+
+#logo {
+  float: left;
+  font-size: 1.7em;
+  color: #ccc;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  font-weight: bold;
+  background: linear-gradient(#f70,#f30);
+  padding: 2px 4px;
+  margin-left: 4px;
+}
+
+#logo:hover {
+  color: #fff;
+  text-decoration: none;
+}

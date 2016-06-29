@@ -1,0 +1,9 @@
+.modal input[type="text"], .modal input[type="password"] {
+  display: block;
+  width: 50%;
+  margin: 10px auto;
+}
+
+.error-msg {
+  color: red;
+}
