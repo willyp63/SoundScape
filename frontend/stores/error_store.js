@@ -1,22 +1,20 @@
 const Store = require('flux/utils').Store;
 const dispatcher = require('../dispatcher');
 
-let _errors, _form;
+let _errors;
 
 const ErrorStore = new Store(dispatcher);
 
 ErrorStore.errors = () => _errors;
-ErrorStore.form = () => _form;
 
 ErrorStore.__onDispatch = function (payload) {
   switch (payload.actionType) {
     case "RECEIVE_ERRORS":
       setErrors(payload.errors);
-      _form = payload.form;
       this.__emitChange();
       break;
     case "REMOVE_ERRORS":
-      _errors = _form = undefined;
+      _errors = undefined;
       this.__emitChange();
       break;
   }
@@ -25,6 +23,7 @@ ErrorStore.__onDispatch = function (payload) {
 function setErrors (errors) {
   _errors = [];
   Object.keys(errors).forEach(name => {
+    // format error messages
     if (name === 'base') {
       _errors.push(errors[name]);
     } else {

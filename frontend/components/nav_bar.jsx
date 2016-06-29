@@ -19,6 +19,8 @@ module.exports = React.createClass({
   _sessionChange () {
     const currentUser = SessionStore.currentUser();
     this.setState({currentUser: currentUser});
+
+    // close login/signup form if a new session was created
     if (currentUser) {
       $("#userModal").modal("hide");
     }
@@ -36,12 +38,14 @@ module.exports = React.createClass({
   },
   _signup (e) {
     e.preventDefault();
+    // show signup form
     this.setState({formType: "signup"}, function () {
       $("#userModal").modal("show");
     });
   },
   _login (e) {
     e.preventDefault();
+    // show login form
     this.setState({formType: "login"}, function () {
       $("#userModal").modal("show");
     });

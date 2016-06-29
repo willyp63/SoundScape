@@ -1,10 +1,9 @@
 const dispatcher = require('../dispatcher');
 
 module.exports = {
-  setErrors (form, errors) {
+  setErrors (errors) {
     dispatcher.dispatch({
       actionType: "RECEIVE_ERRORS",
-      form: form,
       errors: errors
     });
   },

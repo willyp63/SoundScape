@@ -9,7 +9,7 @@ module.exports = {
         successCallback(newUser);
       },
       error (errors) {
-        errorCallback("SIGNUP", JSON.parse(errors.responseText));
+        errorCallback(JSON.parse(errors.responseText));
       }
     });
   },
@@ -23,7 +23,7 @@ module.exports = {
         successCallback(newUser);
       },
       error (errors) {
-        errorCallback("LOGIN", JSON.parse(errors.responseText));
+        errorCallback(JSON.parse(errors.responseText));
       }
     });
   },

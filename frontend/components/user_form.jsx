@@ -15,6 +15,7 @@ module.exports = React.createClass({
     _listeners.forEach(listener => listener.remove());
   },
   componentWillReceiveProps (newProps) {
+    // clear fields before being shown
     this.setState({errors: undefined, user: {username: "", password: ""}});
   },
   _onChange (e) {
@@ -32,7 +33,8 @@ module.exports = React.createClass({
     } else if (this.props.formType === 'signup') {
       SessionActions.signup(this.state.user);
     }
-    this.setState({user: {username: "", password: ""}});
+    // clear password
+    this.setState({user: {username: this.state.user.username, password: ""}});
   },
   render () {
     let formTitle;
@@ -59,7 +61,7 @@ module.exports = React.createClass({
                        onChange={this._onChange} />
 
                 <label for="password">Password</label>
-                <input type="text" id="password"
+                <input type="password" id="password"
                        value={this.state.user.password}
                        onChange={this._onChange} />
                  {this.state.errors ?
