@@ -31,7 +31,7 @@ module.exports = React.createClass({
       window.CLOUDINARY_OPTIONS,
       function (error, results) {
         if (!error) {
-          // do something
+          alert('upload successful');
         }
       }.bind(this)
     );
