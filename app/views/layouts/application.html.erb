@@ -15,7 +15,7 @@
 
   <script src="//widget.cloudinary.com/global/all.js" type="text/javascript"></script>
   <script type="text/javascript">
-    window.CLOUDINARY_OPTIONS = {
+    window.CLOUDINARY_OPTIONS_MP3 = {
       cloud_name: "dcwxxqs4l",
       upload_preset: "gzpjnoyl",
       theme: "minimal",
@@ -23,11 +23,22 @@
       client_allowed_formats: ["mp3"],
       multiiple: false,
       text: {
-        "sources.local.drop_file": "Drop MP3 file here",
-        "sources.local.drop_files": "Drop MP3 files here",
-        "sources.local.select_file": "Select MP3",
+        "sources.local.drop_files": "Drop MP3 here",
         "sources.local.select_files": "Select MP3",
-        "progress.failed_note": "Some of your audio failed uploading."
+        "progress.failed_note": "Your audio failed uploading."
+      }
+    }
+    window.CLOUDINARY_OPTIONS_IMG = {
+      cloud_name: "dcwxxqs4l",
+      upload_preset: "gzpjnoyl",
+      theme: "minimal",
+      sources: ["local"],
+      client_allowed_formats: ["png", "jpg", "jpeg"],
+      multiiple: false,
+      text: {
+        "sources.local.drop_files": "Drop Image here",
+        "sources.local.select_files": "Select Image",
+        "progress.failed_note": "Your image failed uploading."
       }
     }
   </script>

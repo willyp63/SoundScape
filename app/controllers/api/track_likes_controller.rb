@@ -9,6 +9,12 @@ class Api::TrackLikesController < ApplicationController
     end
   end
 
+  def destroy
+    track_like = TrackLike.find_by(track_id: params[:id], user_id: current_user.id);
+    track_like.destroy!
+    render json: track_like
+  end
+
   private
   def track_like_params
     params.require(:track_like).permit(:track_id)

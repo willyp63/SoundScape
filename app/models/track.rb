@@ -19,7 +19,17 @@ class Track < ActiveRecord::Base
   validates(
     :title,
     :audio_url,
+    :image_url,
     :user_id,
     presence: true
   )
+
+  def self.posted_tracks(user)
+    Track.where(user_id: user.id)
+  end
+
+  def self.liked_tracks(user)
+    Track.joins(:track_likes)
+         .where("track_likes.user_id = ?", user.id)
+  end
 end

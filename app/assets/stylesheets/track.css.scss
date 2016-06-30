@@ -1,0 +1,98 @@
+$track_size: 225px;
+$track_top_bottom_margin: 20px;
+
+$title_height: 50px;
+$title_font_size: 16px;
+
+$play_button_size: 125px;
+
+$like_button_size: 40px;
+$like_button_x_offset: $track_size - ($like_button_size * 4 / 3);
+$like_button_y_offset: $like_button_size / 3;
+
+.track-index-row {
+  display: flex;
+  justify-content: space-around;
+  margin-top: $track_top_bottom_margin;
+  margin-bottom: $title_height + (2 * $track_top_bottom_margin);
+}
+
+.track-index-item {
+  flex: none;
+  position: relative;
+  width: $track_size;
+  height: $track_size;
+  cursor: pointer;
+}
+
+.track-index-item img {
+  box-shadow: 0px 1px 5px black;
+}
+
+.track-index-item p {
+  position: absolute;
+  width: $track_size;
+  line-height: $title_height;
+  top: 100%; /* position below image */
+  padding: $track_top_bottom_margin 0;
+  text-align: center;
+  font-size: $title_font_size;
+}
+
+.track-image img {
+  position: absolute;
+}
+
+.play-circle-icon {
+  position: absolute;
+  width: $track_size;
+  line-height: $track_size;
+  font-size: $play_button_size;
+  text-align: center;
+  color: #f30;
+}
+
+$play_button_offset: ($track_size - $play_button_size) / 2;
+
+.play-circle-bg {
+  position: absolute;
+  top: $play_button_offset + 5px;
+  left: $play_button_offset + 5px;
+  width: $play_button_size - 10px;
+  height: $play_button_size - 10px;
+  border-radius: ($play_button_size - 10px) / 2;
+  background-color: #fff;
+}
+
+.like-bg {
+  position: absolute;
+  top: $like_button_y_offset;
+  left: $like_button_x_offset + 1px;
+  width: $like_button_size;
+  height: $like_button_size;
+  border-radius: 10px;
+  background-color: #666;
+}
+
+.like-icon {
+  position: absolute;
+  top: $like_button_y_offset;
+  left: $like_button_x_offset;
+  width: $like_button_size;
+  line-height: $like_button_size;
+  font-size: $like_button_size - 10px;
+  text-align: center;
+  color: #333;
+}
+
+.like-icon:hover {
+  color: #f39;
+}
+
+.liked {
+  color: #f39;
+}
+
+.liked:hover {
+  color: #333;
+}

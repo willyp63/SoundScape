@@ -1,8 +1,18 @@
 $navbar-default-bg: #333;
+$btn-primary-bg: #f70;
 
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
 body {
   background-color: #ddd;
+}
+
+.main-content {
+  position: absolute;
+  background-color: #fff;
+  top: 50px;
+  width: 90%;
+  height: calc(100% - 50px);
+  margin-left: 5%;
 }

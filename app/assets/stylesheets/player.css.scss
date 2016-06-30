@@ -1,0 +1,31 @@
+.audio-player-bar {
+  display: flex;
+  height: 50px;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.playing-track {
+  flex-basis: 20%;
+  flex-grow: 1;
+  color: white;
+  text-align: center;
+}
+
+#audio-player {
+  flex-basis: 40%;
+  flex-grow: 1;
+  margin: auto;
+}
+
+.track-queue {
+  flex-basis: 20%;
+  flex-grow: 1;
+  color: white;
+  text-align: center;
+}
+
+.playing-track p, .track-queue p {
+  font-size: 18px;
+  margin: 0;
+}

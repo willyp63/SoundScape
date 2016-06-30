@@ -9,7 +9,7 @@ module.exports = React.createClass({
     return {errors: undefined, user: {username: "", password: ""}};
   },
   componentDidMount () {
-    _listeners.push(ErrorStore.addListener(this._errorChange));
+    _listeners.push(ErrorStore.addListener(this._receiveErrors));
   },
   componentWillUnmount () {
     _listeners.forEach(listener => listener.remove());
@@ -23,8 +23,10 @@ module.exports = React.createClass({
     newUser[e.target.id] = e.target.value;
     this.setState({user: newUser});
   },
-  _errorChange () {
-    this.setState({errors: ErrorStore.errors()});
+  _receiveErrors () {
+    // clear password
+    this.setState({errors: ErrorStore.errors(),
+      user: {username: this.state.user.username, password: ""}});
   },
   _onSubmit (e) {
     e.preventDefault();
@@ -33,8 +35,6 @@ module.exports = React.createClass({
     } else if (this.props.formType === 'signup') {
       SessionActions.signup(this.state.user);
     }
-    // clear password
-    this.setState({user: {username: this.state.user.username, password: ""}});
   },
   render () {
     let formTitle;
