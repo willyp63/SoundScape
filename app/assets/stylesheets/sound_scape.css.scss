@@ -21,8 +21,13 @@ i, input, button, p, img, label {
   background: transparent;
 }
 
+html {
+  height: 100%;
+}
+
 body {
   background-color: #ddd;
+  min-height: 100%;
 }
 
 .cf:after {
@@ -34,7 +39,7 @@ body {
 .main-content {
   background-color: #fff;
   padding-top: 50px;
+  padding-bottom: 50px;
   margin-left: 5%;
   width: 90%;
-  height: 100%;
 }
