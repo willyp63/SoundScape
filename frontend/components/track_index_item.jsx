@@ -41,7 +41,7 @@ module.exports = React.createClass({
            onMouseEnter={this._onMouseEnter}
            onMouseLeave={this._onMouseLeave}>
         <div className="track-image">
-          <img src={this.props.track.image_url}>
+          <img src={this.props.track.image_url} width="225" height="225">
           </img>
           {this.state.hover ?
             <div>

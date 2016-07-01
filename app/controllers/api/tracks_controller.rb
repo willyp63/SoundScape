@@ -24,7 +24,7 @@ class Api::TracksController < ApplicationController
 
   def create
     track = Track.new(track_params);
-    track.user_id = current_user.id
+    track.user_id = 1
     if track.save
       render json: track
     else
