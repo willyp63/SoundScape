@@ -3,16 +3,13 @@ const PlayerActions = require('../../actions/player_actions');
 
 module.exports = React.createClass({
   _onClick () {
-    const myTrack = {title: this.props.track.name,
-                     audio_url: this.props.track.preview_url,
-                     image_url: this.props.track.album.images[2].url};
-    PlayerActions.playTrack(myTrack);
+    PlayerActions.playTrack(this.props.track);
   },
   render () {
     return (
       <li onClick={this._onClick} className="cf">
-        <p>{`${this.props.track.name} - ${this.props.track.artists[0].name}`}</p>
-        <img src={this.props.track.album.images[2].url} width="40" height="40"/>
+        <p>{`${this.props.track.title} - ${this.props.track.artist}`}</p>
+        <img src={this.props.track.image_url} width="40" height="40"/>
       </li>
     );
   }

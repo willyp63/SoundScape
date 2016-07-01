@@ -1,7 +1,7 @@
 const React = require('react');
-const PlayerActions = require('../actions/player_actions');
-const TrackActions = require('../actions/track_actions');
-const SessionStore = require('../stores/session_store');
+const PlayerActions = require('../../actions/player_actions');
+const TrackActions = require('../../actions/track_actions');
+const SessionStore = require('../../stores/session_store');
 
 module.exports = React.createClass({
   getInitialState () {
@@ -33,13 +33,19 @@ module.exports = React.createClass({
     PlayerActions.playTrack(this.props.track);
   },
   _likeTrack () {
-    if (this.props.track.liked) {
-      TrackActions.unlikeTrack(this.props.track);
+    if (typeof this.props.track.id === 'string') {
+      TrackActions.postAndLikeTrack(this.props.track);
     } else {
-      TrackActions.likeTrack(this.props.track);
+      if (this.props.track.liked) {
+        TrackActions.unlikeTrack(this.props.track);
+      } else {
+        TrackActions.likeTrack(this.props.track);
+      }
     }
   },
   render () {
+    let title = this.props.track.title;
+    if (title.length > 27) { title = title.slice(0, 25) + '...'; }
     return (
       <div className="track-index-item"
            onMouseEnter={this._onMouseEnter}
@@ -54,7 +60,7 @@ module.exports = React.createClass({
                  onClick={this._playTrack}
                  onMouseEnter={this._highlightPlay}
                  onMouseLeave={this._unhighlightPlay}/>
-              {this.props.type === "all" && SessionStore.loggedIn() ?
+              {(this.props.indexType === "ALL" || this.props.indexType === "SEARCH") && SessionStore.loggedIn() ?
                 <div>
                   <span className="like-icon-bg"></span>
                   <i className={"glyphicon glyphicon-heart like-icon" + (this.props.track.liked ? " liked" : "")}
@@ -65,7 +71,7 @@ module.exports = React.createClass({
             </div> :
             ""}
         </div>
-        <p>{this.props.track.title}</p>
+        <p>{title}</p>
       </div>
     );
   }

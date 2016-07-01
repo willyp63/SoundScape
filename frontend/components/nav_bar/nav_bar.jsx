@@ -7,7 +7,7 @@ const RightNavLoggedIn = require('./right_nav_logged_in');
 const RightNavLoggedOut = require('./right_nav_logged_out');
 const SearchBar = require('./search_bar');
 const UserForm = require('../user_form');
-const TrackForm = require('../track_form');
+const TrackForm = require('../tracks/track_form');
 
 const _listeners = [];
 

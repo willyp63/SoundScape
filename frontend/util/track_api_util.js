@@ -1,9 +1,10 @@
 module.exports = {
-  fetchAllTracks (callBack) {
+  fetchAllTracks (callBack, limit) {
     $.ajax({
       url: '/api/tracks',
       method: 'GET',
       dataType: 'JSON',
+      data: {limit: limit, offset: 0},
       success (tracks) {
         callBack(tracks);
       }
@@ -24,6 +25,17 @@ module.exports = {
       url: '/api/tracks/posted',
       method: 'GET',
       dataType: 'JSON',
+      success (tracks) {
+        callBack(tracks);
+      }
+    });
+  },
+  appendAllTracks (callBack, limit, offset) {
+    $.ajax({
+      url: '/api/tracks',
+      method: 'GET',
+      dataType: 'JSON',
+      data: {limit: limit, offset: offset},
       success (tracks) {
         callBack(tracks);
       }
@@ -56,8 +68,22 @@ module.exports = {
       method: 'POST',
       dataType: 'JSON',
       data: {track: track},
-      success (newUser) {
-        successCallback(newUser);
+      success (newTrack) {
+        successCallback(newTrack);
+      },
+      error (errors) {
+        errorCallback(JSON.parse(errors.responseText));
+      }
+    });
+  },
+  postAnonymousTrack (track, successCallback, errorCallback) {
+    $.ajax({
+      url: '/api/tracks/anonymous',
+      method: 'POST',
+      dataType: 'JSON',
+      data: {track: track},
+      success (newTrack) {
+        successCallback(newTrack);
       },
       error (errors) {
         errorCallback(JSON.parse(errors.responseText));

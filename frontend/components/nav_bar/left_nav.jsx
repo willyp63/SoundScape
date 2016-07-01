@@ -3,14 +3,14 @@ const hashHistory = require('react-router').hashHistory;
 
 module.exports = React.createClass({
   _linkHome () {
-    hashHistory.push('/');
+    hashHistory.push('/home');
   },
   _linkCollection () {
-    hashHistory.push('/collection/tracks');
+    hashHistory.push('/collection');
   },
   render () {
-    const homeActive = this.props.pathname === "/";
-    const collectionActive = this.props.pathname.match(/\/collection.*/);
+    const homeActive = this.props.pathname === "/home";
+    const collectionActive = this.props.pathname === "/collection";
     return (
       <div className="nav-bar-left">
         <a className="nav-bar-logo" href="#">

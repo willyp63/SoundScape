@@ -20,9 +20,12 @@ class Track < ActiveRecord::Base
     :title,
     :audio_url,
     :image_url,
-    :user_id,
     presence: true
   )
+
+  def self.all_tracks(limit, offset)
+    Track.limit(limit).offset(offset)
+  end
 
   def self.posted_tracks(user)
     Track.where(user_id: user.id)

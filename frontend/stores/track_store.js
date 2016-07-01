@@ -21,6 +21,10 @@ TrackStore.__onDispatch = function (payload) {
       setTracks(payload.tracks);
       this.__emitChange();
       break;
+    case "APPEND_TRACKS":
+      appendTracks(payload.tracks);
+      this.__emitChange();
+      break;
     case "RECEIVE_TRACK":
       _tracks[payload.track.id] = payload.track;
       this.__emitChange();
@@ -38,6 +42,12 @@ TrackStore.__onDispatch = function (payload) {
 
 function setTracks (tracks) {
   _tracks = {};
+  tracks.forEach(track => {
+    _tracks[track.id] = track;
+  });
+}
+
+function appendTracks (tracks) {
   tracks.forEach(track => {
     _tracks[track.id] = track;
   });

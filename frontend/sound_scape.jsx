@@ -8,25 +8,29 @@ const IndexRoute = ReactRouter.IndexRoute;
 const hashHistory = ReactRouter.hashHistory;
 
 const App = require('./components/app');
-const TrackIndex = require('./components/track_index');
+const Home = require('./components/home');
 const Collection = require('./components/collection');
+const SearchResults = require('./components/search_results');
 
 const SessionActions = require('./actions/session_actions');
 const SessionStore = require('./stores/session_store');
 
 const routes = (
   <Route path="/" component={App}>
-    <IndexRoute component={TrackIndex} />
-    <Route path="/collection" component={Collection} onEnter={ _ensureLoggedIn }>
-      <Route path="tracks" component={TrackIndex}/>
-      <Route path="likes" component={TrackIndex}/>
-    </Route>
+    <IndexRoute onEnter={_redirectToHome} />
+    <Route path="/home" component={Home} />
+    <Route path="/collection" component={Collection} onEnter={ _ensureLoggedIn } />
+    <Route path="/search/:query" component={SearchResults} />
   </Route>
 );
 
+function _redirectToHome (nextState, replace) {
+  replace('/home');
+}
+
 function _ensureLoggedIn (nextState, replace) {
   if (!SessionStore.currentUser()) {
-    replace('/');
+    replace('/home');
   }
 }
 

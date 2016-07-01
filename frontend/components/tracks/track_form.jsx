@@ -1,7 +1,7 @@
 const React = require('react');
-const ErrorStore = require('../stores/error_store');
-const TrackActions = require('../actions/track_actions');
-const TrackStore = require('../stores/track_store');
+const ErrorStore = require('../../stores/error_store');
+const TrackActions = require('../../actions/track_actions');
+const TrackStore = require('../../stores/track_store');
 
 const _listeners = [];
 
