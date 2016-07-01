@@ -29,19 +29,25 @@ module.exports = {
       }
     });
   },
-  likeTrack (track) {
+  likeTrack (track, callBack) {
     $.ajax({
       url: '/api/track_likes',
       method: 'POST',
       dataType: 'JSON',
-      data: {track_like: {track_id: track.id}}
+      data: {track_like: {track_id: track.id}},
+      success () {
+        callBack();
+      }
     });
   },
-  unlikeTrack (track) {
+  unlikeTrack (track, callBack) {
     $.ajax({
       url: `/api/track_likes/${track.id}`,
       method: 'DELETE',
-      dataType: 'JSON'
+      dataType: 'JSON',
+      success () {
+        callBack();
+      }
     });
   },
   postTrack (track, successCallback, errorCallback) {

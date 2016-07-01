@@ -1,3 +1,5 @@
+@import 'colors';
+
 $track_size: 225px;
 $track_top_bottom_margin: 20px;
 
@@ -43,16 +45,18 @@ $like_button_y_offset: $like_button_size / 3;
   position: absolute;
 }
 
+$play_button_offset: ($track_size - $play_button_size) / 2;
+
 .play-circle-icon {
   position: absolute;
-  width: $track_size;
-  line-height: $track_size;
+  top: $play_button_offset;
+  left: $play_button_offset;
+  width: $play_button_size;
+  line-height: $play_button_size;
   font-size: $play_button_size;
   text-align: center;
-  color: #f30;
+  color: $ss-dark-orange;
 }
-
-$play_button_offset: ($track_size - $play_button_size) / 2;
 
 .play-circle-bg {
   position: absolute;
@@ -60,18 +64,12 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
   left: $play_button_offset + 5px;
   width: $play_button_size - 10px;
   height: $play_button_size - 10px;
-  border-radius: ($play_button_size - 10px) / 2;
   background-color: #fff;
+  border-radius: $play_button_size/2;
 }
 
-.like-bg {
-  position: absolute;
-  top: $like_button_y_offset;
-  left: $like_button_x_offset + 1px;
-  width: $like_button_size;
-  height: $like_button_size;
-  border-radius: 10px;
-  background-color: #666;
+.play-circle-bg.highlighted {
+  background-color: $ss-light-gray;
 }
 
 .like-icon {
@@ -85,14 +83,20 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
   color: #333;
 }
 
-.like-icon:hover {
+.like-icon.liked {
   color: #f39;
 }
 
-.liked {
-  color: #f39;
+.like-icon-bg {
+  position: absolute;
+  top: $like_button_y_offset;
+  left: $like_button_x_offset + 1px;
+  width: $like_button_size;
+  height: $like_button_size;
+  border-radius: 10px;
+  background-color: #fff;
 }
 
-.liked:hover {
-  color: #333;
+.like-icon-bg.highlighted {
+  background-color: $ss-light-gray;
 }

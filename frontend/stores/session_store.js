@@ -6,6 +6,7 @@ let _currentUser;
 const SessionStore = new Store(dispatcher);
 
 SessionStore.currentUser = () => _currentUser;
+SessionStore.loggedIn = () => !!_currentUser;
 
 SessionStore.__onDispatch = function (payload) {
   switch (payload.actionType) {

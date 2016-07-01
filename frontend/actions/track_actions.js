@@ -13,17 +13,19 @@ module.exports = {
     TrackApiUtil.fetchPostedTracks(this.receiveTracks);
   },
   likeTrack (track) {
-    TrackApiUtil.likeTrack(track);
-    dispatcher.dispatch({
-      actionType: 'LIKE_TRACK',
-      track: track
+    TrackApiUtil.likeTrack(track, function () {
+      dispatcher.dispatch({
+        actionType: 'LIKE_TRACK',
+        track: track
+      });
     });
   },
   unlikeTrack (track) {
-    TrackApiUtil.unlikeTrack(track);
-    dispatcher.dispatch({
-      actionType: 'UNLIKE_TRACK',
-      track: track
+    TrackApiUtil.unlikeTrack(track, function () {
+      dispatcher.dispatch({
+        actionType: 'UNLIKE_TRACK',
+        track: track
+      });
     });
   },
   receiveTracks (tracks) {

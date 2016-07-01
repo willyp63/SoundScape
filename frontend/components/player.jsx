@@ -26,17 +26,15 @@ module.exports = React.createClass({
     return (
       <div>{
         this.state.track ?
-          <nav className="navbar navbar-default navbar-fixed-bottom">
-            <div className="audio-player-bar">
-              <div className="playing-track">
-                <p>{this.state.track.title}</p>
-              </div>
-              <audio controls id="audio-player">
-                <source src={this.state.track.audio_url} type="audio/mpeg"/>
-              </audio>
-              <div className="track-queue">
-                <p>Queue</p>
-              </div>
+          <nav className="audio-player-bar">
+            <div className="playing-track">
+              <p>{this.state.track.title}</p>
+            </div>
+            <audio controls id="audio-player">
+              <source src={this.state.track.audio_url} type="audio/mpeg"/>
+            </audio>
+            <div className="track-queue">
+              <p>Queue</p>
             </div>
           </nav> :
           ""

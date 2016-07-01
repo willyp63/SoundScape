@@ -1,8 +1,17 @@
+@import 'colors';
+
+$player-height: 50px;
+$player-bg: $ss-gray;
+
 .audio-player-bar {
   display: flex;
-  height: 50px;
-  justify-content: space-around;
   align-items: center;
+  position: fixed;
+  bottom: 0;
+  z-index: 99;
+  width: 100%;
+  height: $player-height;
+  background-color: $player-bg;
 }
 
 .playing-track {

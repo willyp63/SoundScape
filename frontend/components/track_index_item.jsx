@@ -1,10 +1,23 @@
 const React = require('react');
 const PlayerActions = require('../actions/player_actions');
 const TrackActions = require('../actions/track_actions');
+const SessionStore = require('../stores/session_store');
 
 module.exports = React.createClass({
   getInitialState () {
     return {hover: false};
+  },
+  _highlightPlay () {
+    $('.play-circle-bg').addClass('highlighted');
+  },
+  _unhighlightPlay () {
+    $('.play-circle-bg').removeClass('highlighted');
+  },
+  _highlightLike () {
+    $('.like-icon-bg').addClass('highlighted');
+  },
+  _unhighlightLike () {
+    $('.like-icon-bg').removeClass('highlighted');
   },
   _onMouseEnter () {
     this.setState({hover: true});
@@ -33,12 +46,17 @@ module.exports = React.createClass({
           {this.state.hover ?
             <div>
               <span className="play-circle-bg"></span>
-              <i className="glyphicon glyphicon-play-circle play-circle-icon" onClick={this._playTrack}/>
-              {this.props.type === "all" ?
+              <i className="glyphicon glyphicon-play-circle play-circle-icon"
+                 onClick={this._playTrack}
+                 onMouseEnter={this._highlightPlay}
+                 onMouseLeave={this._unhighlightPlay}/>
+              {this.props.type === "all" && SessionStore.loggedIn() ?
                 <div>
-                  <span className="like-bg"></span>
+                  <span className="like-icon-bg"></span>
                   <i className={"glyphicon glyphicon-heart like-icon" + (this.props.track.liked ? " liked" : "")}
-                     onClick={this._likeTrack}/>
+                     onClick={this._likeTrack}
+                     onMouseEnter={this._highlightLike}
+                     onMouseLeave={this._unhighlightLike}/>
                 </div> : ""}
             </div> :
             ""}

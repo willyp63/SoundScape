@@ -1,5 +1,6 @@
 const React = require('react');
 const SessionActions = require('../actions/session_actions');
+const SessionStore = require('../stores/session_store');
 const ErrorStore = require('../stores/error_store');
 
 const _listeners = [];
@@ -10,18 +11,21 @@ module.exports = React.createClass({
   },
   componentDidMount () {
     _listeners.push(ErrorStore.addListener(this._receiveErrors));
+    _listeners.push(SessionStore.addListener(this._sessionChange));
   },
   componentWillUnmount () {
     _listeners.forEach(listener => listener.remove());
-  },
-  componentWillReceiveProps (newProps) {
-    // clear fields before being shown
-    this.setState({errors: undefined, user: {username: "", password: ""}});
   },
   _onChange (e) {
     const newUser = this.state.user;
     newUser[e.target.id] = e.target.value;
     this.setState({user: newUser});
+  },
+  _sessionChange () {
+    // close modal if loggin/sign up was successful
+    if (SessionStore.currentUser()) {
+      $(`#${this.props.formType}-MODAL`).modal('hide');
+    }
   },
   _receiveErrors () {
     // clear password
@@ -30,50 +34,52 @@ module.exports = React.createClass({
   },
   _onSubmit (e) {
     e.preventDefault();
-    if (this.props.formType === 'login') {
+    if (this.props.formType === 'LOGIN') {
       SessionActions.login(this.state.user);
-    } else if (this.props.formType === 'signup') {
+    } else if (this.props.formType === 'SIGNUP') {
       SessionActions.signup(this.state.user);
     }
   },
   render () {
     let formTitle;
-    if (this.props.formType === 'login') {
+    if (this.props.formType === 'LOGIN') {
       formTitle = 'Log In';
-    } else if (this.props.formType === 'signup') {
+    } else if (this.props.formType === 'SIGNUP') {
       formTitle = 'Sign Up';
     }
 
     return (
-      <div id="userModal" className="modal fade" role="dialog">
+      <div id={`${this.props.formType}-MODAL`} className="modal fade" role="dialog">
         <div className="modal-dialog">
-
-          <div className="modal-content">
-            <div className="modal-header">
+          <div className="modal-content cf">
+            <div className="form-header cf">
               <button type="button" className="close" data-dismiss="modal">&times;</button>
-              <h4 className="modal-title">{formTitle}</h4>
+              <p className="modal-title">{formTitle}</p>
             </div>
-            <div className="modal-body text-center">
-              <form onSubmit={this._onSubmit}>
-                <label for="username">Username</label>
+            <form onSubmit={this._onSubmit}>
+              <div className="form-field cf">
+                <label for="username">Username:</label>
                 <input type="text" id="username"
                        value={this.state.user.username}
                        onChange={this._onChange} />
+              </div>
 
-                <label for="password">Password</label>
+              <div className="form-field cf">
+                <label for="password">Password:</label>
                 <input type="password" id="password"
                        value={this.state.user.password}
                        onChange={this._onChange} />
-                 {this.state.errors ?
-                   <ul className="list-unstyled">{
-                     this.state.errors.map(errorMsg => {
-                       return <li key={errorMsg} className="error-msg">{errorMsg}</li>;
-                     })
-                   }</ul> : ""
-                 }
-                 <input type="submit" value={formTitle} className="btn btn-success"/>
-              </form>
-            </div>
+              </div>
+
+               {this.state.errors ?
+                 <ul>{
+                   this.state.errors.map(errorMsg => {
+                     return <li key={errorMsg} className="error-msg">{errorMsg}</li>;
+                   })
+                 }</ul> : ""
+               }
+               <input type="submit" value={formTitle} className="btn btn-success"/>
+            </form>
           </div>
         </div>
       </div>
