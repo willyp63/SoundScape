@@ -20,10 +20,14 @@ module.exports = React.createClass({
     $('.like-icon-bg').removeClass('highlighted');
   },
   _onMouseEnter () {
-    this.setState({hover: true});
+    this.setState({hover: true}, function () {
+      $(`#overlay-${this.props.track.id}`).addClass('active');
+    });
   },
   _onMouseLeave () {
-    this.setState({hover: false});
+    this.setState({hover: false}, function () {
+      $(`#overlay-${this.props.track.id}`).removeClass('active');
+    });
   },
   _playTrack () {
     PlayerActions.playTrack(this.props.track);
@@ -41,8 +45,8 @@ module.exports = React.createClass({
            onMouseEnter={this._onMouseEnter}
            onMouseLeave={this._onMouseLeave}>
         <div className="track-image">
-          <img src={this.props.track.image_url} width="225" height="225">
-          </img>
+          <img src={this.props.track.image_url} width="225" height="225"></img>
+          <span className="track-image-overlay" id={`overlay-${this.props.track.id}`}></span>
           {this.state.hover ?
             <div>
               <span className="play-circle-bg"></span>

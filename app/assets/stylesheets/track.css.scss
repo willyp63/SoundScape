@@ -24,7 +24,6 @@ $like_button_y_offset: $like_button_size / 3;
   position: relative;
   width: $track_size;
   height: $track_size;
-  cursor: pointer;
 }
 
 .track-index-item img {
@@ -45,6 +44,18 @@ $like_button_y_offset: $like_button_size / 3;
   position: absolute;
 }
 
+.track-image-overlay {
+  position: absolute;
+  height: $track_size;
+  width: $track_size;
+  background-color: transparent;
+  display: block;
+}
+
+.track-image-overlay.active {
+  background-color: rgba(0,0,0,0.25);
+}
+
 $play_button_offset: ($track_size - $play_button_size) / 2;
 
 .play-circle-icon {
@@ -56,6 +67,7 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
   font-size: $play_button_size;
   text-align: center;
   color: $ss-dark-orange;
+  cursor: pointer;
 }
 
 .play-circle-bg {
@@ -81,6 +93,7 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
   font-size: $like_button_size - 10px;
   text-align: center;
   color: #333;
+  cursor: pointer;
 }
 
 .like-icon.liked {

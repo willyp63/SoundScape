@@ -29,7 +29,9 @@ module.exports = React.createClass({
     }
   },
   _onClick (e) {
-    SearchActions.showSearchResults();
+    if ($('#search-input').val()) {
+      SearchActions.showSearchResults();
+    }
     // dont allow app to clear search results
     e.stopPropagation();
   },
@@ -37,7 +39,8 @@ module.exports = React.createClass({
     return (
       <div className="nav-bar-center">
         <form>
-          <input type="text"
+          <input id="search-input"
+                 type="text"
                  placeholder="Search for Tracks..."
                  onChange={this._onChange}
                  onClick={this._onClick}>

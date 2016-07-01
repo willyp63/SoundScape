@@ -1,7 +1,7 @@
 const HEROKU_URL = 'https://salty-falls-17641.herokuapp.com';
 const LOCAL_URL = 'http://localhost:3000';
 
-seed(30, HEROKU_URL);
+seed(30, LOCAL_URL);
 
 function randomLetters (n) {
   let letters = "";
@@ -25,7 +25,7 @@ function randomTrack (callBack) {
 function extractTrack (track) {
   return {title: track.name,
           audio_url: track.preview_url,
-          image_url: track.album.images[0].url};
+          image_url: track.album.images[1].url};
 }
 
 function postTrack (track, url) {
