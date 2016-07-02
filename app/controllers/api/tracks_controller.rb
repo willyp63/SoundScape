@@ -6,13 +6,15 @@ class Api::TracksController < ApplicationController
       @tracks = Track.all
     end
 
-    # set liked prop without n+1 queries
-    @tracks = @tracks.map {|t| {id: t.id, title: t.title, audio_url: t.audio_url,
-      image_url: t.image_url, user_id: t.user_id} }
+    if logged_in?
+      # set liked prop without n+1 queries
+      @tracks = @tracks.map {|t| {id: t.id, title: t.title, audio_url: t.audio_url,
+        image_url: t.image_url, user_id: t.user_id} }
 
-    TrackLike.where(user_id: current_user.id).includes(:track).each do |like|
-      track = @tracks.detect {|t| t[:id] == like.track_id}
-      track[:liked] = true
+      TrackLike.where(user_id: current_user.id).includes(:track).each do |like|
+        track = @tracks.detect {|t| t[:id] == like.track_id}
+        track[:liked] = true
+      end
     end
 
     render json: @tracks

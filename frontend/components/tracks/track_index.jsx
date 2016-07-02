@@ -18,7 +18,7 @@ module.exports = React.createClass({
           return (
             <div key={row[0].id} className="track-index-row">{
               row.map(track => {
-                return <TrackIndexItem key={track.id}
+                return <TrackIndexItem key={track.storeId}
                                        track={track}
                                        indexType={this.props.indexType} />;
               })

@@ -26,15 +26,19 @@ TrackStore.__onDispatch = function (payload) {
       this.__emitChange();
       break;
     case "RECEIVE_TRACK":
-      _tracks[payload.track.id] = payload.track;
+      storeTrack(payload.track.id, payload.track);
       this.__emitChange();
       break;
     case 'LIKE_TRACK':
-      _tracks[payload.track.id].liked = true;
+      _tracks[payload.track.storeId].liked = true;
       this.__emitChange();
       break;
     case 'UNLIKE_TRACK':
-      _tracks[payload.track.id].liked = false;
+      _tracks[payload.track.storeId].liked = false;
+      this.__emitChange();
+      break;
+    case 'REPLACE_TRACK':
+      storeTrack(payload.oldTrack.id, payload.newTrack);
       this.__emitChange();
       break;
   }
@@ -43,14 +47,19 @@ TrackStore.__onDispatch = function (payload) {
 function setTracks (tracks) {
   _tracks = {};
   tracks.forEach(track => {
-    _tracks[track.id] = track;
+    storeTrack(track.id, track);
   });
 }
 
 function appendTracks (tracks) {
   tracks.forEach(track => {
-    _tracks[track.id] = track;
+    storeTrack(track.id, track);
   });
+}
+
+function storeTrack (id, track) {
+  track.storeId = id;
+  _tracks[id] = track;
 }
 
 module.exports = TrackStore;

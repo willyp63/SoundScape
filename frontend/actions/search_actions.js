@@ -14,14 +14,14 @@ module.exports = {
   },
   appendSearchResults (tracks) {
     dispatcher.dispatch({
-      actionType: 'APPEND_RESULTS',
-      results: tracks
+      actionType: 'APPEND_TRACKS',
+      tracks: tracks
     });
   },
   receiveSearchResults (tracks) {
     dispatcher.dispatch({
-      actionType: 'RECEIVE_RESULTS',
-      results: tracks
+      actionType: 'RECEIVE_TRACKS',
+      tracks: tracks
     });
   },
   receiveDropDownResults (tracks) {

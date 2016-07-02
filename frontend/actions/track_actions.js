@@ -27,7 +27,12 @@ module.exports = {
     TrackApiUtil.postAnonymousTrack(track, function (newTrack) {
       TrackApiUtil.likeTrack(newTrack, function () {
         dispatcher.dispatch({
-          actionType: 'LIKE_RESULT',
+          actionType: 'REPLACE_TRACK',
+          oldTrack: track,
+          newTrack: newTrack
+        });
+        dispatcher.dispatch({
+          actionType: 'LIKE_TRACK',
           track: track
         });
       });

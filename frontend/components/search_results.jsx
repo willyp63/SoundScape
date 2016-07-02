@@ -1,6 +1,6 @@
 const React = require('react');
 
-const SearchResultStore = require('../stores/search_result_store');
+const TrackStore = require('../stores/track_store');
 const SearchActions = require('../actions/search_actions');
 
 const TrackIndex = require('./tracks/track_index');
@@ -12,10 +12,10 @@ let _appending = false;
 
 module.exports = React.createClass({
   getInitialState () {
-    return {tracks: SearchResultStore.all()};
+    return {tracks: TrackStore.all()};
   },
   componentWillMount () {
-    _listeners.push(SearchResultStore.addListener(this._trackChange));
+    _listeners.push(TrackStore.addListener(this._trackChange));
     SearchActions.searchTracks(this.props.params.query, TRACKS_PER_REQUEST, 0);
 
     // listen for scroll
@@ -37,7 +37,7 @@ module.exports = React.createClass({
     }
   },
   _trackChange () {
-    this.setState({tracks: SearchResultStore.all()}, function () {
+    this.setState({tracks: TrackStore.all()}, function () {
       _appending = false;
     });
   },
