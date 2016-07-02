@@ -55,10 +55,8 @@ $text-color-active: #fff;
   height: $nav-bar-height;
   background: linear-gradient($logo-bg-light, $logo-bg-dark);
   margin-left: 10px;
-}
-
-.nav-bar-logo > img {
-  margin-top: 2px;
+  padding-left: 2px;
+  padding-right: 2px;
 }
 
 .nav-bar-left > ul {
@@ -70,11 +68,17 @@ $text-color-active: #fff;
   float: left;
   line-height: $nav-bar-height;
   font-size: $nav-bar-font-size;
-  text-align: justify;
-  text-justify: auto;
-  padding: 0 10px;
+  text-align: center;
   color: $text-color;
   cursor: pointer;
+}
+
+.nav-bar-left > ul > li:first-of-type {
+  width: 67px;
+}
+
+.nav-bar-left > ul > li:last-of-type {
+  width: 97px;
 }
 
 .nav-bar-left > ul > li:hover {
