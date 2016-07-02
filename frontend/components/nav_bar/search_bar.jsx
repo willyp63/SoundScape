@@ -11,7 +11,7 @@ let _query = "";
 
 module.exports = React.createClass({
   getInitialState () {
-    return {results: SearchResultStore.dropDownResults(),
+    return {results: SearchResultStore.results(),
             showing: SearchResultStore.showing()};
   },
   componentWillMount () {
@@ -21,21 +21,21 @@ module.exports = React.createClass({
     _listeners.forEach(listener => listener.remove());
   },
   _resultsChange () {
-    this.setState({results: SearchResultStore.dropDownResults(),
+    this.setState({results: SearchResultStore.results(),
                    showing: SearchResultStore.showing()});
   },
   _onChange (e) {
     _query = e.target.value;
     if (e.target.value) {
-      SearchActions.showSearchResults();
-      SearchActions.searchTracksInDropDown(e.target.value, NUM_RESULTS);
+      SearchActions.showResults();
+      SearchActions.searchTracks(e.target.value, NUM_RESULTS);
     } else {
-      SearchActions.hideSearchResults();
+      SearchActions.hideResults();
     }
   },
   _onClick (e) {
     if ($('#search-input').val()) {
-      SearchActions.showSearchResults();
+      SearchActions.showResults();
     }
     // dont allow app to clear search results
     e.stopPropagation();
@@ -43,8 +43,8 @@ module.exports = React.createClass({
   _onSubmit (e) {
     e.preventDefault();
     $('#search-input').val("");
-    SearchActions.hideSearchResults();
-    hashHistory.push(`/search/${_query}`);
+    SearchActions.hideResults();
+    hashHistory.push(`/results/${_query}`);
   },
   render () {
     return (

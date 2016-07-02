@@ -5,7 +5,7 @@ const SearchActions = require('../actions/search_actions');
 
 module.exports = React.createClass({
   _onClick () {
-    SearchActions.hideSearchResults();
+    SearchActions.hideResults();
   },
   render () {
     return (

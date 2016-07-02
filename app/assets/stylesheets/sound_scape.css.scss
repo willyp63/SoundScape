@@ -1,7 +1,9 @@
 @import 'colors';
 
+/* make bootstrap buttons orange */
 $btn-primary-bg: $ss-light-orange;
 
+/* require bootstrap */
 @import "bootstrap-sprockets";
 @import "bootstrap-custom";
 
@@ -30,16 +32,16 @@ body {
   min-height: 100%;
 }
 
-.cf:after {
-  content: "";
-  display: block;
-  clear: both;
-}
-
 .main-content {
   background-color: #fff;
   padding-top: 50px;
   padding-bottom: 50px;
   margin-left: 5%;
   width: 90%;
+}
+
+.cf:after {
+  content: "";
+  display: block;
+  clear: both;
 }

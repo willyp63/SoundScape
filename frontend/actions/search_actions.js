@@ -1,41 +1,27 @@
 const dispatcher = require('../dispatcher');
 const SpotifyApiUtil = require('../util/spotify_api_util');
+const TrackActions = require('./track_actions');
 
 module.exports = {
-  searchTracksInDropDown (query, limit) {
-    SpotifyApiUtil.searchTracks(this.receiveDropDownResults, query, limit, 0);
+  searchTracks (query, limit) {
+    SpotifyApiUtil.searchTracks(this.receiveResults, query, limit, 0);
   },
-  searchTracks (query, limit, offset) {
-    if (offset) {
-      SpotifyApiUtil.searchTracks(this.appendSearchResults, query, limit, offset);
-    } else {
-      SpotifyApiUtil.searchTracks(this.receiveSearchResults, query, limit, offset);
-    }
+  fetchResults (query, limit, offset) {
+    const callBack = offset ? TrackActions.appendTracks : TrackActions.receiveTracks;
+    SpotifyApiUtil.searchTracks(callBack, query, limit, offset);
   },
-  appendSearchResults (tracks) {
+  receiveResults (tracks) {
     dispatcher.dispatch({
-      actionType: 'APPEND_TRACKS',
-      tracks: tracks
-    });
-  },
-  receiveSearchResults (tracks) {
-    dispatcher.dispatch({
-      actionType: 'RECEIVE_TRACKS',
-      tracks: tracks
-    });
-  },
-  receiveDropDownResults (tracks) {
-    dispatcher.dispatch({
-      actionType: 'RECEIVE_DROP_DOWN_RESULTS',
+      actionType: 'RECEIVE_RESULTS',
       results: tracks
     });
   },
-  hideSearchResults () {
+  hideResults () {
     dispatcher.dispatch({
       actionType: 'HIDE_RESULTS'
     });
   },
-  showSearchResults () {
+  showResults () {
     dispatcher.dispatch({
       actionType: 'SHOW_RESULTS'
     });

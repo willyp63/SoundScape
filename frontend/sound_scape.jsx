@@ -10,7 +10,7 @@ const hashHistory = ReactRouter.hashHistory;
 const App = require('./components/app');
 const Home = require('./components/home');
 const Collection = require('./components/collection');
-const SearchResults = require('./components/search_results');
+const Results = require('./components/results');
 
 const SessionActions = require('./actions/session_actions');
 const SessionStore = require('./stores/session_store');
@@ -20,7 +20,7 @@ const routes = (
     <IndexRoute onEnter={_redirectToHome} />
     <Route path="/home" component={Home} />
     <Route path="/collection" component={Collection} onEnter={ _ensureLoggedIn } />
-    <Route path="/search/:query" component={SearchResults} />
+    <Route path="/results/:query" component={Results} />
   </Route>
 );
 

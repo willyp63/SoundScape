@@ -1,37 +1,23 @@
 const React = require('react');
-
-const TrackStore = require('../stores/track_store');
 const TrackActions = require('../actions/track_actions');
-
 const TrackIndex = require('./tracks/track_index');
-
-const _listeners = [];
 
 module.exports = React.createClass({
   getInitialState () {
-    return {indexType: "MY_TRACKS", tracks: TrackStore.all()};
+    return {indexType: "MY_TRACKS"};
   },
-  componentWillMount () {
-    _listeners.push(TrackStore.addListener(this._trackChange));
-    this._fetchTracks();
-  },
-  componentWillUnmount () {
-    _listeners.forEach(listener => listener.remove());
-  },
-  _fetchTracks () {
+  _fetchInitialTracks () {
     if (this.state.indexType === "MY_TRACKS") {
       TrackActions.fetchPostedTracks();
     } else {
       TrackActions.fetchLikedTracks();
     }
   },
-  _trackChange () {
-    this.setState({tracks: TrackStore.all()});
+  _fetchMoreTracks (offset) {
+    // do nothing
   },
   _navItemClick (e) {
-    this.setState({indexType: e.target.id}, function () {
-      this._fetchTracks();
-    });
+    this.setState({indexType: e.target.id});
   },
   render () {
     return (
@@ -46,7 +32,9 @@ module.exports = React.createClass({
               onClick={this._navItemClick}>Likes
           </li>
         </ul>
-        <TrackIndex tracks={this.state.tracks} indexType={this.state.indexType} />
+        <TrackIndex fetchInitialTracks={this._fetchInitialTracks}
+                    fetchMoreTracks={this._fetchMoreTracks}
+                    indexType={this.state.indexType} />
       </div>
     );
   }

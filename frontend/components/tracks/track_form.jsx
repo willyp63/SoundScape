@@ -71,7 +71,7 @@ module.exports = React.createClass({
               <p className="modal-title">Upload Track</p>
             </div>
             <form onSubmit={this._onSubmit} className="track-form">
-              <div className="row">
+              <div className="cf">
                 <div className="my-col-2 cf">
                   {this.state.track.image_url ?
                     <div className="image-upload-thumbnail">
