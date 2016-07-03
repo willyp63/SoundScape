@@ -12,10 +12,15 @@ let _query = "";
 module.exports = React.createClass({
   getInitialState () {
     return {results: SearchResultStore.results(),
-            showing: SearchResultStore.showing()};
+            showing: SearchResultStore.showing(),
+            resultTextWidth: 0};
   },
   componentWillMount () {
+    window.addEventListener('resize', this._handleResize);
     _listeners.push(SearchResultStore.addListener(this._resultsChange));
+  },
+  componentDidMount () {
+    this.setState({resultTextWidth: resultTextWidth()});
   },
   componentWillUnmount () {
     _listeners.forEach(listener => listener.remove());
@@ -46,10 +51,13 @@ module.exports = React.createClass({
     SearchActions.hideResults();
     hashHistory.push(`/results/${_query}`);
   },
+  _handleResize (e) {
+    this.setState({resultTextWidth: resultTextWidth()});
+  },
   render () {
     return (
       <div className="nav-bar-center">
-        <form onSubmit={this._onSubmit}>
+        <form onSubmit={this._onSubmit} id="search-form">
           <input id="search-input"
                  type="text"
                  autoComplete="off"
@@ -63,7 +71,9 @@ module.exports = React.createClass({
           {this.state.showing && this.state.results.length ?
             <ul className="dropdown-menu search-results">{
               this.state.results.map(track => {
-                return <SearchResult key={track.id} track={track} />;
+                return <SearchResult key={track.id}
+                                     track={track}
+                                     textWidth={this.state.resultTextWidth} />;
               })
             }</ul> :
             ""}
@@ -72,3 +82,7 @@ module.exports = React.createClass({
     );
   }
 });
+
+function resultTextWidth () {
+  return $('#search-form').width() - 85;
+}

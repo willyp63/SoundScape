@@ -98,7 +98,7 @@ $text-color-active: #fff;
 
 $search-bar-y-offset: ($nav-bar-height - $search-bar-height)/2;
 
-.nav-bar-center input {
+.nav-bar-center #search-input {
   width: calc(100% - 32px);
   height: $search-bar-height - 16px;
   padding: 8px;
@@ -108,7 +108,7 @@ $search-bar-y-offset: ($nav-bar-height - $search-bar-height)/2;
   outline: 0;
 }
 
-.nav-bar-center input:focus {
+.nav-bar-center #search-input:focus {
   box-shadow: 0 0 1pt 1pt #0cf;
 }
 
@@ -222,6 +222,7 @@ $search-bar-y-offset: ($nav-bar-height - $search-bar-height)/2;
 .search-results li p {
   float: left;
   line-height: 50px;
+  font-size: 18px;
 }
 
 .search-results li img {

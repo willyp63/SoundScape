@@ -2,6 +2,8 @@ const React = require('react');
 const ErrorStore = require('../../stores/error_store');
 const TrackActions = require('../../actions/track_actions');
 const TrackStore = require('../../stores/track_store');
+const CLOUDINARY_IMAGE_OPTIONS = require('../../constants/cloudinary').IMAGE_OPTIONS;
+const CLOUDINARY_AUDIO_OPTIONS = require('../../constants/cloudinary').AUDIO_OPTIONS;
 
 const _listeners = [];
 
@@ -34,7 +36,7 @@ module.exports = React.createClass({
   _uploadImage (e) {
     e.preventDefault();
     window.cloudinary.openUploadWidget(
-      window.CLOUDINARY_OPTIONS_IMG,
+      CLOUDINARY_IMAGE_OPTIONS,
       function (error, results) {
         if (!error) {
           const newTrack = this.state.track;
@@ -47,7 +49,7 @@ module.exports = React.createClass({
   _uploadTrack (e) {
     e.preventDefault();
     window.cloudinary.openUploadWidget(
-      window.CLOUDINARY_OPTIONS_MP3,
+      CLOUDINARY_AUDIO_OPTIONS,
       function (error, results) {
         if (!error) {
           const newTrack = this.state.track;
