@@ -11,17 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160701234222) do
+ActiveRecord::Schema.define(version: 20160703214721) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "track_likes", force: :cascade do |t|
-    t.integer "user_id",  null: false
-    t.integer "track_id", null: false
+    t.integer "user_id",    null: false
+    t.integer "track_id"
+    t.string  "spotify_id"
   end
 
+  add_index "track_likes", ["spotify_id"], name: "index_track_likes_on_spotify_id", using: :btree
   add_index "track_likes", ["track_id"], name: "index_track_likes_on_track_id", using: :btree
+  add_index "track_likes", ["user_id", "spotify_id"], name: "index_track_likes_on_user_id_and_spotify_id", unique: true, using: :btree
   add_index "track_likes", ["user_id", "track_id"], name: "index_track_likes_on_user_id_and_track_id", unique: true, using: :btree
   add_index "track_likes", ["user_id"], name: "index_track_likes_on_user_id", using: :btree
 
@@ -32,8 +35,10 @@ ActiveRecord::Schema.define(version: 20160701234222) do
     t.integer  "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "spotify_id"
   end
 
+  add_index "tracks", ["spotify_id"], name: "index_tracks_on_spotify_id", unique: true, using: :btree
   add_index "tracks", ["title"], name: "index_tracks_on_title", using: :btree
   add_index "tracks", ["user_id"], name: "index_tracks_on_user_id", using: :btree
 

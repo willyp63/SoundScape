@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     get '/tracks/liked', to: 'tracks#liked'
     get '/tracks/posted', to: 'tracks#posted'
     post '/tracks/anonymous', to: 'tracks#create_anonymous'
+    post '/tracks/build_liked', to: 'tracks#build_liked'
     resources :track_likes, only: [:create, :destroy]
     resources :users, only: [:create]
     resource :session, only: [:create, :destroy]

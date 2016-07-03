@@ -2,9 +2,10 @@
 #
 # Table name: track_likes
 #
-#  id       :integer          not null, primary key
-#  user_id  :integer          not null
-#  track_id :integer          not null
+#  id         :integer          not null, primary key
+#  user_id    :integer          not null
+#  track_id   :integer
+#  spotify_id :string
 #
 
 require 'test_helper'

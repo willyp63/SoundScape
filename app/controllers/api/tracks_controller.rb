@@ -7,14 +7,20 @@ class Api::TracksController < ApplicationController
     end
 
     if logged_in?
-      # set liked prop without n+1 queries
-      @tracks = @tracks.map {|t| {id: t.id, title: t.title, audio_url: t.audio_url,
-        image_url: t.image_url, user_id: t.user_id} }
-
-      TrackLike.where(user_id: current_user.id).includes(:track).each do |like|
-        track = @tracks.detect {|t| t[:id] == like.track_id}
-        track[:liked] = true
+      liked_tracks = Track.liked_tracks(current_user)
+      track_id_hash = {}.tap do |h|
+        @tracks.each do |t|
+          h[t.spotify_id || t.id] = {id: t.id, title: t.title, audio_url: t.audio_url, liked: false,
+                              image_url: t.image_url, user_id: t.user_id, spotify_id: t.spotify_id}
+        end
       end
+      liked_tracks.each do |t|
+        id = t.spotify_id || t.id
+        if track_id_hash[id]
+          track_id_hash[id][:liked] = true
+        end
+      end
+      @tracks = track_id_hash.keys.map {|k| track_id_hash[k] }
     end
 
     render json: @tracks
@@ -27,6 +33,24 @@ class Api::TracksController < ApplicationController
     else
       render json: ["you're not logged in"], status: 404
     end
+  end
+
+  def build_liked
+    liked_tracks = Track.liked_tracks(current_user)
+    track_id_hash = {}.tap do |h|
+      params[:tracks].each do |_, t|
+        t['liked'] = false
+        h[t['spotify_id'] || t['id']] = t
+      end
+    end
+    liked_tracks.each do |t|
+      id = t.spotify_id || t.id
+      if track_id_hash[id]
+        track_id_hash[id]['liked'] = true
+      end
+    end
+    @tracks = track_id_hash.keys.map {|k| track_id_hash[k] }
+    render json: @tracks
   end
 
   def posted
@@ -63,7 +87,24 @@ class Api::TracksController < ApplicationController
   end
 
   private
+  def set_liked_field(tracks)
+    liked_tracks = Track.liked_tracks(current_user)
+    track_id_hash = {}.tap do |h|
+      tracks.each do |t|
+        h[t.id || t.spotify_id] = {id: t.id, title: t.title, audio_url: t.audio_url, liked: false,
+                            image_url: t.image_url, user_id: t.user_id, spotify_id: t.spotify_id}
+      end
+    end
+    liked_tracks.each do |t|
+      id = t.id || t.spotify_id
+      if track_id_hash[id]
+        track_id_hash[id][:liked] = true
+      end
+    end
+    track_id_hash.keys.map {|k| track_id_hash[k] }
+  end
+
   def track_params
-    params.require(:track).permit(:title, :audio_url, :image_url)
+    params.require(:track).permit(:title, :audio_url, :image_url, :spotify_id)
   end
 end

@@ -34,7 +34,11 @@ module.exports = React.createClass({
   },
   _likeTrack () {
     if (typeof this.props.track.id === 'string') {
-      TrackActions.postAndLikeTrack(this.props.track);
+      if (this.props.track.liked) {
+        TrackActions.unlikeTrack(this.props.track);
+      } else {
+        TrackActions.postAndLikeTrack(this.props.track);
+      }
     } else {
       if (this.props.track.liked) {
         TrackActions.unlikeTrack(this.props.track);

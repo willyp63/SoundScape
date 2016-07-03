@@ -6,9 +6,10 @@
 #  title      :string           not null
 #  audio_url  :string           not null
 #  image_url  :string
-#  user_id    :integer          not null
+#  user_id    :integer
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  spotify_id :string
 #
 
 class Track < ActiveRecord::Base
@@ -32,7 +33,8 @@ class Track < ActiveRecord::Base
   end
 
   def self.liked_tracks(user)
-    Track.joins(:track_likes)
+    Track.joins("INNER JOIN track_likes ON track_likes.track_id = tracks.id OR
+                                           track_likes.spotify_id = tracks.spotify_id")
          .where("track_likes.user_id = ?", user.id)
   end
 end

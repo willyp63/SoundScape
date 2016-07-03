@@ -46,15 +46,16 @@ module.exports = {
       url: '/api/track_likes',
       method: 'POST',
       dataType: 'JSON',
-      data: {track_like: {track_id: track.id}},
+      data: {track_like: {track_id: track.id, spotify_id: track.spotify_id}},
       success () {
         callBack();
       }
     });
   },
   unlikeTrack (track, callBack) {
+    // perfer to send spotify id
     $.ajax({
-      url: `/api/track_likes/${track.id}`,
+      url: `/api/track_likes/${track.spotify_id || track.id}`,
       method: 'DELETE',
       dataType: 'JSON',
       success () {
