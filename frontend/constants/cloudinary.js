@@ -5,7 +5,7 @@ module.exports = {
     theme: "minimal",
     sources: ["local"],
     client_allowed_formats: ["mp3"],
-    multiiple: false,
+    multiple: false,
     text: {
       "sources.local.drop_files": "Drop MP3 here",
       "sources.local.select_files": "Select MP3",
@@ -18,7 +18,7 @@ module.exports = {
     theme: "minimal",
     sources: ["local"],
     client_allowed_formats: ["png", "jpg", "jpeg"],
-    multiiple: false,
+    multiple: false,
     text: {
       "sources.local.drop_files": "Drop Image here",
       "sources.local.select_files": "Select Image",

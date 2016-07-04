@@ -32,9 +32,15 @@ module.exports = React.createClass({
           <SearchBar />
           { SessionStore.loggedIn() ? <RightNavLoggedIn /> : <RightNavLoggedOut /> }
         </nav>
-        <UserForm formType="LOGIN" />
-        <UserForm formType="SIGNUP" />
-        <TrackForm formType="NEW"/>
+        { SessionStore.loggedIn() ?
+          <div>
+            <UserForm key="2" formType="UPDATE" />
+            <TrackForm formType="NEW" />
+          </div> :
+          <div>
+            <UserForm key="1" formType="LOGIN" />
+            <UserForm formType="SIGNUP" />
+          </div>}
       </div>
     );
   }

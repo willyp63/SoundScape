@@ -1,14 +1,25 @@
 const React = require('react');
 const SessionActions = require('../actions/session_actions');
+const UserActions = require('../actions/user_actions');
 const SessionStore = require('../stores/session_store');
 const ErrorStore = require('../stores/error_store');
+const ErrorActions = require('../actions/error_actions');
 const CLOUDINARY_IMAGE_OPTIONS = require('../constants/cloudinary').IMAGE_OPTIONS;
 
 const _listeners = [];
 
 module.exports = React.createClass({
   getInitialState () {
-    return {errors: undefined, user: {username: "", password: "", picture_url: ""}};
+    if (this.props.formType === "UPDATE") {
+      const user = SessionStore.currentUser();
+      return {errors: undefined, user: {id: user.id,
+                                        username: user.username,
+                                        old_password: "",
+                                        password: "",
+                                        picture_url: user.picture_url}};
+    } else {
+      return {errors: undefined, user: {username: "", password: "", picture_url: ""}};
+    }
   },
   componentDidMount () {
     _listeners.push(ErrorStore.addListener(this._receiveErrors));
@@ -16,6 +27,7 @@ module.exports = React.createClass({
   },
   componentWillUnmount () {
     _listeners.forEach(listener => listener.remove());
+    this._closeModal();
   },
   _onChange (e) {
     const newUser = this.state.user;
@@ -24,14 +36,19 @@ module.exports = React.createClass({
   },
   _sessionChange () {
     // close modal if loggin/sign up was successful
-    if (SessionStore.currentUser()) {
-      $(`#${this.props.formType}-MODAL`).modal('hide');
+    if (SessionStore.loggedIn()) {
+      this._closeModal();
     }
+  },
+  _closeModal () {
+    $(`#${this.props.formType}-MODAL`).modal('hide');
   },
   _receiveErrors () {
     // clear password
     this.setState({errors: ErrorStore.errors(),
-      user: {username: this.state.user.username,
+      user: {id: this.state.user.id,
+            username: this.state.user.username,
+            old_password: "",
             password: "",
             picture_url: this.state.user.picture_url}});
   },
@@ -54,6 +71,8 @@ module.exports = React.createClass({
       SessionActions.login(this.state.user);
     } else if (this.props.formType === 'SIGNUP') {
       SessionActions.signup(this.state.user);
+    } else {
+      UserActions.updateUser(this.state.user);
     }
   },
   render () {
@@ -62,6 +81,8 @@ module.exports = React.createClass({
       formTitle = 'Log In';
     } else if (this.props.formType === 'SIGNUP') {
       formTitle = 'Sign Up';
+    } else {
+      formTitle = 'Update Profile';
     }
 
     return (
@@ -69,7 +90,7 @@ module.exports = React.createClass({
         <div className="modal-dialog">
           <div className="modal-content cf">
             <div className="form-header cf">
-              <button type="button" className="close" data-dismiss="modal">&times;</button>
+              <button className="close" onClick={this._closeModal}>&times;</button>
               <p className="modal-title">{formTitle}</p>
             </div>
             <form onSubmit={this._onSubmit}>
@@ -80,14 +101,24 @@ module.exports = React.createClass({
                        onChange={this._onChange} />
               </div>
 
+              { this.props.formType === "UPDATE" ?
+                <div className="form-field cf">
+                  <label for="old_password">Old Password:</label>
+                  <input type="password" id="old_password"
+                         value={this.state.user.old_password}
+                         onChange={this._onChange} />
+                </div> : ""}
+
               <div className="form-field cf">
-                <label for="password">Password:</label>
+                <label for="password">
+                  {this.props.formType === "UPDATE" ? "New " : ""}Password:
+                </label>
                 <input type="password" id="password"
                        value={this.state.user.password}
                        onChange={this._onChange} />
               </div>
 
-              {this.props.formType === "SIGNUP" ?
+              {this.props.formType !== "LOGIN" ?
                 <div className="cf">
                   <div className="my-col-2 cf">
                     {this.state.user.picture_url ?

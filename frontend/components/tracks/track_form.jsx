@@ -9,7 +9,7 @@ const _listeners = [];
 
 module.exports = React.createClass({
   getInitialState () {
-    return {errors: undefined, track: {title: "",
+    return {errors: [], track: {title: "",
                                       image_url: "",
                                       audio_url: ""}};
   },
@@ -21,10 +21,13 @@ module.exports = React.createClass({
   },
   componentDidMount () {
     _listeners.push(ErrorStore.addListener(this._receiveErrors));
-    _listeners.push(TrackStore.addListener(this._closeModal));
+    _listeners.push(TrackStore.addListener(this._trackChange));
   },
   componentWillUnmount () {
     _listeners.forEach(listener => listener.remove());
+  },
+  _trackChange () {
+    this._closeModal();
   },
   _closeModal () {
     $(`#${this.props.formType}-TRACK-MODAL`).modal("hide");

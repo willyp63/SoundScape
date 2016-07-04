@@ -7,7 +7,7 @@ Rails.application.routes.draw do
     post '/tracks/anonymous', to: 'tracks#create_anonymous'
     post '/tracks/build_liked', to: 'tracks#build_liked'
     resources :track_likes, only: [:create, :destroy]
-    resources :users, only: [:create]
+    resources :users, only: [:create, :update]
     resource :session, only: [:create, :destroy]
   end
 end

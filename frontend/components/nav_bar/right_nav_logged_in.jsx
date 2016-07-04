@@ -18,6 +18,11 @@ module.exports = React.createClass({
     // redirect to root
     hashHistory.push('/');
   },
+  _editProfile (e) {
+    e.preventDefault();
+    ErrorActions.removeErrors();
+    $("#UPDATE-MODAL").modal("show");
+  },
   render () {
     return (
       <div className="nav-bar-right">
@@ -30,10 +35,9 @@ module.exports = React.createClass({
               <i className="glyphicon glyphicon-triangle-bottom profile-carrot"></i>
             </a>
             <ul className="dropdown-menu">
-              <li>Action</li>
-              <li>Another action</li>
-              <li>Something else here</li>
+              <li>{SessionStore.currentUser().username}</li>
               <li role="separator" className="divider"></li>
+              <li onClick={this._editProfile}>Edit Profile</li>
               <li onClick={this._logout}>Log Out</li>
             </ul>
           </li>

@@ -183,6 +183,7 @@ $search-bar-y-offset: ($nav-bar-height - $search-bar-height)/2;
   border-radius: 0 !important;
   border-top: none !important;
   background-color: $nav-bar-active-color !important;
+  cursor: default;
 }
 
 .dropdown-menu > li {
@@ -193,6 +194,11 @@ $search-bar-y-offset: ($nav-bar-height - $search-bar-height)/2;
   text-align: right;
   font-size: $nav-bar-font-size;
   color: $text-color;
+  cursor: pointer;
+}
+
+.dropdown-menu > li:first-of-type {
+  cursor: default;
 }
 
 .dropdown-menu > li.divider {
@@ -200,9 +206,18 @@ $search-bar-y-offset: ($nav-bar-height - $search-bar-height)/2;
   padding: 0;
 }
 
+.dropdown-menu > li.divider:hover {
+  background-color: $text-color;
+}
+
 .dropdown-menu > li:hover {
   color: $text-color-active;
   background-color: $nav-bar-bg;
+}
+
+.dropdown-menu > li:first-of-type:hover {
+  color: $text-color;
+  background-color: transparent;
 }
 
 /* SEARCH RESULTS */
