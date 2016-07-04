@@ -36,17 +36,27 @@ class Api::TracksController < ApplicationController
   end
 
   def build_liked
-    liked_tracks = Track.liked_tracks(current_user)
+    spotify_tracks = Track.where("tracks.spotify_id IS NOT NULL")
+    liked_tracks = Track.where("tracks.spotify_id IS NOT NULL")
+                        .joins("INNER JOIN track_likes ON track_likes.spotify_id = tracks.spotify_id")
+                        .where("track_likes.user_id = ?", current_user.id)
     track_id_hash = {}.tap do |h|
       params[:tracks].each do |_, t|
         t['liked'] = false
         h[t['spotify_id'] || t['id']] = t
       end
     end
+    # set liked field
     liked_tracks.each do |t|
       id = t.spotify_id || t.id
       if track_id_hash[id]
         track_id_hash[id]['liked'] = true
+      end
+    end
+    # set id field for those already in db
+    spotify_tracks.each do |t|
+      if track_id_hash[t.spotify_id]
+        track_id_hash[t.spotify_id]['id'] = t.id
       end
     end
     @tracks = track_id_hash.keys.map {|k| track_id_hash[k] }

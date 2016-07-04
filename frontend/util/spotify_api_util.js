@@ -1,3 +1,5 @@
+const SessionStore = require('../stores/session_store');
+
 module.exports = {
   searchTracks (callBack, query, limit, offset) {
     $.ajax({
@@ -5,9 +7,13 @@ module.exports = {
       data: {q: query, type: 'track', limit: limit, offset: offset},
       success: function (response) {
         const tracks = response.tracks.items.map(extractTrack);
-        this.buildLikedTracks(function (builtTracks) {
-          callBack(builtTracks);
-        }, tracks);
+        if (SessionStore.loggedIn()) {
+          this.buildLikedTracks(function (builtTracks) {
+            callBack(builtTracks);
+          }, tracks);
+        } else {
+          callBack(tracks);
+        }
       }.bind(this)
     });
   },
