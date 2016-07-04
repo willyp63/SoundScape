@@ -55,8 +55,11 @@ $text-color-active: #fff;
   height: $nav-bar-height;
   background: linear-gradient($logo-bg-light, $logo-bg-dark);
   margin-left: 10px;
-  padding-left: 2px;
-  padding-right: 2px;
+  padding: 0 2px;
+}
+
+.nav-bar-logo img {
+  margin-top: 2px;
 }
 
 .nav-bar-left > ul {
@@ -165,7 +168,7 @@ $search-bar-y-offset: ($nav-bar-height - $search-bar-height)/2;
 
 .profile-badge {
   position: absolute;
-  top: -45%;
+  top: -40%;
   right: calc(100% - 30px);
   border-radius: $profile-badge-height/2;
 }

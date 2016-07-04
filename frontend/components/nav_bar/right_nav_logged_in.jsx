@@ -9,7 +9,7 @@ module.exports = React.createClass({
     e.preventDefault();
     // show track form
     ErrorActions.removeErrors();
-    $("#TRACK-MODAL").modal("show");
+    $("#NEW-TRACK-MODAL").modal("show");
   },
   _logout (e) {
     e.preventDefault();

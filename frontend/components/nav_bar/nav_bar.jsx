@@ -34,7 +34,7 @@ module.exports = React.createClass({
         </nav>
         <UserForm formType="LOGIN" />
         <UserForm formType="SIGNUP" />
-        <TrackForm />
+        <TrackForm formType="NEW"/>
       </div>
     );
   }

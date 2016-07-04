@@ -90,5 +90,32 @@ module.exports = {
         errorCallback(JSON.parse(errors.responseText));
       }
     });
+  },
+  updateTrack (track, successCallback, errorCallback) {
+    $.ajax({
+      url: `/api/tracks/${track.id}`,
+      method: 'PATCH',
+      dataType: 'JSON',
+      data: {track: track},
+      success (newTrack) {
+        successCallback(track, newTrack);
+      },
+      error (errors) {
+        errorCallback(JSON.parse(errors.responseText));
+      }
+    });
+  },
+  deleteTrack (track, successCallback, errorCallback) {
+    $.ajax({
+      url: `/api/tracks/${track.id}`,
+      method: 'DELETE',
+      dataType: 'JSON',
+      success (newTrack) {
+        successCallback(track);
+      },
+      error (errors) {
+        errorCallback(JSON.parse(errors.responseText));
+      }
+    });
   }
 };

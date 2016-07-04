@@ -34,7 +34,7 @@ function postTrack (track, url) {
     method: 'POST',
     dataType: 'JSON',
     data: {track: extractTrack(track)},
-    success (newUser) {
+    success (newTrack) {
       console.log("success");
     },
     error (errors) {

@@ -26,11 +26,7 @@ module.exports = {
   postAndLikeTrack (track) {
     TrackApiUtil.postAnonymousTrack(track, function (newTrack) {
       TrackApiUtil.likeTrack(newTrack, function () {
-        dispatcher.dispatch({
-          actionType: 'REPLACE_TRACK',
-          oldTrack: track,
-          newTrack: newTrack
-        });
+        this.replaceTrack(track, newTrack);
         dispatcher.dispatch({
           actionType: 'LIKE_TRACK',
           track: track
@@ -58,15 +54,43 @@ module.exports = {
       tracks: tracks
     });
   },
+  unlikeAndRemoveTrack (track) {
+    TrackApiUtil.unlikeTrack(track, function () {
+      this.removeTrack(track);
+    });
+  },
   postTrack (track) {
     TrackApiUtil.postTrack(track,
                            this.receiveTrack,
                            ErrorActions.setErrors);
   },
+  updateTrack (track) {
+    TrackApiUtil.updateTrack(track,
+                             this.replaceTrack,
+                             ErrorActions.setErrors);
+  },
+  deleteTrack (track) {
+    TrackApiUtil.deleteTrack(track,
+                             this.removeTrack,
+                             ErrorActions.setErrors);
+  },
   receiveTrack (track) {
     dispatcher.dispatch({
       actionType: 'RECEIVE_TRACK',
       track: track
+    });
+  },
+  removeTrack (track) {
+    dispatcher.dispatch({
+      actionType: 'REMOVE_TRACK',
+      track: track
+    });
+  },
+  replaceTrack (oldTrack, newTrack) {
+    dispatcher.dispatch({
+      actionType: 'REPLACE_TRACK',
+      oldTrack: oldTrack,
+      newTrack: newTrack
     });
   }
 };

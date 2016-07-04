@@ -41,6 +41,10 @@ TrackStore.__onDispatch = function (payload) {
       storeTrack(payload.oldTrack.id, payload.newTrack);
       this.__emitChange();
       break;
+    case 'REMOVE_TRACK':
+      _tracks[payload.track.storeId] = undefined;
+      this.__emitChange();
+      break;
   }
 };
 

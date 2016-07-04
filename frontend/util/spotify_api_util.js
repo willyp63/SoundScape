@@ -18,6 +18,9 @@ module.exports = {
     });
   },
   buildLikedTracks (callBack, tracks) {
+    // avoid unnecessary request
+    if (!tracks.length) { callBack(tracks); return; }
+
     $.ajax({
       url: '/api/tracks/build_liked',
       method: 'POST',

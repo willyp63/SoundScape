@@ -1,13 +1,15 @@
 const React = require('react');
 const TrackIndexItem = require('./track_index_item');
 const TrackStore = require('../../stores/track_store');
+const TrackForm = require('../tracks/track_form');
+const ErrorActions = require('../../actions/error_actions');
 
 const _listeners = [];
 let _loadingTracks = false;
 
 module.exports = React.createClass({
   getInitialState () {
-    return {tracks: TrackStore.all()};
+    return {tracks: TrackStore.all(), updateTrack: null};
   },
   componentWillMount () {
     window.addEventListener('scroll', this._onScroll);
@@ -36,6 +38,12 @@ module.exports = React.createClass({
       _loadingTracks = false;
     });
   },
+  _updateTrack (track) {
+    this.setState({updateTrack: track}, function () {
+      ErrorActions.removeErrors();
+      $("#UPDATE-TRACK-MODAL").modal("show");
+    });
+  },
   render () {
     // seperate tracks into rows
     const numTracks = this.state.tracks.length;
@@ -47,19 +55,25 @@ module.exports = React.createClass({
       rows[RowIndex].push(this.state.tracks[i]);
     }
     return (
-      <div className='track-index'>{
-        rows.map(row => {
-          return (
-            <div key={row[0].storeId} className="track-index-row">{
-              row.map(track => {
-                return <TrackIndexItem key={track.storeId}
-                                       track={track}
-                                       indexType={this.props.indexType} />;
-              })
-            }</div>
-          );
-        })
-      }</div>
+      <div>
+        <div className='track-index'>{
+          rows.map(row => {
+            return (
+              <div key={row[0].storeId} className="track-index-row">{
+                row.map(track => {
+                  return <TrackIndexItem key={track.storeId}
+                                         track={track}
+                                         indexType={this.props.indexType}
+                                         updateTrack={this._updateTrack}/>;
+                })
+              }</div>
+            );
+          })
+        }</div>
+        {this.props.indexType === "MY_TRACKS" ?
+          <TrackForm formType="UPDATE" track={this.state.updateTrack} /> :
+          ""}
+      </div>
     );
   }
 });

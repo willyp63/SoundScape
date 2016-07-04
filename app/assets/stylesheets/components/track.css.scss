@@ -11,6 +11,8 @@ $play_button_size: 125px;
 $like_button_size: 40px;
 $like_button_x_offset: $track_size - ($like_button_size * 4 / 3);
 $like_button_y_offset: $like_button_size / 3;
+$update_button_x_offset: $like_button_size / 3;
+
 
 .track-index-row {
   display: flex;
@@ -111,5 +113,31 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
 }
 
 .like-icon-bg.highlighted {
+  background-color: $ss-light-gray;
+}
+
+.update-icon {
+  position: absolute !important;
+  top: $like_button_y_offset !important;
+  left: $update_button_x_offset !important;
+  width: $like_button_size;
+  line-height: $like_button_size !important;
+  font-size: $like_button_size - 10px;
+  text-align: center;
+  color: #333;
+  cursor: pointer;
+}
+
+.update-icon-bg {
+  position: absolute;
+  top: $like_button_y_offset;
+  left: $update_button_x_offset + 1px;
+  width: $like_button_size;
+  height: $like_button_size;
+  border-radius: 10px;
+  background-color: #fff;
+}
+
+.update-icon-bg.highlighted {
   background-color: $ss-light-gray;
 }

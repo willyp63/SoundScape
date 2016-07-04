@@ -7,20 +7,7 @@ class Api::TracksController < ApplicationController
     end
 
     if logged_in?
-      liked_tracks = Track.liked_tracks(current_user)
-      track_id_hash = {}.tap do |h|
-        @tracks.each do |t|
-          h[t.spotify_id || t.id] = {id: t.id, title: t.title, audio_url: t.audio_url, liked: false,
-                              image_url: t.image_url, user_id: t.user_id, spotify_id: t.spotify_id}
-        end
-      end
-      liked_tracks.each do |t|
-        id = t.spotify_id || t.id
-        if track_id_hash[id]
-          track_id_hash[id][:liked] = true
-        end
-      end
-      @tracks = track_id_hash.keys.map {|k| track_id_hash[k] }
+      @tracks = build_liked_tracks(@tracks)
     end
 
     render json: @tracks
@@ -29,6 +16,11 @@ class Api::TracksController < ApplicationController
   def liked
     if logged_in?
       @tracks = Track.liked_tracks(current_user)
+      @tracks = @tracks.map do |t|
+        track = track_hash(t)
+        track[:liked] = true
+        track
+      end
       render json: @tracks
     else
       render json: ["you're not logged in"], status: 404
@@ -36,37 +28,13 @@ class Api::TracksController < ApplicationController
   end
 
   def build_liked
-    spotify_tracks = Track.where("tracks.spotify_id IS NOT NULL")
-    liked_tracks = Track.where("tracks.spotify_id IS NOT NULL")
-                        .joins("INNER JOIN track_likes ON track_likes.spotify_id = tracks.spotify_id")
-                        .where("track_likes.user_id = ?", current_user.id)
-    track_id_hash = {}.tap do |h|
-      params[:tracks].each do |_, t|
-        t['liked'] = false
-        h[t['spotify_id'] || t['id']] = t
-      end
-    end
-    # set liked field
-    liked_tracks.each do |t|
-      id = t.spotify_id || t.id
-      if track_id_hash[id]
-        track_id_hash[id]['liked'] = true
-      end
-    end
-    # set id field for those already in db
-    spotify_tracks.each do |t|
-      if track_id_hash[t.spotify_id]
-        track_id_hash[t.spotify_id]['id'] = t.id
-      end
-    end
-    @tracks = track_id_hash.keys.map {|k| track_id_hash[k] }
-    render json: @tracks
+    render json: build_liked_spotify_tracks(params[:tracks])
   end
 
   def posted
     if logged_in?
       @tracks = Track.posted_tracks(current_user)
-      render json: @tracks
+      render json: build_liked_tracks(@tracks)
     else
       render json: ["you're not logged in"], status: 404
     end
@@ -96,19 +64,65 @@ class Api::TracksController < ApplicationController
     end
   end
 
+  def update
+    track = Track.find(params[:id]);
+    if track.update(track_params)
+      track = track_hash(track)
+      track[:liked] = (params[:track][:liked] == "true")
+      render json: track
+    else
+      render json: track.errors.full_messages, status: 422
+    end
+  end
+
+  def destroy
+    track = Track.find(params[:id]);
+    track.destroy!
+    render json: track
+  end
+
   private
-  def set_liked_field(tracks)
-    liked_tracks = Track.liked_tracks(current_user)
+  def build_liked_tracks(tracks)
+    # build hash
     track_id_hash = {}.tap do |h|
       tracks.each do |t|
-        h[t.id || t.spotify_id] = {id: t.id, title: t.title, audio_url: t.audio_url, liked: false,
-                            image_url: t.image_url, user_id: t.user_id, spotify_id: t.spotify_id}
+        id = (t.spotify_id || t.id)
+        h[id] = track_hash(t)
       end
     end
-    liked_tracks.each do |t|
-      id = t.id || t.spotify_id
+    # set liked field
+    Track.liked_tracks(current_user).each do |t|
+      id = (t.spotify_id || t.id)
       if track_id_hash[id]
         track_id_hash[id][:liked] = true
+      end
+    end
+    track_id_hash.keys.map {|k| track_id_hash[k] }
+  end
+
+  def track_hash(t)
+    {id: t.id, title: t.title, audio_url: t.audio_url, liked: false,
+     image_url: t.image_url, user_id: t.user_id, spotify_id: t.spotify_id}
+  end
+
+  def build_liked_spotify_tracks(tracks)
+    # build hash
+    track_id_hash = {}.tap do |h|
+      tracks.each do |_, t|
+        t['liked'] = false
+        h[t['spotify_id'] || t['id']] = t
+      end
+    end
+    # set liked field
+    Track.liked_spotify_tracks(current_user).each do |t|
+      if track_id_hash[t.spotify_id]
+        track_id_hash[t.spotify_id]['liked'] = true
+      end
+    end
+    # set id field for those already in db
+    Track.spotify_tracks.each do |t|
+      if track_id_hash[t.spotify_id]
+        track_id_hash[t.spotify_id]['id'] = t.id
       end
     end
     track_id_hash.keys.map {|k| track_id_hash[k] }

@@ -1,8 +1,9 @@
 class Api::TrackLikesController < ApplicationController
   def create
     # perfer to set spotify id
-    if params[:track_like][:spotify_id]
-      track_like = TrackLike.new(spotify_id: params[:track_like][:spotify_id]);
+    spotify_id = params[:track_like][:spotify_id]
+    if spotify_id && !spotify_id.empty?
+      track_like = TrackLike.new(spotify_id: spotify_id);
     else
       track_like = TrackLike.new(track_id: params[:track_like][:track_id]);
     end

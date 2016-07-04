@@ -19,6 +19,12 @@ module.exports = React.createClass({
   _unhighlightLike () {
     $('.like-icon-bg').removeClass('highlighted');
   },
+  _highlightUpdate () {
+    $('.update-icon-bg').addClass('highlighted');
+  },
+  _unhighlightUpdate () {
+    $('.update-icon-bg').removeClass('highlighted');
+  },
   _onMouseEnter () {
     this.setState({hover: true}, function () {
       $(`#overlay-${this.props.track.id}`).addClass('active');
@@ -33,19 +39,22 @@ module.exports = React.createClass({
     PlayerActions.playTrack(this.props.track);
   },
   _likeTrack () {
-    if (typeof this.props.track.id === 'string') {
-      if (this.props.track.liked) {
-        TrackActions.unlikeTrack(this.props.track);
+    if (this.props.track.liked) {
+      if (this.props.indexType === "MY_LIKES") {
+        TrackActions.unlikeAndRemoveTrack(this.props.track);
       } else {
-        TrackActions.postAndLikeTrack(this.props.track);
+        TrackActions.unlikeTrack(this.props.track);
       }
     } else {
-      if (this.props.track.liked) {
-        TrackActions.unlikeTrack(this.props.track);
+      if (typeof this.props.track.id === 'string') {
+        TrackActions.postAndLikeTrack(this.props.track);
       } else {
         TrackActions.likeTrack(this.props.track);
       }
     }
+  },
+  _updateTrack () {
+    this.props.updateTrack(this.props.track);
   },
   render () {
     let title = this.props.track.title;
@@ -64,14 +73,22 @@ module.exports = React.createClass({
                  onClick={this._playTrack}
                  onMouseEnter={this._highlightPlay}
                  onMouseLeave={this._unhighlightPlay}/>
-              {(this.props.indexType === "ALL" || this.props.indexType === "SEARCH") && SessionStore.loggedIn() ?
-                <div>
-                  <span className="like-icon-bg"></span>
-                  <i className={"glyphicon glyphicon-heart like-icon" + (this.props.track.liked ? " liked" : "")}
-                     onClick={this._likeTrack}
-                     onMouseEnter={this._highlightLike}
-                     onMouseLeave={this._unhighlightLike}/>
-                </div> : ""}
+              {this.props.indexType === "MY_TRACKS" ?
+               <div>
+                 <span className="update-icon-bg"></span>
+                 <i className="glyphicon glyphicon-cog update-icon"
+                    onClick={this._updateTrack}
+                    onMouseEnter={this._highlightUpdate}
+                    onMouseLeave={this._unhighlightUpdate}/>
+               </div> : ""}
+             {SessionStore.loggedIn() ?
+              <div>
+                <span className="like-icon-bg"></span>
+                <i className={"glyphicon glyphicon-heart like-icon" + (this.props.track.liked ? " liked" : "")}
+                   onClick={this._likeTrack}
+                   onMouseEnter={this._highlightLike}
+                   onMouseLeave={this._unhighlightLike}/>
+              </div> : ""}
             </div> :
             ""}
         </div>

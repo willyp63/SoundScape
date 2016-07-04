@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   root to: 'static_pages#root'
   namespace :api, defaults: {format: :json} do
-    resources :tracks, only: [:index, :create]
+    resources :tracks, only: [:index, :create, :update, :destroy]
     get '/tracks/liked', to: 'tracks#liked'
     get '/tracks/posted', to: 'tracks#posted'
     post '/tracks/anonymous', to: 'tracks#create_anonymous'

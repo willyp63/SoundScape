@@ -34,7 +34,17 @@ class Track < ActiveRecord::Base
 
   def self.liked_tracks(user)
     Track.joins("INNER JOIN track_likes ON track_likes.track_id = tracks.id OR
-                                           track_likes.spotify_id = tracks.spotify_id")
+                                          track_likes.spotify_id = tracks.spotify_id")
+         .where("track_likes.user_id = ?", user.id)
+  end
+
+  def self.spotify_tracks
+    Track.where("tracks.spotify_id IS NOT NULL")
+  end
+
+  def self.liked_spotify_tracks(user)
+    Track.where("tracks.spotify_id IS NOT NULL")
+         .joins("INNER JOIN track_likes ON track_likes.spotify_id = tracks.spotify_id")
          .where("track_likes.user_id = ?", user.id)
   end
 end

@@ -10,19 +10,28 @@ const _listeners = [];
 module.exports = React.createClass({
   getInitialState () {
     return {errors: undefined, track: {title: "",
-                                       image_url: "",
-                                       audio_url: ""}};
+                                      image_url: "",
+                                      audio_url: ""}};
+  },
+  componentWillReceiveProps (newProps) {
+    if (!newProps.track) { return; }
+    this.setState({track: {title: newProps.track.title,
+                          image_url: newProps.track.image_url,
+                          audio_url: newProps.track.audio_url}});
   },
   componentDidMount () {
     _listeners.push(ErrorStore.addListener(this._receiveErrors));
-    _listeners.push(TrackStore.addListener(this._trackChange));
+    _listeners.push(TrackStore.addListener(this._closeModal));
   },
   componentWillUnmount () {
     _listeners.forEach(listener => listener.remove());
   },
-  _trackChange () {
-    // close modal when new track is recieved
-    $("#TRACK-MODAL").modal("hide");
+  _closeModal () {
+    $(`#${this.props.formType}-TRACK-MODAL`).modal("hide");
+
+    const audioPlayer = document.getElementById('audio-upload');
+    if (audioPlayer) { audioPlayer.pause(); }
+    this.setState({track: {title: "", image_url: "", audio_url: ""}});
   },
   _titleChange (e) {
     const newTrack = this.state.track;
@@ -61,23 +70,37 @@ module.exports = React.createClass({
   },
   _onSubmit (e) {
     e.preventDefault();
-    TrackActions.postTrack(this.state.track);
+    if (this.props.formType === "NEW") {
+      TrackActions.postTrack(this.state.track);
+    } else {
+      const track = {id: this.props.track.id,
+              storeId: this.props.track.storeId,
+              liked: this.props.track.liked,
+              title: this.state.track.title,
+              image_url: this.state.track.image_url,
+              audio_url: this.state.track.audio_url};
+      TrackActions.updateTrack(track);
+    }
+  },
+  _onDelete (e) {
+    e.preventDefault();
+    TrackActions.deleteTrack(this.props.track);
   },
   render () {
     return (
-      <div id="TRACK-MODAL" className="modal fade" role="dialog">
+      <div id={`${this.props.formType}-TRACK-MODAL`} className="modal fade" role="dialog">
         <div className="modal-dialog">
           <div className="modal-content cf">
             <div className="form-header cf">
-              <button type="button" className="close" data-dismiss="modal">&times;</button>
-              <p className="modal-title">Upload Track</p>
+              <button type="button" className="close" onClick={this._closeModal}>&times;</button>
+              <p className="modal-title">{this.props.formType === "NEW" ? "New" : "Edit"} Track</p>
             </div>
             <form onSubmit={this._onSubmit} className="track-form">
               <div className="cf">
                 <div className="my-col-2 cf">
                   {this.state.track.image_url ?
                     <div className="image-upload-thumbnail">
-                      <img src={this.state.track.image_url} />
+                      <img src={this.state.track.image_url} width="225" height="225"/>
                     </div> :
                     <div className="image-upload-placeholder">
                       Upload an Image
@@ -101,7 +124,7 @@ module.exports = React.createClass({
               </div>
 
               <div className="form-field cf">
-                <label for="title">Track Title:</label>
+                <label for="title">Title:</label>
                 <input type="text" id="title"
                        value={this.state.track.title}
                        onChange={this._titleChange} />
@@ -114,7 +137,15 @@ module.exports = React.createClass({
                    })
                  }</ul> : ""
                }
-               <input type="submit" value="Upload Track" className="btn btn-success"/>
+
+               {this.props.formType === "UPDATE" ?
+                 <button className="btn btn-danger" onClick={this._onDelete}>
+                   Delete Track
+                 </button> :
+                 ""}
+               <input type="submit"
+                      value={`${this.props.formType === "NEW" ? "Create" : "Update"} Track`}
+                      className="btn btn-success"/>
             </form>
           </div>
         </div>

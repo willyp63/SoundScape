@@ -39,6 +39,11 @@ $form-field-font-size: 20px;
 .form-field {
   display: flex;
   justify-content: space-between;
+  padding: 0 25px;
+}
+
+.form-field input[type="text"], .form-field input[type="password"] {
+  padding: 0 5px;
 }
 
 .modal-content label {
@@ -91,7 +96,7 @@ $form-field-font-size: 20px;
   align-items: center;
 }
 
-.track-form button {
+.track-form button.btn-primary {
   width: 125px;
   font-size: 18px;
   color: white;
