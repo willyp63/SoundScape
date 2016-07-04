@@ -7,8 +7,8 @@ module.exports = {
     client_allowed_formats: ["mp3"],
     multiple: false,
     text: {
-      "sources.local.drop_files": "Drop MP3 here",
-      "sources.local.select_files": "Select MP3",
+      "sources.local.drop_file": "Drop MP3 here",
+      "sources.local.select_file": "Select MP3",
       "progress.failed_note": "Your audio failed uploading."
     }
   },
@@ -20,8 +20,8 @@ module.exports = {
     client_allowed_formats: ["png", "jpg", "jpeg"],
     multiple: false,
     text: {
-      "sources.local.drop_files": "Drop Image here",
-      "sources.local.select_files": "Select Image",
+      "sources.local.drop_file": "Drop Image here",
+      "sources.local.select_file": "Select Image",
       "progress.failed_note": "Your image failed uploading."
     }
   }

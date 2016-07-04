@@ -31,7 +31,7 @@ module.exports = {
           actionType: 'LIKE_TRACK',
           track: track
         });
-      });
+      }.bind(this));
     }, ErrorActions.setErrors);
   },
   unlikeTrack (track) {
