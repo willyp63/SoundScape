@@ -1,6 +1,7 @@
 const React = require('react');
 
 const SessionActions = require('../../actions/session_actions');
+const SessionStore = require('../../stores/session_store');
 const hashHistory = require('react-router').hashHistory;
 const ErrorActions = require('../../actions/error_actions');
 
@@ -24,7 +25,7 @@ module.exports = React.createClass({
           <li className="dropdown">
             <a href="#" className="dropdown-toggle" data-toggle="dropdown">
               <img className="profile-badge"
-                   src="http://res.cloudinary.com/dcwxxqs4l/image/upload/v1467216318/sample_yeytpq.jpg"
+                   src={SessionStore.currentUser().picture_url}
                    width="35" height="35"/>
               <i className="glyphicon glyphicon-triangle-bottom profile-carrot"></i>
             </a>

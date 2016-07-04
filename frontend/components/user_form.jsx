@@ -2,12 +2,13 @@ const React = require('react');
 const SessionActions = require('../actions/session_actions');
 const SessionStore = require('../stores/session_store');
 const ErrorStore = require('../stores/error_store');
+const CLOUDINARY_IMAGE_OPTIONS = require('../constants/cloudinary').IMAGE_OPTIONS;
 
 const _listeners = [];
 
 module.exports = React.createClass({
   getInitialState () {
-    return {errors: undefined, user: {username: "", password: ""}};
+    return {errors: undefined, user: {username: "", password: "", picture_url: ""}};
   },
   componentDidMount () {
     _listeners.push(ErrorStore.addListener(this._receiveErrors));
@@ -30,7 +31,22 @@ module.exports = React.createClass({
   _receiveErrors () {
     // clear password
     this.setState({errors: ErrorStore.errors(),
-      user: {username: this.state.user.username, password: ""}});
+      user: {username: this.state.user.username,
+            password: "",
+            picture_url: this.state.user.picture_url}});
+  },
+  _uploadImage (e) {
+    e.preventDefault();
+    window.cloudinary.openUploadWidget(
+      CLOUDINARY_IMAGE_OPTIONS,
+      function (error, results) {
+        if (!error) {
+          const newUser = this.state.user;
+          newUser.picture_url = results[0].secure_url;
+          this.setState({user: newUser});
+        }
+      }.bind(this)
+    );
   },
   _onSubmit (e) {
     e.preventDefault();
@@ -70,6 +86,25 @@ module.exports = React.createClass({
                        value={this.state.user.password}
                        onChange={this._onChange} />
               </div>
+
+              {this.props.formType === "SIGNUP" ?
+                <div className="cf">
+                  <div className="my-col-2 cf">
+                    {this.state.user.picture_url ?
+                      <div className="image-upload-thumbnail">
+                        <img src={this.state.user.picture_url} width="225" height="225"/>
+                      </div> :
+                      <div className="image-upload-placeholder">
+                        Upload an Image
+                      </div>}
+                  </div>
+                  <div className="my-col-1 cf">
+                    <div className="upload-buttons">
+                      <button className="btn btn-primary"
+                        onClick={this._uploadImage}>Select Image</button>
+                    </div>
+                  </div>
+                </div> : ""}
 
                {this.state.errors ?
                  <ul>{
