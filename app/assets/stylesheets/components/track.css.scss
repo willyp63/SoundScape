@@ -88,7 +88,7 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
 
 .like-icon {
   position: absolute !important;
-  top: $like_button_y_offset !important;
+  top: $like_button_y_offset + 1px !important;
   left: $like_button_x_offset - 2px !important;
   width: $like_button_size + 4px;
   line-height: $like_button_size + 4px !important;

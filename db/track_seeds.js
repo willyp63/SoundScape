@@ -1,7 +1,7 @@
 const HEROKU_URL = 'https://salty-falls-17641.herokuapp.com';
 const LOCAL_URL = 'http://localhost:3000';
 
-seed(30, LOCAL_URL);
+seed(100, LOCAL_URL);
 
 function randomLetters (n) {
   let letters = "";
@@ -30,7 +30,7 @@ function extractTrack (track) {
 
 function postTrack (track, url) {
   $.ajax({
-    url: `${url}/api/tracks`,
+    url: `${url}/api/tracks/anonymous`,
     method: 'POST',
     dataType: 'JSON',
     data: {track: extractTrack(track)},
@@ -43,8 +43,8 @@ function postTrack (track, url) {
   });
 }
 
-function seed (n, url) {
-  for (let i = 0; i < n; i++) {
+function seed (numTrack, url) {
+  for (let i = 0; i < numTrack; i++) {
     randomTrack(function (track) {
       postTrack(track, url);
     });
