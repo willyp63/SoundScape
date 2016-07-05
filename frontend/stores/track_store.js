@@ -1,19 +1,13 @@
 const Store = require('flux/utils').Store;
 const dispatcher = require('../dispatcher');
+const LinkedHashMap = require('../util/linked_hash_map');
 
-let _tracks = {};
+// allows store to keep tracks in order
+let _tracks = new LinkedHashMap();
 
 const TrackStore = new Store(dispatcher);
 
-TrackStore.all = function () {
-  const allTracks = [];
-  Object.keys(_tracks).forEach(id => {
-    if (_tracks[id]) {
-      allTracks.push(_tracks[id]);
-    }
-  });
-  return allTracks;
-};
+TrackStore.all = () => _tracks.all();
 
 TrackStore.__onDispatch = function (payload) {
   switch (payload.actionType) {
@@ -30,26 +24,26 @@ TrackStore.__onDispatch = function (payload) {
       this.__emitChange();
       break;
     case 'LIKE_TRACK':
-      _tracks[payload.track.storeId].liked = true;
+      _tracks.get(payload.track.storeId).liked = true;
       this.__emitChange();
       break;
     case 'UNLIKE_TRACK':
-      _tracks[payload.track.storeId].liked = false;
+      _tracks.get(payload.track.storeId).liked = false;
       this.__emitChange();
       break;
     case 'REPLACE_TRACK':
-      storeTrack(payload.oldTrack.id, payload.newTrack);
+      replaceTrack(payload.oldTrack, payload.newTrack);
       this.__emitChange();
       break;
     case 'REMOVE_TRACK':
-      _tracks[payload.track.storeId] = undefined;
+      _tracks.remove(payload.track.storeId);
       this.__emitChange();
       break;
   }
 };
 
 function setTracks (tracks) {
-  _tracks = {};
+  _tracks = new LinkedHashMap();
   tracks.forEach(track => {
     storeTrack(track.id, track);
   });
@@ -61,9 +55,14 @@ function appendTracks (tracks) {
   });
 }
 
+function replaceTrack (oldTrack, newTrack) {
+  newTrack.storeId = oldTrack.id;
+  _tracks.set(oldTrack.id, newTrack);
+}
+
 function storeTrack (id, track) {
   track.storeId = id;
-  _tracks[id] = track;
+  _tracks.addHead(id, track);
 }
 
 module.exports = TrackStore;

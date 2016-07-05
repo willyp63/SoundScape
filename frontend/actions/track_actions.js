@@ -58,7 +58,7 @@ module.exports = {
   unlikeAndRemoveTrack (track) {
     TrackApiUtil.unlikeTrack(track, function () {
       this.removeTrack(track);
-    });
+    }.bind(this));
   },
   postTrack (track) {
     TrackApiUtil.postTrack(track,

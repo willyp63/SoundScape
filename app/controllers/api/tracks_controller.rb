@@ -97,7 +97,7 @@ class Api::TracksController < ApplicationController
         track_id_hash[id][:liked] = true
       end
     end
-    track_id_hash.keys.map {|k| track_id_hash[k] }
+    track_id_hash.values
   end
 
   def track_hash(t)
@@ -110,7 +110,7 @@ class Api::TracksController < ApplicationController
     track_id_hash = {}.tap do |h|
       tracks.each do |_, t|
         t['liked'] = false
-        h[t['spotify_id'] || t['id']] = t
+        h[t['spotify_id']] = t
       end
     end
     # set liked field
@@ -125,7 +125,7 @@ class Api::TracksController < ApplicationController
         track_id_hash[t.spotify_id]['id'] = t.id
       end
     end
-    track_id_hash.keys.map {|k| track_id_hash[k] }
+    track_id_hash.values
   end
 
   def track_params
