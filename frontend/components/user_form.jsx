@@ -3,7 +3,6 @@ const SessionActions = require('../actions/session_actions');
 const UserActions = require('../actions/user_actions');
 const SessionStore = require('../stores/session_store');
 const ErrorStore = require('../stores/error_store');
-const ErrorActions = require('../actions/error_actions');
 const CLOUDINARY_IMAGE_OPTIONS = require('../constants/cloudinary').IMAGE_OPTIONS;
 
 const _listeners = [];
@@ -42,6 +41,7 @@ module.exports = React.createClass({
   },
   _closeModal () {
     $(`#${this.props.formType}-MODAL`).modal('hide');
+    this.setState({errors: undefined, user: {username: "", password: "", picture_url: ""}});
   },
   _receiveErrors () {
     // clear password

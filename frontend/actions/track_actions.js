@@ -24,14 +24,15 @@ module.exports = {
     });
   },
   postAndLikeTrack (track) {
+    const that = this;
     TrackApiUtil.postAnonymousTrack(track, function (newTrack) {
       TrackApiUtil.likeTrack(newTrack, function () {
-        this.replaceTrack(track, newTrack);
+        that.replaceTrack(track, newTrack);
         dispatcher.dispatch({
           actionType: 'LIKE_TRACK',
           track: track
         });
-      }.bind(this));
+      });
     }, ErrorActions.setErrors);
   },
   unlikeTrack (track) {

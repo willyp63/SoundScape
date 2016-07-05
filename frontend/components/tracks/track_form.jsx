@@ -9,9 +9,7 @@ const _listeners = [];
 
 module.exports = React.createClass({
   getInitialState () {
-    return {errors: [], track: {title: "",
-                                      image_url: "",
-                                      audio_url: ""}};
+    return {errors: [], track: {title: "", image_url: "", audio_url: ""}};
   },
   componentWillReceiveProps (newProps) {
     if (!newProps.track) { return; }
@@ -30,10 +28,12 @@ module.exports = React.createClass({
     this._closeModal();
   },
   _closeModal () {
-    $(`#${this.props.formType}-TRACK-MODAL`).modal("hide");
-
+    // kill audio player
     const audioPlayer = document.getElementById('audio-upload');
     if (audioPlayer) { audioPlayer.pause(); }
+
+    // close form reset state
+    $(`#${this.props.formType}-TRACK-MODAL`).modal("hide");
     this.setState({track: {title: "", image_url: "", audio_url: ""}});
   },
   _titleChange (e) {

@@ -21,7 +21,7 @@ module.exports = {
     multiple: false,
     text: {
       "sources.local.drop_file": "Drop Image here",
-      "sources.local.select_file": "Select Image",
+      "sources.local.select_file": "Select Img",
       "progress.failed_note": "Your image failed uploading."
     }
   }
