@@ -26,7 +26,7 @@ module.exports = React.createClass({
     _listeners.forEach(listener => listener.remove());
   },
   _onScroll (e) {
-    const maxScrollY = $('.main-content').height() / 2;
+    const maxScrollY = $('.main-content').height() - (2 * window.innerHeight);
     if (!_loadingTracks && window.scrollY >= maxScrollY) {
       const offset = this.state.tracks.length;
       this.props.fetchMoreTracks(offset);
