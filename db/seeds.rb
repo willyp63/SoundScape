@@ -6,8 +6,6 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-require 'byebug'
-
 admin = User.create!(username: 'admin', password: 'password',
     picture_url: "http://res.cloudinary.com/dcwxxqs4l/image/upload/v1467420920/ju19klj43ayaxvaw2u2g.jpg")
 
