@@ -24,11 +24,11 @@ TrackStore.__onDispatch = function (payload) {
       this.__emitChange();
       break;
     case 'LIKE_TRACK':
-      _tracks.get(payload.track.storeId).liked = true;
+      likeTrack(payload.track);
       this.__emitChange();
       break;
     case 'UNLIKE_TRACK':
-      _tracks.get(payload.track.storeId).liked = false;
+      unlikeTrack(payload.track);
       this.__emitChange();
       break;
     case 'REPLACE_TRACK':
@@ -63,6 +63,18 @@ function replaceTrack (oldTrack, newTrack) {
 function storeTrack (id, track) {
   track.storeId = id;
   _tracks.addHead(id, track);
+}
+
+function likeTrack (track) {
+  const t = _tracks.get(track.storeId);
+  t.liked = true;
+  t.like_count++;
+}
+
+function unlikeTrack (track) {
+  const t = _tracks.get(track.storeId);
+  t.liked = false;
+  t.like_count--;
 }
 
 module.exports = TrackStore;

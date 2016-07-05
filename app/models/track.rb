@@ -47,4 +47,12 @@ class Track < ActiveRecord::Base
          .joins("INNER JOIN track_likes ON track_likes.spotify_id = tracks.spotify_id")
          .where("track_likes.user_id = ?", user.id)
   end
+
+  def incrementLikeCount
+    update!(like_count: like_count + 1)
+  end
+
+  def decrementLikeCount
+    update!(like_count: like_count - 1)
+  end
 end

@@ -103,10 +103,15 @@ module.exports = React.createClass({
                     <div className="sk-circle11 sk-circle"></div>
                     <div className="sk-circle12 sk-circle"></div>
                   </div> :
-                  <i className={"glyphicon glyphicon-heart like-icon" + (this.props.track.liked ? " liked" : "")}
-                     onClick={this._likeTrack}
-                     onMouseEnter={this._highlightLike}
-                     onMouseLeave={this._unhighlightLike}/>}
+                  <div>
+                    <i className={"glyphicon glyphicon-heart like-icon" + (this.props.track.liked ? " liked" : "")}/>
+                    <span className="like-count"
+                          onClick={this._likeTrack}
+                          onMouseEnter={this._highlightLike}
+                          onMouseLeave={this._unhighlightLike}>
+                      {this.props.track.like_count}
+                    </span>
+                  </div>}
               </div> : ""}
             </div> :
             ""}

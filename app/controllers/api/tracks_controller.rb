@@ -102,7 +102,8 @@ class Api::TracksController < ApplicationController
 
   def track_hash(t)
     {id: t.id, title: t.title, audio_url: t.audio_url, liked: false,
-     image_url: t.image_url, user_id: t.user_id, spotify_id: t.spotify_id}
+      like_count: t.like_count, image_url: t.image_url, user_id: t.user_id,
+      spotify_id: t.spotify_id}
   end
 
   def build_liked_spotify_tracks(tracks)
@@ -123,6 +124,7 @@ class Api::TracksController < ApplicationController
     Track.spotify_tracks.each do |t|
       if track_id_hash[t.spotify_id]
         track_id_hash[t.spotify_id]['id'] = t.id
+        track_id_hash[t.spotify_id]['like_count'] = t.like_count
       end
     end
     track_id_hash.values

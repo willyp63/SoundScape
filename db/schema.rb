@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160703214721) do
+ActiveRecord::Schema.define(version: 20160705181714) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,13 +29,14 @@ ActiveRecord::Schema.define(version: 20160703214721) do
   add_index "track_likes", ["user_id"], name: "index_track_likes_on_user_id", using: :btree
 
   create_table "tracks", force: :cascade do |t|
-    t.string   "title",      null: false
-    t.string   "audio_url",  null: false
+    t.string   "title",                  null: false
+    t.string   "audio_url",              null: false
     t.string   "image_url"
     t.integer  "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
     t.string   "spotify_id"
+    t.integer  "like_count", default: 0
   end
 
   add_index "tracks", ["spotify_id"], name: "index_tracks_on_spotify_id", unique: true, using: :btree

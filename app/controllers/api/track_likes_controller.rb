@@ -4,9 +4,12 @@ class Api::TrackLikesController < ApplicationController
     spotify_id = params[:track_like][:spotify_id]
     if spotify_id && !spotify_id.empty?
       track_like = TrackLike.new(spotify_id: spotify_id);
+      Track.find_by(spotify_id: spotify_id).incrementLikeCount
     else
       track_like = TrackLike.new(track_id: params[:track_like][:track_id]);
+      track_like.track.incrementLikeCount
     end
+
     track_like.user_id = current_user.id
     if track_like.save
       render json: track_like
@@ -16,8 +19,15 @@ class Api::TrackLikesController < ApplicationController
   end
 
   def destroy
+    if params[:id].is_a?(String)
+      track_like = TrackLike.find_by(spotify_id: params[:id], user_id: current_user.id);
+      Track.find_by(spotify_id: params[:id]).decrementLikeCount
+    else
+      track_like = TrackLike.find_by(track_id: params[:id], user_id: current_user.id);
+      track_like.track.decrementLikeCount
+    end
+
     # match either id type
-    track_like = TrackLike.find_by(track_id: params[:id], user_id: current_user.id);
     track_like ||= TrackLike.find_by(spotify_id: params[:id], user_id: current_user.id);
     track_like.destroy!
     render json: track_like
