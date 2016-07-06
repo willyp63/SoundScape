@@ -10,10 +10,18 @@ module.exports = React.createClass({
     return {indexType: "MOST_RECENT"};
   },
   _fetchInitialTracks () {
-    TrackActions.fetchAllTracks(INITIAL_REQUEST_SIZE);
+    if (this.state.indexType === "MOST_RECENT") {
+      TrackActions.fetchMostRecentTracks(INITIAL_REQUEST_SIZE, 0);
+    } else {
+      TrackActions.fetchMostLikedTracks(INITIAL_REQUEST_SIZE, 0);
+    }
   },
   _fetchMoreTracks (offset) {
-    TrackActions.appendAllTracks(ADDITIONAL_REQUEST_SIZE, offset);
+    if (this.state.indexType === "MOST_RECENT") {
+      TrackActions.fetchMostRecentTracks(ADDITIONAL_REQUEST_SIZE, offset);
+    } else {
+      TrackActions.fetchMostLikedTracks(ADDITIONAL_REQUEST_SIZE, offset);
+    }
   },
   _navItemClick (e) {
     this.setState({indexType: e.target.id});
@@ -33,7 +41,7 @@ module.exports = React.createClass({
         </ul>
         <TrackIndex fetchInitialTracks={this._fetchInitialTracks}
                     fetchMoreTracks={this._fetchMoreTracks}
-                    indexType="ALL" />
+                    indexType={this.state.indexType} />
       </div>
     );
   }

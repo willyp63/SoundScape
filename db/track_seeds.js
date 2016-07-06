@@ -1,7 +1,7 @@
 const HEROKU_URL = 'https://salty-falls-17641.herokuapp.com';
 const LOCAL_URL = 'http://localhost:3000';
 
-seed(100, LOCAL_URL);
+seed(100, HEROKU_URL);
 
 function randomLetters (n) {
   let letters = "";

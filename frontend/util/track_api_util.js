@@ -1,10 +1,32 @@
 module.exports = {
-  fetchAllTracks (callBack, limit) {
+  fetchAllTracks (callBack, limit, offset) {
     $.ajax({
       url: '/api/tracks',
       method: 'GET',
       dataType: 'JSON',
-      data: {limit: limit, offset: 0},
+      data: {limit: limit, offset: offset},
+      success (tracks) {
+        callBack(tracks);
+      }
+    });
+  },
+  fetchMostLikedTracks (callBack, limit, offset) {
+    $.ajax({
+      url: '/api/tracks/most_liked',
+      method: 'GET',
+      dataType: 'JSON',
+      data: {limit: limit, offset: offset},
+      success (tracks) {
+        callBack(tracks);
+      }
+    });
+  },
+  fetchMostRecentTracks (callBack, limit, offset) {
+    $.ajax({
+      url: '/api/tracks/most_recent',
+      method: 'GET',
+      dataType: 'JSON',
+      data: {limit: limit, offset: offset},
       success (tracks) {
         callBack(tracks);
       }
@@ -25,17 +47,6 @@ module.exports = {
       url: '/api/tracks/posted',
       method: 'GET',
       dataType: 'JSON',
-      success (tracks) {
-        callBack(tracks);
-      }
-    });
-  },
-  appendAllTracks (callBack, limit, offset) {
-    $.ajax({
-      url: '/api/tracks',
-      method: 'GET',
-      dataType: 'JSON',
-      data: {limit: limit, offset: offset},
       success (tracks) {
         callBack(tracks);
       }

@@ -48,6 +48,14 @@ class Track < ActiveRecord::Base
          .where("track_likes.user_id = ?", user.id)
   end
 
+  def self.most_liked(limit, offset)
+    Track.order("like_count DESC").limit(limit).offset(offset)
+  end
+
+  def self.most_recent(limit, offset)
+    Track.order("created_at DESC").limit(limit).offset(offset)
+  end
+
   def incrementLikeCount
     update!(like_count: like_count + 1)
   end

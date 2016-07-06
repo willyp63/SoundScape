@@ -3,17 +3,23 @@ const TrackApiUtil = require('../util/track_api_util');
 const ErrorActions = require('./error_actions');
 
 module.exports = {
-  fetchAllTracks (limit) {
-    TrackApiUtil.fetchAllTracks(this.receiveTracks, limit);
+  fetchAllTracks (limit, offset) {
+    const cb = offset ? this.appendTracks : this.receiveTracks;
+    TrackApiUtil.fetchAllTracks(cb, limit, offset);
+  },
+  fetchMostLikedTracks (limit, offset) {
+    const cb = offset ? this.appendTracks : this.receiveTracks;
+    TrackApiUtil.fetchMostLikedTracks(cb, limit, offset);
+  },
+  fetchMostRecentTracks (limit, offset) {
+    const cb = offset ? this.appendTracks : this.receiveTracks;
+    TrackApiUtil.fetchMostRecentTracks(cb, limit, offset);
   },
   fetchLikedTracks () {
     TrackApiUtil.fetchLikedTracks(this.receiveTracks);
   },
   fetchPostedTracks () {
     TrackApiUtil.fetchPostedTracks(this.receiveTracks);
-  },
-  appendAllTracks (limit, offset) {
-    TrackApiUtil.appendAllTracks(this.appendTracks, limit, offset);
   },
   likeTrack (track) {
     TrackApiUtil.likeTrack(track, function () {

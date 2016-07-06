@@ -9,7 +9,24 @@ class Api::TracksController < ApplicationController
     if logged_in?
       @tracks = build_liked_tracks(@tracks)
     end
+    render json: @tracks
+  end
 
+  def most_liked
+    @tracks = Track.most_liked(params[:limit], params[:offset])
+
+    if logged_in?
+      @tracks = build_liked_tracks(@tracks)
+    end
+    render json: @tracks
+  end
+
+  def most_recent
+    @tracks = Track.most_recent(params[:limit], params[:offset])
+
+    if logged_in?
+      @tracks = build_liked_tracks(@tracks)
+    end
     render json: @tracks
   end
 

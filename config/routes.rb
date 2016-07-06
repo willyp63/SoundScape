@@ -4,6 +4,8 @@ Rails.application.routes.draw do
     resources :tracks, only: [:index, :create, :update, :destroy]
     get '/tracks/liked', to: 'tracks#liked'
     get '/tracks/posted', to: 'tracks#posted'
+    get '/tracks/most_liked', to: 'tracks#most_liked'
+    get '/tracks/most_recent', to: 'tracks#most_recent'
     post '/tracks/anonymous', to: 'tracks#create_anonymous'
     post '/tracks/build_liked', to: 'tracks#build_liked'
     resources :track_likes, only: [:create, :destroy]

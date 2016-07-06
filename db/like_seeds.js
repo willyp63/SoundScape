@@ -1,7 +1,7 @@
 const HEROKU_URL = 'https://salty-falls-17641.herokuapp.com';
 const LOCAL_URL = 'http://localhost:3000';
 
-seed(100, 105, 2000, LOCAL_URL);
+seed(100, 100, 2000, HEROKU_URL);
 
 function postRandomLike (numUsers, numTracks, url) {
   const userId = Math.floor(Math.random() * numUsers);
