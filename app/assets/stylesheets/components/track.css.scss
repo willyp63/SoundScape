@@ -32,12 +32,20 @@ $update_button_x_offset: $like_button_size / 3;
   box-shadow: 0px 1px 5px black;
 }
 
-.track-index-item p {
+.track-text {
+  display: flex;
+  align-items: center;
   position: absolute;
   width: $track_size;
-  line-height: $title_height;
+  height: $title_height;
   top: 100%; /* position below image */
+  left: 0;
   padding: $track_top_bottom_margin 0;
+}
+
+.track-text p {
+  display: block;
+  width: 100%;
   text-align: center;
   font-size: $title_font_size;
 }

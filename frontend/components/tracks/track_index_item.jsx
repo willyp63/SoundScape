@@ -61,13 +61,13 @@ module.exports = React.createClass({
     this.props.updateTrack(this.props.track);
   },
   render () {
-    let title = this.props.track.title;
-    if (title.length > 27) { title = title.slice(0, 25) + '...'; }
+    // let title = this.props.track.title;
+    // if (title.length > 27) { title = title.slice(0, 25) + '...'; }
     return (
-      <div className="track-index-item"
-           onMouseEnter={this._onMouseEnter}
-           onMouseLeave={this._onMouseLeave}>
-        <div className="track-image">
+      <div className="track-index-item">
+        <div className="track-image"
+          onMouseEnter={this._onMouseEnter}
+          onMouseLeave={this._onMouseLeave}>
           <img src={this.props.track.image_url} width="225" height="225"></img>
           <span className="track-image-overlay" id={`overlay-${this.props.track.id}`}></span>
           {this.state.hover ?
@@ -116,7 +116,9 @@ module.exports = React.createClass({
             </div> :
             ""}
         </div>
-        <p>{title}</p>
+        <div className="track-text">
+          <p>{`${this.props.track.title} - ${this.props.track.artist}`}</p>
+        </div>
       </div>
     );
   }
