@@ -8,6 +8,7 @@ const IndexRoute = ReactRouter.IndexRoute;
 const hashHistory = ReactRouter.hashHistory;
 
 const App = require('./components/app');
+const Splash = require('./components/splash');
 const Home = require('./components/home');
 const Collection = require('./components/collection');
 const Results = require('./components/results');
@@ -18,6 +19,7 @@ const SessionStore = require('./stores/session_store');
 const routes = (
   <Route path="/" component={App}>
     <IndexRoute onEnter={_redirectToHome} />
+    <Route path="/splash" component={Splash} />
     <Route path="/home" component={Home} />
     <Route path="/collection" component={Collection} onEnter={ _ensureLoggedIn } />
     <Route path="/results/:query" component={Results} />
@@ -25,12 +27,12 @@ const routes = (
 );
 
 function _redirectToHome (nextState, replace) {
-  replace('/home');
+  replace('/splash');
 }
 
 function _ensureLoggedIn (nextState, replace) {
   if (!SessionStore.currentUser()) {
-    replace('/home');
+    replace('/splash');
   }
 }
 
