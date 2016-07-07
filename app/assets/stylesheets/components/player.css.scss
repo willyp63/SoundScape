@@ -14,27 +14,210 @@ $player-bg: $ss-gray;
   background-color: $player-bg;
 }
 
+.audio-player-bar audio {
+  display: none;
+}
+
 .playing-track {
-  flex-basis: 20%;
-  flex-grow: 1;
+  flex-basis: 25%;
   color: white;
   text-align: center;
 }
 
-#audio-player {
-  flex-basis: 40%;
+.playing-image {
+  flex-basis: 25%;
+  height: 50px;
+}
+
+.playing-image img {
+  margin: 5px 50%;
+  transform: translate(-50%, 0);
+}
+
+.audio-player-center {
+  flex-basis: 50%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.audio-controls {
+  flex-basis: 100px;
+  float: left;
+  color: $ss-light-gray;
+  font-size: 30px;
+  line-height: $player-height;
+  text-align: center;
+}
+
+.audio-controls i {
+  line-height: $player-height;
+  cursor: pointer;
+}
+
+.audio-controls i:hover {
+  color: #fff;
+}
+
+.audio-progress-bar {
   flex-grow: 1;
-  margin: auto;
+  float: left;
+  display: flex;
+  align-items: center;
+}
+
+.audio-current-time, .audio-total-time  {
+  flex-basis: 60px;
+  text-align: center;
+  line-height: $player-height;
+  color: $ss-light-gray;
+}
+
+.progress-bar {
+  flex-grow: 1;
+  height: $player-height;
+  position: relative;
+}
+
+.progress-bar-bg {
+  background-color: $ss-dark-gray;
+  position: absolute;
+  top: ($player-height - 8px) / 2;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.progress-bar-fg {
+  background-color: $ss-dark-orange;
+  position: absolute;
+  top: ($player-height - 8px) / 2;
+  left: 0;
+  width: 0;
+  height: 8px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.progress-bar-head {
+  position: absolute;
+  background-color: $ss-dark-orange;
+  border: 1px solid $ss-gray;
+  top: ($player-height - 18px) / 2;
+  left: -8px;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.audio-volume-control {
+  flex-basis: 35px;
+  float: left;
+  position: relative;
+  color: $ss-light-gray;
+  font-size: 30px;
+  text-align: center;
+  margin-left: 15px;
+  cursor: pointer;
+}
+
+.audio-volume-control:hover {
+  color: #fff;
+}
+
+.audio-volume-control i {
+  line-height: $player-height;
+}
+
+.playing-track {
+  display: flex;
+  position: relative;
+  height: $player-height;
+  align-items: center;
+  color: $ss-light-gray;
+  cursor: pointer;
+}
+
+.playing-track:hover {
+  color: #fff;
+}
+
+.playing-track p {
+  flex-grow: 1;
+  font-size: 18px;
+  margin: 0;
+}
+
+.playing-track i {
+  font-size: 18px;
+  line-height: $player-height;
+  margin: 0;
+  margin-right: 8px;
 }
 
 .track-queue {
-  flex-basis: 20%;
-  flex-grow: 1;
-  color: white;
-  text-align: center;
+  position: absolute !important;
+  bottom: 100% !important;
+  right: 0 !important;
+  height: 350px;
+  width: 300px;
+  overflow-y: scroll;
+  background-color: $ss-dark-gray;
+  color: $ss-light-gray;
+  cursor: pointer;
 }
 
-.playing-track p, .track-queue p {
+.track-queue li {
+  text-align: left;
+  height: 50px;
+}
+
+.track-queue li:hover {
+  background-color: $ss-gray;
+  color: #fff;
+}
+
+.track-queue li p {
+  float: left;
+  line-height: 50px;
   font-size: 18px;
-  margin: 0;
+  margin-left: 15px;
+}
+
+.track-queue li img {
+  margin-top: 5px;
+  float: right;
+  margin-right: 15px;
+}
+
+.volume-selector {
+  position: absolute;
+  top: -150px;
+  left: 0;
+  height: 150px;
+  width: 100%;
+  background-color: $ss-dark-gray;
+}
+
+.volume-rail {
+  margin: 15px 16px;
+  width: 3px;
+  height: 120px;
+  background-color: $ss-light-gray;
+  border-radius: 1.5px;
+}
+
+.volume-head {
+  margin: 8px 10px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  background-color: $ss-light-gray;
+  border: 1px solid $ss-gray;
+  border-radius: 7px;
 }

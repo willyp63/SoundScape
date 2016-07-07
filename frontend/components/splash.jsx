@@ -11,7 +11,7 @@ let _randomQuery;
 module.exports = React.createClass({
   componentWillMount () {
     const i = Math.floor(Math.random() * randomQueries.length);
-    _randomQuery = "a";
+    _randomQuery = randomQueries[i];
   },
   _fetchInitialTracks () {
     SearchActions.fetchResults(_randomQuery, INITIAL_REQUEST_SIZE, 0);
@@ -29,6 +29,9 @@ module.exports = React.createClass({
           <img src="http://res.cloudinary.com/dcwxxqs4l/image/upload/v1467765103/banner_g9ggmj.jpg"/>
           <span className="tag-line">Sample Millions of Tracks</span>
           <button className="btn btn-success" onClick={this._demoLogin}>Try It Out!</button>
+        </div>
+        <div className="search-results-header">
+          <p>{`Tracks by: ${_randomQuery}`}</p>
         </div>
         <TrackIndex fetchInitialTracks={this._fetchInitialTracks}
                     fetchMoreTracks={this._fetchMoreTracks}

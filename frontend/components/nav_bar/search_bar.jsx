@@ -1,5 +1,6 @@
 const React = require('react');
 const SearchActions = require('../../actions/search_actions');
+const PlayerActions = require('../../actions/player_actions');
 const SearchResultStore = require('../../stores/search_result_store');
 const SearchResult = require('./search_result');
 const hashHistory = require('react-router').hashHistory;
@@ -54,6 +55,9 @@ module.exports = React.createClass({
   _handleResize (e) {
     this.setState({resultTextWidth: resultTextWidth()});
   },
+  _playTrack (track) {
+    PlayerActions.playTrack(track);
+  },
   render () {
     return (
       <div className="nav-bar-center">
@@ -73,7 +77,8 @@ module.exports = React.createClass({
               this.state.results.map(track => {
                 return <SearchResult key={track.id}
                                      track={track}
-                                     textWidth={this.state.resultTextWidth} />;
+                                     textWidth={this.state.resultTextWidth}
+                                     onClick={this._playTrack}/>;
               })
             }</ul> :
             ""}

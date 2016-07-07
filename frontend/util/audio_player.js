@@ -1,0 +1,78 @@
+let _onUpdate, _onLoad, _onEnd;
+let _loaded, _updating;
+
+module.exports = {
+  audio () {
+    return document.getElementById('audio-player');
+  },
+  init (onLoad, onUpdate, onEnd) {
+    if (_onUpdate && _onLoad && _onEnd) { this.removeListeners(); }
+    _onUpdate = onUpdate; _onLoad = onLoad; _onEnd = onEnd;
+    _loaded = false;
+
+    const audio = this.audio();
+    audio.load();
+    audio.addEventListener("canplaythrough", this.canplaythrough, false);
+    audio.addEventListener("ended", _onEnd, false);
+    audio.addEventListener("timeupdate", _onUpdate, false);
+    _updating = true;
+    $(window).on("resize", this.timeUpdate.bind(this));
+  },
+  canplaythrough () {
+    // only fire _onLoad once
+    if (!_loaded) {
+      _onLoad();
+      _loaded = true;
+    }
+  },
+  removeListeners () {
+    const audio = this.audio();
+    audio.removeEventListener("canplaythrough", this.canplaythrough);
+    audio.removeEventListener("ended", _onEnd);
+    audio.removeEventListener("timeupdate", _onUpdate);
+    $(window).off("resize", this.timeUpdate.bind(this));
+  },
+  duration () {
+    return this.audio().duration;
+  },
+  currentTime () {
+    return this.audio().currentTime;
+  },
+  play () {
+    this.audio().play();
+  },
+  pause () {
+    this.audio().pause();
+  },
+  stepBack () {
+    this.audio().currentTime = 0;
+  },
+  stepForward () {
+
+  },
+  timeUpdate () {
+    if (!_updating) { return; }
+    const audio = this.audio();
+    var percent = (audio.currentTime / audio.duration);
+    this.moveProgressHead(percent);
+  },
+  moveProgressHead (percent) {
+    const fullWidth = $(".progress-bar-bg").width();
+    const left = (percent * fullWidth) - 8;
+    $(".progress-bar-head").css('left', `${left}px`);
+    $(".progress-bar-fg").width(`${100 * percent}%`);
+  },
+  setCurrentTime (percent) {
+    const audio = this.audio();
+    audio.currentTime = audio.duration * percent;
+  },
+  setVolume (percent) {
+    this.audio().volume = percent;
+  },
+  stopUpdating () {
+    _updating = false;
+  },
+  resumeUpdating () {
+    _updating = true;
+  }
+};

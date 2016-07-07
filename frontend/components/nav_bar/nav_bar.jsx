@@ -35,12 +35,12 @@ module.exports = React.createClass({
         { SessionStore.loggedIn() ?
           <div>
             <UserForm key="2" formType="UPDATE" />
-            <TrackForm formType="NEW" />
           </div> :
           <div>
             <UserForm key="1" formType="LOGIN" />
             <UserForm formType="SIGNUP" />
           </div>}
+          <TrackForm formType="NEW" />
       </div>
     );
   }

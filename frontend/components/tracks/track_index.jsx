@@ -3,6 +3,7 @@ const TrackIndexItem = require('./track_index_item');
 const TrackStore = require('../../stores/track_store');
 const TrackForm = require('../tracks/track_form');
 const ErrorActions = require('../../actions/error_actions');
+const PlayerActions = require('../../actions/player_actions');
 
 const _listeners = [];
 let _loadingTracks = false;
@@ -44,6 +45,9 @@ module.exports = React.createClass({
       $("#UPDATE-TRACK-MODAL").modal("show");
     });
   },
+  _playAll () {
+    PlayerActions.playTracks(this.state.tracks);
+  },
   render () {
     // seperate tracks into rows
     const numTracks = this.state.tracks.length;
@@ -56,6 +60,10 @@ module.exports = React.createClass({
     }
     return (
       <div>
+        <div className="play-buttons">
+          <button className="btn btn-primary"
+                  onClick={this._playAll}>Play all</button>
+        </div>
         <div className='track-index'>{
           rows.map(row => {
             return (

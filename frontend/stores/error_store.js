@@ -1,7 +1,7 @@
 const Store = require('flux/utils').Store;
 const dispatcher = require('../dispatcher');
 
-let _errors;
+let _errors = [];
 
 const ErrorStore = new Store(dispatcher);
 
@@ -14,7 +14,8 @@ ErrorStore.__onDispatch = function (payload) {
       this.__emitChange();
       break;
     case "REMOVE_ERRORS":
-      _errors = undefined;
+      debugger
+      _errors = [];
       this.__emitChange();
       break;
   }

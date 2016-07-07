@@ -163,6 +163,17 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
   background-color: $ss-light-gray;
 }
 
+.play-buttons {
+  width: 100%;
+  height: 50px;
+}
+
+.play-buttons button {
+  float: right;
+  margin-top: 15px;
+  margin-right: 75px;
+}
+
 /* SPINNER */
 .sk-fading-circle {
   position: relative;

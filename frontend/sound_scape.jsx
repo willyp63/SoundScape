@@ -18,21 +18,16 @@ const SessionStore = require('./stores/session_store');
 
 const routes = (
   <Route path="/" component={App}>
-    <IndexRoute onEnter={_redirectToHome} />
-    <Route path="/splash" component={Splash} />
+    <IndexRoute component={Splash} />
     <Route path="/home" component={Home} />
     <Route path="/collection" component={Collection} onEnter={ _ensureLoggedIn } />
     <Route path="/results/:query" component={Results} />
   </Route>
 );
 
-function _redirectToHome (nextState, replace) {
-  replace('/splash');
-}
-
 function _ensureLoggedIn (nextState, replace) {
   if (!SessionStore.currentUser()) {
-    replace('/splash');
+    hashHistory.push('/');
   }
 }
 

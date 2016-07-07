@@ -1,12 +1,20 @@
 const React = require('react');
 const hashHistory = require('react-router').hashHistory;
+const SessionStore = require('../../stores/session_store');
+const ErrorActions = require('../../actions/error_actions');
 
 module.exports = React.createClass({
   _linkHome () {
     hashHistory.push('/home');
   },
   _linkCollection () {
-    hashHistory.push('/collection');
+    if (!SessionStore.loggedIn()) {
+      // show signup form
+      ErrorActions.removeErrors();
+      $("#SIGNUP-MODAL").modal("show");
+    } else {
+      hashHistory.push('/collection');
+    }
   },
   render () {
     const homeActive = this.props.pathname === "/home";

@@ -6,5 +6,11 @@ module.exports = {
       actionType: 'PLAY_TRACK',
       track: track
     });
+  },
+  playTracks (tracks) {
+    dispatcher.dispatch({
+      actionType: 'PLAY_TRACKS',
+      tracks: tracks
+    });
   }
 };

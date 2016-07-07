@@ -2,6 +2,7 @@ const React = require('react');
 const PlayerActions = require('../../actions/player_actions');
 const TrackActions = require('../../actions/track_actions');
 const SessionStore = require('../../stores/session_store');
+const ErrorActions = require('../../actions/error_actions');
 
 module.exports = React.createClass({
   getInitialState () {
@@ -42,18 +43,24 @@ module.exports = React.createClass({
     PlayerActions.playTrack(this.props.track);
   },
   _likeTrack () {
-    this.setState({loading: true});
-    if (this.props.track.liked) {
-      if (this.props.indexType === "MY_LIKES") {
-        TrackActions.unlikeAndRemoveTrack(this.props.track);
-      } else {
-        TrackActions.unlikeTrack(this.props.track);
-      }
+    if (!SessionStore.loggedIn()) {
+      // show signup form
+      ErrorActions.removeErrors();
+      $("#SIGNUP-MODAL").modal("show");
     } else {
-      if (typeof this.props.track.id === 'string') {
-        TrackActions.postAndLikeTrack(this.props.track);
+      this.setState({loading: true});
+      if (this.props.track.liked) {
+        if (this.props.indexType === "MY_LIKES") {
+          TrackActions.unlikeAndRemoveTrack(this.props.track);
+        } else {
+          TrackActions.unlikeTrack(this.props.track);
+        }
       } else {
-        TrackActions.likeTrack(this.props.track);
+        if (typeof this.props.track.id === 'string') {
+          TrackActions.postAndLikeTrack(this.props.track);
+        } else {
+          TrackActions.likeTrack(this.props.track);
+        }
       }
     }
   },
@@ -61,8 +68,10 @@ module.exports = React.createClass({
     this.props.updateTrack(this.props.track);
   },
   render () {
-    // let title = this.props.track.title;
-    // if (title.length > 27) { title = title.slice(0, 25) + '...'; }
+    let text = this.props.track.title;
+    if (this.props.track.artist) {
+      text += ` - ${this.props.track.artist}`;
+    }
     return (
       <div className="track-index-item">
         <div className="track-image"
@@ -85,7 +94,6 @@ module.exports = React.createClass({
                     onMouseEnter={this._highlightUpdate}
                     onMouseLeave={this._unhighlightUpdate}/>
                </div> : ""}
-             {SessionStore.loggedIn() ?
               <div>
                 <span className="like-icon-bg"></span>
                 {this.state.loading ?
@@ -112,12 +120,11 @@ module.exports = React.createClass({
                       {this.props.track.like_count}
                     </span>
                   </div>}
-              </div> : ""}
-            </div> :
-            ""}
+                </div>
+            </div> : ""}
         </div>
         <div className="track-text">
-          <p>{`${this.props.track.title} - ${this.props.track.artist}`}</p>
+          <p>{text}</p>
         </div>
       </div>
     );

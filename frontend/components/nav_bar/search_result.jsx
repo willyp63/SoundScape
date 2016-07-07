@@ -1,12 +1,14 @@
 const React = require('react');
-const PlayerActions = require('../../actions/player_actions');
 
 module.exports = React.createClass({
   _onClick () {
-    PlayerActions.playTrack(this.props.track);
+    this.props.onClick(this.props.track);
   },
   render () {
-    let text = `${this.props.track.title} - ${this.props.track.artist}`;
+    let text = this.props.track.title;
+    if (this.props.track.artist) {
+      text += ` - ${this.props.track.artist}`;
+    }
     if (getWidthOfText(text) > this.props.textWidth) {
       text = shortenText(text, this.props.textWidth);
     }

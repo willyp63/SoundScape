@@ -41,7 +41,12 @@ module.exports = React.createClass({
   },
   _closeModal () {
     $(`#${this.props.formType}-MODAL`).modal('hide');
-    this.setState({errors: undefined, user: {username: "", password: "", picture_url: ""}});
+    const user = SessionStore.currentUser();
+    this.setState({errors: [], user: {id: user.id,
+                                      username: user.username,
+                                      old_password: "",
+                                      password: "",
+                                      picture_url: user.picture_url}});
   },
   _receiveErrors () {
     // clear password

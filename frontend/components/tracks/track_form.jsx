@@ -17,11 +17,13 @@ module.exports = React.createClass({
                           image_url: newProps.track.image_url,
                           audio_url: newProps.track.audio_url}});
   },
-  componentDidMount () {
+  componentWillMount () {
+    console.log('mounting');
     _listeners.push(ErrorStore.addListener(this._receiveErrors));
     _listeners.push(TrackStore.addListener(this._trackChange));
   },
   componentWillUnmount () {
+    console.log("unmounting");
     _listeners.forEach(listener => listener.remove());
   },
   _trackChange () {
@@ -43,6 +45,7 @@ module.exports = React.createClass({
   },
   _receiveErrors () {
     // clear password
+    debugger
     this.setState({errors: ErrorStore.errors()});
   },
   _uploadImage (e) {

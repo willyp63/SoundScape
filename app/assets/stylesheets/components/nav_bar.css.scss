@@ -197,7 +197,7 @@ $search-bar-y-offset: ($nav-bar-height - $search-bar-height)/2;
   cursor: pointer;
 }
 
-.dropdown-menu > li:first-of-type {
+.nav-bar-right .dropdown-menu > li:first-of-type {
   cursor: default;
 }
 
@@ -215,7 +215,7 @@ $search-bar-y-offset: ($nav-bar-height - $search-bar-height)/2;
   background-color: $nav-bar-bg;
 }
 
-.dropdown-menu > li:first-of-type:hover {
+.nav-bar-right .dropdown-menu > li:first-of-type:hover {
   color: $text-color;
   background-color: transparent;
 }
