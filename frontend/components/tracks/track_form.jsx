@@ -123,13 +123,16 @@ module.exports = React.createClass({
                        onChange={this._titleChange} />
               </div>
 
-               {this.state.errors ?
-                 <ul>{
-                   this.state.errors.map(errorMsg => {
-                     return <li key={errorMsg} className="error-msg">{errorMsg}</li>;
-                   })
-                 }</ul> : ""
-               }
+              {this.state.errors ?
+                <ul className="error-messages">{
+                  this.state.errors.map(errorMsg => {
+                    return (<li key={errorMsg}>
+                             <i className="glyphicon glyphicon-remove" />
+                             {errorMsg}
+                           </li>);
+                  })
+                }</ul> : ""
+              }
 
                {this.props.formType === "UPDATE" ?
                  <button className="btn btn-danger" onClick={this._onDelete}>

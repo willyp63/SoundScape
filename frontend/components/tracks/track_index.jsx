@@ -1,6 +1,7 @@
 const React = require('react');
 const TrackIndexItem = require('./track_index_item');
 const TrackStore = require('../../stores/track_store');
+const TrackActions = require('../../actions/track_actions');
 const ErrorActions = require('../../actions/error_actions');
 const ModalActions = require('../../actions/modal_actions');
 const PlayerActions = require('../../actions/player_actions');
@@ -13,12 +14,16 @@ module.exports = React.createClass({
     return {tracks: TrackStore.all()};
   },
   componentWillMount () {
+    TrackActions.setIndexType(this.props.indexType);
     window.addEventListener('scroll', this._onScroll);
     _listeners.push(TrackStore.addListener(this._onChange));
     this.props.fetchInitialTracks();
     _loadingTracks = true;
   },
   componentWillReceiveProps (newProps) {
+    if (newProps.indexType !== this.props.indexType) {
+      TrackActions.setIndexType(newProps.indexType);
+    }
     newProps.fetchInitialTracks();
     _loadingTracks = true;
   },
@@ -27,7 +32,7 @@ module.exports = React.createClass({
     _listeners.forEach(listener => listener.remove());
   },
   _onScroll (e) {
-    const maxScrollY = $('.main-content').height() - (2 * window.innerHeight);
+    const maxScrollY = $('.main-content').height() - (3 * window.innerHeight);
     if (!_loadingTracks && window.scrollY >= maxScrollY) {
       const offset = this.state.tracks.length;
       this.props.fetchMoreTracks(offset);

@@ -10,10 +10,7 @@ class Api::TrackLikesController < ApplicationController
       track_like.track.incrementLikeCount
     end
 
-    # TODO change this!!! (only for seeding)
-    if params[:track_like][:user_id]
-      track_like.user_id = params[:track_like][:user_id]
-    else
+    if logged_in?
       track_like.user_id = current_user.id
     end
 

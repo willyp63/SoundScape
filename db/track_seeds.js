@@ -44,9 +44,22 @@ function postTrack (track, url) {
 }
 
 function seed (numTrack, url) {
+  let images = [];
+  let tracks = [];
+  let titles = [];
+  let k = numTrack;
   for (let i = 0; i < numTrack; i++) {
     randomTrack(function (track) {
-      postTrack(track, url);
+      images.push(track.album.images[1].url);
+      tracks.push(track.preview_url);
+      titles.push(track.name);
+      k--;
+      console.log(k);
+      if (k <= 0) {
+        console.log(images);
+        console.log(tracks);
+        console.log(titles);
+      }
     });
   }
 }

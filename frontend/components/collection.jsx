@@ -25,7 +25,7 @@ module.exports = React.createClass({
         <ul className="my-navbar">
           <li id="MY_TRACKS"
               className={this.state.indexType === "MY_TRACKS" ? "selected" : ""}
-              onClick={this._navItemClick}>My Tracks
+              onClick={this._navItemClick}>My Uploads
           </li>
           <li id="MY_LIKES"
               className={this.state.indexType === "MY_LIKES" ? "selected" : ""}

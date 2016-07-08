@@ -4,10 +4,16 @@ const LinkedHashMap = require('../util/linked_hash_map');
 
 // allows store to keep tracks in order
 let _tracks = new LinkedHashMap();
+let _indexType;
 
 const TrackStore = new Store(dispatcher);
 
 TrackStore.all = () => _tracks.all();
+TrackStore.indexType = () => _indexType;
+
+TrackStore.hasTrack = function (track) {
+  return !!(_tracks.get(track.storeId));
+};
 
 TrackStore.__onDispatch = function (payload) {
   switch (payload.actionType) {
@@ -39,6 +45,10 @@ TrackStore.__onDispatch = function (payload) {
       _tracks.remove(payload.track.storeId);
       this.__emitChange();
       break;
+    case 'SET_INDEX_TYPE':
+      _indexType = payload.indexType;
+      this.__emitChange();
+      break;
   }
 };
 
@@ -67,12 +77,14 @@ function storeTrack (id, track) {
 
 function likeTrack (track) {
   const t = _tracks.get(track.storeId);
+  if (!t) { return; }
   t.liked = true;
   t.like_count++;
 }
 
 function unlikeTrack (track) {
   const t = _tracks.get(track.storeId);
+  if (!t) { return; }
   t.liked = false;
   t.like_count--;
 }

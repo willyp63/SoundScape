@@ -63,11 +63,10 @@ $form-field-font-size: 20px;
   float: right;
 }
 
-.modal-content ul {
-  margin: 0 15%;
-}
-
-.error-msg {
+.error-messages {
+  list-style: none;
+  margin: 15px auto;
+  text-align: center;
   color: red;
 }
 

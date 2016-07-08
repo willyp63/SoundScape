@@ -1,28 +1,43 @@
 const React = require('react');
 const PlayerStore = require('../stores/player_store');
+const TrackStore = require('../stores/track_store');
+const SessionStore = require('../stores/session_store');
 const AudioPlayer = require('../util/audio_player');
+const PlayerActions = require('../actions/player_actions');
+const ModalActions = require('../actions/modal_actions');
+const ErrorActions = require('../actions/error_actions');
+const TrackActions = require('../actions/track_actions');
 const SearchResult = require('./nav_bar/search_result');
 
 const _listeners = [];
 
 module.exports = React.createClass({
   getInitialState () {
-    return {tracks: PlayerStore.tracks(), playing: true, trackIndex: 0,
+    return {tracks: PlayerStore.tracks(), playing: true, trackIndex: 0, loading: false,
       currentTime: 0, duration: 0, volumeOpen: false, queueOpen: false};
   },
   componentWillMount () {
     _listeners.push(PlayerStore.addListener(this._onChange));
+    _listeners.push(TrackStore.addListener(this._trackChange));
   },
   componentWillUnmount () {
     _listeners.forEach(listener => listener.remove());
   },
   _onChange () {
-    this.setState({tracks: PlayerStore.tracks(), trackIndex: 0}, this._beginPlaying);
+    if (PlayerStore.newTracks()) {
+      if (this.state.tracks.length) { AudioPlayer.removeListeners(); }
+      this.setState({tracks: PlayerStore.tracks(), trackIndex: 0}, this._beginPlaying);
+    } else {
+      this.setState({tracks: PlayerStore.tracks(), loading: false});
+    }
+  },
+  _trackChange () {
+    this.setState({loading: false});
   },
   _beginPlaying () {
-    AudioPlayer.moveProgressHead(0);
     if (this.state.tracks.length) {
-      this.setState({playing: true}, function () {
+      AudioPlayer.moveProgressHead(0);
+      this.setState({playing: true, currentTime: 0}, function () {
         AudioPlayer.init(this._onLoad, this._timeUpdate, this._onEnd);
       });
     }
@@ -85,6 +100,34 @@ module.exports = React.createClass({
     if (newIndex < 0) { return; }
     this.setState({trackIndex: newIndex}, this._beginPlaying);
   },
+  _closePlayer () {
+    AudioPlayer.removeListeners();
+    PlayerActions.closePlayer();
+  },
+  _likeTrack () {
+    const track = this.state.tracks[this.state.trackIndex];
+    if (!SessionStore.loggedIn()) {
+      // show signup form
+
+      ErrorActions.removeErrors();
+      ModalActions.show("USER", "SIGNUP");
+    } else {
+      this.setState({loading: true});
+      if (track.liked) {
+        if (TrackStore.indexType() === "MY_LIKES") {
+          TrackActions.unlikeAndRemoveTrack(track);
+        } else {
+          TrackActions.unlikeTrack(track);
+        }
+      } else {
+        if (typeof track.id === 'string') {
+          TrackActions.postAndLikeTrack(track);
+        } else {
+          TrackActions.likeTrack(track);
+        }
+      }
+    }
+  },
   render () {
     const track = this.state.tracks[this.state.trackIndex];
     return (
@@ -95,7 +138,29 @@ module.exports = React.createClass({
               <source src={track.audio_url} type="audio/mpeg"/>
             </audio>
             <div className="playing-image">
+              <i className="glyphicon glyphicon-remove" onClick={this._closePlayer}/>
               <img src={track.image_url} width="40" height="40"/>
+              <div className="player-like-button" onClick={this._likeTrack}>
+                {this.state.loading ?
+                  <div className="sk-fading-circle">
+                    <div className="sk-circle1 sk-circle"></div>
+                    <div className="sk-circle2 sk-circle"></div>
+                    <div className="sk-circle3 sk-circle"></div>
+                    <div className="sk-circle4 sk-circle"></div>
+                    <div className="sk-circle5 sk-circle"></div>
+                    <div className="sk-circle6 sk-circle"></div>
+                    <div className="sk-circle7 sk-circle"></div>
+                    <div className="sk-circle8 sk-circle"></div>
+                    <div className="sk-circle9 sk-circle"></div>
+                    <div className="sk-circle10 sk-circle"></div>
+                    <div className="sk-circle11 sk-circle"></div>
+                    <div className="sk-circle12 sk-circle"></div>
+                  </div> :
+                  <div>
+                    <i className={"glyphicon glyphicon-heart player-like-icon" + (track.liked ? " liked" : "")}/>
+                    <span className="player-like-count">{track.like_count}</span>
+                  </div>}
+                </div>
             </div>
             <div className="audio-player-center">
               <div className="audio-controls">

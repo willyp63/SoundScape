@@ -1,6 +1,9 @@
 const dispatcher = require('../dispatcher');
 const TrackApiUtil = require('../util/track_api_util');
 const ErrorActions = require('./error_actions');
+const PlayerActions = require('./player_actions');
+const TrackStore = require('../stores/track_store');
+const PlayerStore = require('../stores/player_store');
 
 module.exports = {
   fetchAllTracks (limit, offset) {
@@ -23,10 +26,14 @@ module.exports = {
   },
   likeTrack (track) {
     TrackApiUtil.likeTrack(track, function () {
-      dispatcher.dispatch({
-        actionType: 'LIKE_TRACK',
-        track: track
-      });
+      if (TrackStore.hasTrack(track)) {
+        dispatcher.dispatch({
+          actionType: 'LIKE_TRACK',
+          track: track
+        });
+      } else {
+        PlayerActions.likePlayingTrack(track);
+      }
     });
   },
   postAndLikeTrack (track) {
@@ -34,19 +41,28 @@ module.exports = {
     TrackApiUtil.postAnonymousTrack(track, function (newTrack) {
       TrackApiUtil.likeTrack(newTrack, function () {
         that.replaceTrack(track, newTrack);
-        dispatcher.dispatch({
-          actionType: 'LIKE_TRACK',
-          track: track
-        });
+        PlayerActions.replaceTrack(track, newTrack);
+        if (TrackStore.hasTrack(track)) {
+          dispatcher.dispatch({
+            actionType: 'LIKE_TRACK',
+            track: newTrack
+          });
+        } else {
+          PlayerActions.likePlayingTrack(newTrack);
+        }
       });
     }, ErrorActions.setErrors);
   },
   unlikeTrack (track) {
     TrackApiUtil.unlikeTrack(track, function () {
-      dispatcher.dispatch({
-        actionType: 'UNLIKE_TRACK',
-        track: track
-      });
+      if (TrackStore.hasTrack(track)) {
+        dispatcher.dispatch({
+          actionType: 'UNLIKE_TRACK',
+          track: track
+        });
+      } else {
+        PlayerActions.unlikePlayingTrack(track);
+      }
     });
   },
   receiveTracks (tracks) {
@@ -64,6 +80,7 @@ module.exports = {
   unlikeAndRemoveTrack (track) {
     TrackApiUtil.unlikeTrack(track, function () {
       this.removeTrack(track);
+      PlayerActions.removePlayingTrack(track);
     }.bind(this));
   },
   postTrack (track) {
@@ -107,6 +124,12 @@ module.exports = {
       actionType: 'REPLACE_TRACK',
       oldTrack: oldTrack,
       newTrack: newTrack
+    });
+  },
+  setIndexType (indexType) {
+    dispatcher.dispatch({
+      actionType: 'SET_INDEX_TYPE',
+      indexType: indexType
     });
   }
 };

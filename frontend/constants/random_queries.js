@@ -19,7 +19,7 @@ module.exports = ["Britney Spears", "Jay Z", "Eminem", "Destiny's Child", "Green
                  "Toby Love", "Leslie Grace", "Carlos y Alejandra", "Wisin", "Ivy Queen", "Monchy & Alexandra",
                  "Chino & Nacho", "Tito El Bambino", "Mariah Carey", "Tina Turner", "Toni Braxton",
                  "Vanessa Williams", "Céline Dion", "Lionel Richie", "Diana Ross", "P!nk", "Jessica Simpson",
-                 "Kelly Clarkson", "Nelly Furtado", "Xzibit", "Ice Cube", "Warren G", "Nate Dogg", "N.W.A.",
+                 "Kelly Clarkson", "Nelly Furtado", "Ice Cube", "Warren G", "Nate Dogg", "N.W.A.",
                  "The Game", "Rihanna", "Usher", "Fergie", "Robin Thicke", "The Black Eyed Peas", "Mary J. Blige",
                  "En Vogue", "Faith Evans", "Ashanti", "Cake", "The Presidents Of The United States Of America",
                  "Harvey Danger", "Marcy Playground", "Third Eye Blind", "Everclear", "Phantom Planet", "Lit",
@@ -30,6 +30,6 @@ module.exports = ["Britney Spears", "Jay Z", "Eminem", "Destiny's Child", "Green
                     "Manic Street Preachers", "Tim McGraw", "Brad Paisley", "Blake Shelton", "Toby Keith",
                     "Dierks Bentley", "Keith Urban", "Gary Allan", "Billy Currington", "Rascal Flatts", "Jason Aldean",
                      "Megadeth", "Slayer", "Anthrax", "Pantera", "Testament", "Motörhead", "Machine Head", "Sepultura",
-                      "Suicidal Tendencies", "Iron Maiden", "Temple Of The Dog", "Jerry Cantrell", "Mad Season",
+                      "Iron Maiden", "Temple Of The Dog", "Jerry Cantrell", "Mad Season",
                       "Candlebox", "Mother Love Bone", "Queens of the Stone Age", "The Smashing Pumpkins", "Dave Grohl",
                        "Taylor Hawkins & The Coattail Riders"];

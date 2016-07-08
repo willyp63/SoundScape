@@ -64,7 +64,8 @@ module.exports = React.createClass({
       UserActions.updateUser(this.state.user);
     }
   },
-  _demoLogin () {
+  _demoLogin (e) {
+    e.preventDefault();
     SessionActions.login({username: 'guest', password: 'db84n337vmz39alqp97'});
   },
   _closeModal () {
@@ -133,14 +134,19 @@ module.exports = React.createClass({
                 </div> : ""}
 
                {this.state.errors ?
-                 <ul>{
+                 <ul className="error-messages">{
                    this.state.errors.map(errorMsg => {
-                     return <li key={errorMsg} className="error-msg">{errorMsg}</li>;
+                     return (<li key={errorMsg}>
+                              <i className="glyphicon glyphicon-remove" />
+                              {errorMsg}
+                            </li>);
                    })
                  }</ul> : ""
                }
-               <button onSubmit={this._onSubmit} className="btn btn-success">{formTitle}</button>
-               <button onClick={this._demoLogin} className="btn btn-success">Demo</button>
+              <button onClick={this._onSubmit} className="btn btn-success">{formTitle}</button>
+              {this.props.formType !== "UPDATE" ?
+                <button onClick={this._demoLogin} className="btn btn-success">Demo</button> :
+                ""}
             </form>
           </div>
         </div>

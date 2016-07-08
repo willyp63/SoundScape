@@ -27,11 +27,69 @@ $player-bg: $ss-gray;
 .playing-image {
   flex-basis: 25%;
   height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.playing-image i {
+  float: left;
+  font-size: 32px;
+  line-height: $player-height;
+  color: $ss-light-gray;
+  cursor: pointer;
+}
+
+.playing-image i:hover {
+  color: #fff;
 }
 
 .playing-image img {
-  margin: 5px 50%;
-  transform: translate(-50%, 0);
+  float: left;
+}
+
+.player-like-button {
+  float: left;
+  position: relative;
+  background-color: #fff;
+  border-radius: 10px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.player-like-button:hover {
+  background-color: $ss-light-gray;
+}
+
+.player-like-button i {
+  margin-top: 2px;
+  line-height: 40px;
+  font-size: 38px;
+  color: $ss-dark-gray !important;
+}
+
+.player-like-button i.liked {
+  color: #f39 !important;
+}
+
+.player-like-button span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #fff;
+  line-height: 40px;
+  width: 40px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.player-like-button .sk-fading-circle {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  height: 32px;
+  width: 32px;
 }
 
 .audio-player-center {
