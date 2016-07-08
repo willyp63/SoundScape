@@ -1,137 +1,58 @@
 # SoundScape
 
-[Heroku link][heroku] **Song:** This should be a link to your production site
+[Heroku link][heroku]
 
 [heroku]: https://salty-falls-17641.herokuapp.com
 
-## Minimum Viable Product
+SoundScape is a full-stack web application. SoundScape uses Ruby on Rails with a PostgresSQL database for the backend. SoundScape utilizes Facebook's React.js with a Flux design to delivery front end content.
 
-SoundScape is a web application inspired by SoundCloud that will be built using Ruby on Rails and React.js.  By the end of Week 9, this app will, at a minimum, satisfy the following criteria:
+SoundScape is a great place to explore new music. Users can search for almost any song in existence, sample it, and then add that song to their personal list of liked songs. Users can also post original songs that can be seen by all other users.
 
-- [ ] Hosting on Heroku
-- [ ] New account creation, login, and guest/demo login
-- [ ] A production README, replacing this README (**NB**: check out the [sample production README](docs/production_readme.md) -- you'll write this later)
-- [ ] User Pages
-  - [ ] Smooth, bug-free navigation
-  - [ ] Adequate seed data to demonstrate the site's features
-  - [ ] Adequate CSS styling
-- [ ] Song CRUD
-  - [ ] Smooth, bug-free navigation
-  - [ ] Adequate seed data to demonstrate the site's features
-  - [ ] Adequate CSS styling
-- [ ] Song Likes
-  - [ ] Smooth, bug-free navigation
-  - [ ] Adequate seed data to demonstrate the site's features
-  - [ ] Adequate CSS styling
-- [ ] Continuous Play while Navigating Site
-  - [ ] Smooth, bug-free navigation
-  - [ ] Adequate seed data to demonstrate the site's features
-  - [ ] Adequate CSS styling
+## Like Tracks!
 
+Any track that is displayed on SoundScape can be liked by clicking an icon on the track image or player bar. Once a user likes a track the icon will change color and will then be used to unlike the track. All tracks that the user currently likes will be displayed in their collection.
 
-## Design Docs
-* [View Wireframes][views]
-* [React Components][components]
-* [Flux Cycles][flux-cycles]
-* [API endpoints][api-endpoints]
-* [DB schema][schema]
+![likes]
 
-[views]: docs/views.md
-[components]: docs/components.md
-[flux-cycles]: docs/flux-cycles.md
-[api-endpoints]: docs/api-endpoints.md
-[schema]: docs/schema.md
+## Search Millions of Tracks
 
-## Implementation Timeline
+SoundCloud uses Spotify's API to stream thirty second samples of tracks. This allows for any song to be searched for, sampled, and then liked by the user. A dropdown of ten results is presented while typing in the search bar. Those results can be clicked to play or the user can hit enter and see the full list of results.
 
-### Phase 1: Backend setup and Front End User Authentication (1.5 days, W1 Wed 12pm)
+When a track from the Spotify API is liked, it must be added to SoundScape's database before it can be liked. The track is posted by an anonymous user and then is liked by the current user. This all happens Seamlessly.
 
-**Objective:** Functioning rails project with Authentication
+![search]
 
-- [ ] create `User` model
-- [ ] authentication
-- [ ] user signup/signin modals
-- [ ] create basic user profile pages
-- [ ] allow users to upload profile picture
-- [ ] implement basic navigation bar
+## Infinite Scroll
 
-### Phase 2: Song Model, API, and basic APIUtil (1 day, W1 Th 12pm)
+All pages have infinite scroll. This is especially important for pages that may have to display hundreds of tracks, like the search result page. Only a small number of tracks are requested and rendered to begin with. And as the user scrolls down the page, more tracks will be requested and appended.
 
-**Objective:** Songs can be created, read, edited and destroyed through
-the API.
+## Post, Edit and Delete Tracks
 
-- [ ] create `Song` model
-- [ ] seed the database with a small amount of test data
-- [ ] CRUD API for songs (`Api::SongsController`)
-- [ ] jBuilder views for songs (?)
-- [ ] setup Webpack & Flux scaffold
-- [ ] setup `APIUtil` to interact with the API
-- [ ] test out API interaction in the console.
+Any logged in user can post their own tracks. The only requirement is that the audio be in MP3 format and that an image is included. Users have a page where they can view all of their posted tracks. Here they can edit/delete their tracks.
 
-### Phase 3: Flux Architecture and Router (1.5 days, W1 F 6pm)
+![new]
 
-**Objective:** Songs can be created, read, edited and destroyed with the
-user interface.
+## Custom Audio Player
 
-- [ ] setup the flux loop with skeleton files
-- [ ] setup React Router
-- implement each song component, building out the flux loop as needed.
-  - [ ] `SongsIndex`
-  - [ ] `SongIndexItem`
-  - [ ] `SongForm`
-- [ ] implement a separate song index for profile page (user's uploaded songs)
-and for home page (all user's uploaded songs)
-- [ ] update navigation bar to link to home page and user page as well as signup
-and login
+SoundScape has a custom built audio player. The player accepts multiple tracks and allows the user to cycle through these tracks. The progress bar and volume bar are clickable and dragable. While navigating the site, the player stays up and playing whatever it was last assigned. Tracks can also be liked via the player.
 
-### Phase 4: Start Styling (0.5 days, W2 M 12pm)
+![splash]
 
-**Objective:** Existing pages (including signup/signin) will look good.
+## Future Direction
 
-- [ ] create a basic style guide
-- [ ] position elements on the page
-- [ ] add basic colors & styles
+### Profile Page
 
-### Phase 5: Song Likes (1 day, W2 Tu 12pm)
+I would like to give users their own profile page. Other users could find this page via the search bar or other links. All of a users posted tracks would be displayed on their profile page along with other information about that user.
 
-**Objective:** Songs can be likes, and can be viewed on user page.
+### Track Comments
 
-- [ ] create `SongLike` model (join table)
-- build out API, Flux loop, and components for:
-  - [ ] liking/unliking any song other than your own
-  - [ ] viewing liked songs on user Pages
-- [ ] Use CSS to style new views
+I think users would be interested in expressing their opinions of the tracks they listen to. And even more users would like to see what other people think of a song. I might even allow someone to score a song (1-5). Doing something like this would require creating a track display page.
 
-### Phase 6: Play back (1 days, W2 Th 12pm)
+### Playlists
 
-**Objective:** Songs can be played continuously while navigating the site
+The tracks a user likes are all thrown into the same group. It would be nice if someone could further organize their liked songs into playlists. Playlists could then be shared with others and even searchable.
 
-- [ ] implement UI to allow for play a song
-- implement a functioning play back bar
-  - [ ] bar should show/hide based on state
-  - [ ] buttons for pause/play, forward/rewind, and volume control
-  - [ ] animated view that shows the current location of the play back
-- [ ] bar stays open when navigating pages
-
-
-### Phase 7: Allow Complex Styling (0.5 days, W2 Th 6pm)
-
-**objective:** Enable complex styling using bootstrap.
-
-- [ ] Integrate bootstrap
-- [ ] make the page stand out and look good
-- [ ] add custom animation to transitions (?)
-
-### Phase 8: Seeding and clean up (1 day, W2 F 6pm)
-
-**objective:** Make the site feel more cohesive and awesome.
-
-- [ ] Seed database with music (spotify api or other source)
-- [ ] Get feedback on UI and seed data
-- [ ] style finishing touches / code clean up
-
-### Bonus Features (TBD)
-- [ ] Search for songs with search bar in navigation bar
-- [ ] Allow look up of any song using spotify api (only samples)
-- [ ] Pagination / infinite scroll for Songs Index
-- [ ] Allow users to organize songs into playlists
+[splash]: ./docs/screenshots/splash.jpg
+[new]: ./docs/screenshots/new.jpg
+[search]: ./docs/screenshots/search.jpg
+[likes]: ./docs/screenshots/likes.jpg
