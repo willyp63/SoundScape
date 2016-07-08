@@ -210,17 +210,15 @@ $player-bg: $ss-gray;
 }
 
 .playing-track i {
-  font-size: 18px;
-  line-height: $player-height;
-  margin: 0;
-  margin-right: 8px;
+  font-size: 16px;
 }
 
 .track-queue {
   position: absolute !important;
+  display: none;
   bottom: 100% !important;
   right: 0 !important;
-  height: 350px;
+  max-height: 325px;
   width: 300px;
   overflow-y: scroll;
   background-color: $ss-dark-gray;
@@ -253,6 +251,7 @@ $player-bg: $ss-gray;
 
 .volume-selector {
   position: absolute;
+  display: none;
   top: -150px;
   left: 0;
   height: 150px;

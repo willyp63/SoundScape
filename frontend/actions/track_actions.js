@@ -3,7 +3,6 @@ const TrackApiUtil = require('../util/track_api_util');
 const ErrorActions = require('./error_actions');
 const PlayerActions = require('./player_actions');
 const TrackStore = require('../stores/track_store');
-const PlayerStore = require('../stores/player_store');
 
 module.exports = {
   fetchAllTracks (limit, offset) {

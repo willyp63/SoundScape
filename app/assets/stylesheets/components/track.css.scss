@@ -102,7 +102,7 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
   line-height: $like_button_size + 4px !important;
   font-size: $like_button_size - 2px;
   text-align: center;
-  color: #333;
+  color: $ss-dark-gray;
 }
 
 .like-icon.liked {

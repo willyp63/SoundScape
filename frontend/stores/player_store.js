@@ -50,6 +50,12 @@ PlayerStore.__onDispatch = function (payload) {
       _newTracks = false;
       this.__emitChange();
       break;
+    case "SHUFFLE_TRACKS":
+      const shuffledTracks = shuffle(_tracks.all());
+      setTracks(shuffledTracks);
+      _newTracks = true;
+      this.__emitChange();
+      break;
   }
 };
 
@@ -63,6 +69,19 @@ function setTracks (tracks) {
 function storeTrack (id, track) {
   track.storeId = id;
   _tracks.addHead(id, track);
+}
+
+function shuffle (tracks) {
+  let i = tracks.length;
+  while (i !== 0) {
+    let k = Math.floor(Math.random() * i);
+    i--;
+
+    let temp = tracks[i];
+    tracks[i] = tracks[k];
+    tracks[k] = temp;
+  }
+  return tracks;
 }
 
 module.exports = PlayerStore;

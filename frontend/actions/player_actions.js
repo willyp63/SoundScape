@@ -42,5 +42,10 @@ module.exports = {
       actionType: 'UNLIKE_PLAYING_TRACK',
       track: track
     });
+  },
+  shuffleTracks () {
+    dispatcher.dispatch({
+      actionType: 'SHUFFLE_TRACKS'
+    });
   }
 };

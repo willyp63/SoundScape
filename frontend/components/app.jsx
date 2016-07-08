@@ -5,7 +5,11 @@ const SearchActions = require('../actions/search_actions');
 
 module.exports = React.createClass({
   _onClick () {
+    // hide drop downs
+
     SearchActions.hideResults();
+    $('.volume-selector').css('display', 'none');
+    $('.track-queue').css('display', 'none');
   },
   render () {
     return (

@@ -51,6 +51,10 @@ module.exports = React.createClass({
   _playAll () {
     PlayerActions.playTracks(this.state.tracks);
   },
+  _shuffleAll () {
+    PlayerActions.playTracks(this.state.tracks);
+    PlayerActions.shuffleTracks();
+  },
   render () {
     // seperate tracks into rows
     const numTracks = this.state.tracks.length;
@@ -66,6 +70,8 @@ module.exports = React.createClass({
         <div className="play-buttons">
           <button className="btn btn-primary btn-lg"
                   onClick={this._playAll}>Play all</button>
+          <button className="btn btn-primary btn-lg"
+                  onClick={this._shuffleAll}>Shuffle all</button>
         </div>
         <div className='track-index'>{
           rows.map(row => {

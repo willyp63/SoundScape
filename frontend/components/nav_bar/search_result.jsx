@@ -1,7 +1,8 @@
 const React = require('react');
 
 module.exports = React.createClass({
-  _onClick () {
+  _onClick (e) {
+    e.stopPropagation();
     this.props.onClick(this.props.track);
   },
   render () {

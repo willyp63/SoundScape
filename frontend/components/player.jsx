@@ -13,8 +13,8 @@ const _listeners = [];
 
 module.exports = React.createClass({
   getInitialState () {
-    return {tracks: PlayerStore.tracks(), playing: true, trackIndex: 0, loading: false,
-      currentTime: 0, duration: 0, volumeOpen: false, queueOpen: false};
+    return {tracks: PlayerStore.tracks(), playing: true, trackIndex: 0,
+      loading: false, currentTime: 0, duration: 0};
   },
   componentWillMount () {
     _listeners.push(PlayerStore.addListener(this._onChange));
@@ -71,17 +71,31 @@ module.exports = React.createClass({
     $(window).on('mousemove', moveProgressHead);
     $(window).on('mouseup', progressHeadReleased);
   },
-  _toggleVolumeSelector () {
-    this.setState({volumeOpen: !this.state.volumeOpen});
+  _toggleVolumeSelector (e) {
+    e.stopPropagation();
+    const volumeSelector = $('.volume-selector');
+    if (volumeSelector.css('display') === 'none') {
+      volumeSelector.css('display', 'block');
+    } else {
+      volumeSelector.css('display', 'none');
+    }
   },
-  _toggleQueue () {
-    this.setState({queueOpen: !this.state.queueOpen});
+  _toggleQueue (e) {
+    e.stopPropagation();
+    const queue = $('.track-queue');
+    if (queue.css('display') === 'none') {
+      queue.css('display', 'block');
+    } else {
+      queue.css('display', 'none');
+    }
   },
   _clickVolumeBar (e) {
+    e.stopPropagation();
     const percent = mousePercentVolumeBar(e);
     setVolume(percent);
   },
   _clickVolumeHead (e) {
+    e.stopPropagation();
     $(window).on('mousemove', moveVolumeHead);
     $(window).on('mouseup', volumeHeadReleased);
   },
@@ -186,30 +200,27 @@ module.exports = React.createClass({
               <div className="audio-volume-control">
                 <i className="glyphicon glyphicon-volume-up"
                    onClick={this._toggleVolumeSelector}></i>
-                {this.state.volumeOpen ?
-                  <div className="volume-selector"
-                       onClick={this._clickVolumeBar}>
-                    <div className="volume-rail" />
-                    <div className="volume-head"
-                         onMouseDown={this._clickVolumeHead}/>
-                  </div> : ""}
+                 <div className="volume-selector"
+                      onClick={this._clickVolumeBar}>
+                   <div className="volume-rail" />
+                   <div className="volume-head"
+                        onMouseDown={this._clickVolumeHead}/>
+                 </div>
               </div>
             </div>
             <div className="playing-track open"
                  onClick={this._toggleQueue}>
-              <p>{track.title}</p>
-              <i className="glyphicon glyphicon-triangle-top" />
+              <p>{track.title} <i className="glyphicon glyphicon-triangle-top" /></p>
             </div>
             <div>
-              {this.state.queueOpen ?
-                <ul className="track-queue">{
-                  this.state.tracks.map(track => {
-                    return <SearchResult key={track.id}
-                    track={track}
-                    textWidth={220}
-                    onClick={this._playTack} />;
-                  })
-                }</ul> : ""}
+              <ul className="track-queue">{
+                this.state.tracks.map(track => {
+                  return <SearchResult key={track.id}
+                  track={track}
+                  textWidth={220}
+                  onClick={this._playTack} />;
+                })
+              }</ul>
             </div>
           </nav> :
           ""
