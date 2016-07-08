@@ -1,7 +1,7 @@
 const Store = require('flux/utils').Store;
 const dispatcher = require('../dispatcher');
 
-let _currentUser;
+let _currentUser = false;
 
 const SessionStore = new Store(dispatcher);
 
@@ -15,7 +15,7 @@ SessionStore.__onDispatch = function (payload) {
       this.__emitChange();
       break;
     case "REMOVE_CURRENT_USER":
-      _currentUser = undefined;
+      _currentUser = false;
       this.__emitChange();
       break;
   }

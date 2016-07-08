@@ -67,7 +67,7 @@ $player-bg: $ss-gray;
 }
 
 .audio-current-time, .audio-total-time  {
-  flex-basis: 60px;
+  flex-basis: 80px;
   text-align: center;
   line-height: $player-height;
   color: $ss-light-gray;
@@ -120,7 +120,6 @@ $player-bg: $ss-gray;
   color: $ss-light-gray;
   font-size: 30px;
   text-align: center;
-  margin-left: 15px;
   cursor: pointer;
 }
 
@@ -147,7 +146,8 @@ $player-bg: $ss-gray;
 
 .playing-track p {
   flex-grow: 1;
-  font-size: 18px;
+  padding: 0 10px;
+  font-size: 14px;
   margin: 0;
 }
 

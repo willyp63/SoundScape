@@ -1,7 +1,7 @@
 const React = require('react');
 const ErrorStore = require('../../stores/error_store');
 const TrackActions = require('../../actions/track_actions');
-const TrackStore = require('../../stores/track_store');
+const ModalActions = require('../../actions/modal_actions');
 const CLOUDINARY_IMAGE_OPTIONS = require('../../constants/cloudinary').IMAGE_OPTIONS;
 const CLOUDINARY_AUDIO_OPTIONS = require('../../constants/cloudinary').AUDIO_OPTIONS;
 
@@ -9,34 +9,22 @@ const _listeners = [];
 
 module.exports = React.createClass({
   getInitialState () {
-    return {errors: [], track: {title: "", image_url: "", audio_url: ""}};
-  },
-  componentWillReceiveProps (newProps) {
-    if (!newProps.track) { return; }
-    this.setState({track: {title: newProps.track.title,
-                          image_url: newProps.track.image_url,
-                          audio_url: newProps.track.audio_url}});
+    if (this.props.track) {
+      return {errors: [], track: {title: this.props.track.title,
+                            image_url: this.props.track.image_url,
+                            audio_url: this.props.track.audio_url}};
+    } else {
+      return {errors: [], track: {title: "", image_url: "", audio_url: ""}};
+    }
   },
   componentWillMount () {
-    console.log('mounting');
     _listeners.push(ErrorStore.addListener(this._receiveErrors));
-    _listeners.push(TrackStore.addListener(this._trackChange));
   },
   componentWillUnmount () {
-    console.log("unmounting");
     _listeners.forEach(listener => listener.remove());
   },
-  _trackChange () {
-    this._closeModal();
-  },
   _closeModal () {
-    // kill audio player
-    const audioPlayer = document.getElementById('audio-upload');
-    if (audioPlayer) { audioPlayer.pause(); }
-
-    // close form reset state
-    $(`#${this.props.formType}-TRACK-MODAL`).modal("hide");
-    this.setState({track: {title: "", image_url: "", audio_url: ""}});
+    ModalActions.hide("TRACK", this.props.formType);
   },
   _titleChange (e) {
     const newTrack = this.state.track;
@@ -45,7 +33,6 @@ module.exports = React.createClass({
   },
   _receiveErrors () {
     // clear password
-    debugger
     this.setState({errors: ErrorStore.errors()});
   },
   _uploadImage (e) {

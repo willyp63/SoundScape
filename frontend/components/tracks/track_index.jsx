@@ -1,8 +1,8 @@
 const React = require('react');
 const TrackIndexItem = require('./track_index_item');
 const TrackStore = require('../../stores/track_store');
-const TrackForm = require('../tracks/track_form');
 const ErrorActions = require('../../actions/error_actions');
+const ModalActions = require('../../actions/modal_actions');
 const PlayerActions = require('../../actions/player_actions');
 
 const _listeners = [];
@@ -10,7 +10,7 @@ let _loadingTracks = false;
 
 module.exports = React.createClass({
   getInitialState () {
-    return {tracks: TrackStore.all(), updateTrack: null};
+    return {tracks: TrackStore.all()};
   },
   componentWillMount () {
     window.addEventListener('scroll', this._onScroll);
@@ -40,10 +40,8 @@ module.exports = React.createClass({
     });
   },
   _updateTrack (track) {
-    this.setState({updateTrack: track}, function () {
-      ErrorActions.removeErrors();
-      $("#UPDATE-TRACK-MODAL").modal("show");
-    });
+    ErrorActions.removeErrors();
+    ModalActions.show("TRACK", "UPDATE", track);
   },
   _playAll () {
     PlayerActions.playTracks(this.state.tracks);
@@ -61,7 +59,7 @@ module.exports = React.createClass({
     return (
       <div>
         <div className="play-buttons">
-          <button className="btn btn-primary"
+          <button className="btn btn-primary btn-lg"
                   onClick={this._playAll}>Play all</button>
         </div>
         <div className='track-index'>{
@@ -78,9 +76,6 @@ module.exports = React.createClass({
             );
           })
         }</div>
-        {this.props.indexType === "MY_TRACKS" ?
-          <TrackForm formType="UPDATE" track={this.state.updateTrack} /> :
-          ""}
       </div>
     );
   }

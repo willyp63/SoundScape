@@ -4,13 +4,14 @@ const SessionActions = require('../../actions/session_actions');
 const SessionStore = require('../../stores/session_store');
 const hashHistory = require('react-router').hashHistory;
 const ErrorActions = require('../../actions/error_actions');
+const ModalActions = require('../../actions/modal_actions');
 
 module.exports = React.createClass({
   _upload (e) {
     e.preventDefault();
     // show track form
     ErrorActions.removeErrors();
-    $("#NEW-TRACK-MODAL").modal("show");
+    ModalActions.show("TRACK", "NEW");
   },
   _logout (e) {
     e.preventDefault();
@@ -21,7 +22,7 @@ module.exports = React.createClass({
   _editProfile (e) {
     e.preventDefault();
     ErrorActions.removeErrors();
-    $("#UPDATE-MODAL").modal("show");
+    ModalActions.show("USER", "UPDATE");
   },
   render () {
     return (

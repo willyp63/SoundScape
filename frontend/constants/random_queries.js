@@ -11,7 +11,7 @@ module.exports = ["Britney Spears", "Jay Z", "Eminem", "Destiny's Child", "Green
           "Good Charlotte", "Simple Plan", "Thirty Seconds To Mars", "Bowling For Soup", "Rise Against",
            "Michael Jackson", "Jackie Jackson", "Jermaine Jackson", "The Jackson 5", "Adam Levine",
             "Stevie Wonder", "Melanie C", "Geri Halliwell", "Atomic Kitten", "Girls Aloud", "Victoria Beckham",
-             "Emma Bunton", "Mel B", "Sugababes", "*NSYNC", "IN-Q", "Kele Fleming", "Paula Varjack",
+             "Emma Bunton", "Mel B", "Sugababes", "*NSYNC", "IN-Q", "Kele Fleming",
               "Frank Garrett", "Frank Silvera", "Jørgen Leth", "Celestial Navigations", "Frank Pettingell",
                "Hawke", "Micah", "New Kids On The Block", "Hanson", "Nick Carter", "S Club 7", "O-Town",
                 "Five", "Westlife", "Savage Garden", "Nirvana", "Incubus", "Audioslave", "Lenny Kravitz",

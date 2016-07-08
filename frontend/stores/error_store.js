@@ -14,7 +14,6 @@ ErrorStore.__onDispatch = function (payload) {
       this.__emitChange();
       break;
     case "REMOVE_ERRORS":
-      debugger
       _errors = [];
       this.__emitChange();
       break;

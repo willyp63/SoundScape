@@ -9,6 +9,5 @@
 admin = User.create!(username: 'admin', password: 'password',
     picture_url: "http://res.cloudinary.com/dcwxxqs4l/image/upload/v1467420920/ju19klj43ayaxvaw2u2g.jpg")
 
-99.times do
-  User.create(username: Faker::Internet.user_name, password: Faker::Internet.password)
-end
+guest = User.create!(username: 'guest', password: 'db84n337vmz39alqp97',
+    picture_url: "http://res.cloudinary.com/dcwxxqs4l/image/upload/v1467420920/ju19klj43ayaxvaw2u2g.jpg")

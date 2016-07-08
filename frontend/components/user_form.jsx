@@ -1,5 +1,6 @@
 const React = require('react');
 const SessionActions = require('../actions/session_actions');
+const ModalActions = require('../actions/modal_actions');
 const UserActions = require('../actions/user_actions');
 const SessionStore = require('../stores/session_store');
 const ErrorStore = require('../stores/error_store');
@@ -22,31 +23,14 @@ module.exports = React.createClass({
   },
   componentDidMount () {
     _listeners.push(ErrorStore.addListener(this._receiveErrors));
-    _listeners.push(SessionStore.addListener(this._sessionChange));
   },
   componentWillUnmount () {
     _listeners.forEach(listener => listener.remove());
-    this._closeModal();
   },
   _onChange (e) {
     const newUser = this.state.user;
     newUser[e.target.id] = e.target.value;
     this.setState({user: newUser});
-  },
-  _sessionChange () {
-    // close modal if loggin/sign up was successful
-    if (SessionStore.loggedIn()) {
-      this._closeModal();
-    }
-  },
-  _closeModal () {
-    $(`#${this.props.formType}-MODAL`).modal('hide');
-    const user = SessionStore.currentUser();
-    this.setState({errors: [], user: {id: user.id,
-                                      username: user.username,
-                                      old_password: "",
-                                      password: "",
-                                      picture_url: user.picture_url}});
   },
   _receiveErrors () {
     // clear password
@@ -80,6 +64,12 @@ module.exports = React.createClass({
       UserActions.updateUser(this.state.user);
     }
   },
+  _demoLogin () {
+    SessionActions.login({username: 'guest', password: 'db84n337vmz39alqp97'});
+  },
+  _closeModal () {
+    ModalActions.hide("USER", this.props.formType);
+  },
   render () {
     let formTitle;
     if (this.props.formType === 'LOGIN') {
@@ -91,14 +81,14 @@ module.exports = React.createClass({
     }
 
     return (
-      <div id={`${this.props.formType}-MODAL`} className="modal fade" role="dialog">
+      <div id={`${this.props.formType}-USER-MODAL`} className="modal fade" role="dialog">
         <div className="modal-dialog">
           <div className="modal-content cf">
             <div className="form-header cf">
               <button className="close" onClick={this._closeModal}>&times;</button>
               <p className="modal-title">{formTitle}</p>
             </div>
-            <form onSubmit={this._onSubmit}>
+            <form className="user-form">
               <div className="form-field cf">
                 <label for="username">Username:</label>
                 <input type="text" id="username"
@@ -149,7 +139,8 @@ module.exports = React.createClass({
                    })
                  }</ul> : ""
                }
-               <input type="submit" value={formTitle} className="btn btn-success"/>
+               <button onSubmit={this._onSubmit} className="btn btn-success">{formTitle}</button>
+               <button onClick={this._demoLogin} className="btn btn-success">Demo</button>
             </form>
           </div>
         </div>

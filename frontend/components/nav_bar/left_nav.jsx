@@ -2,6 +2,7 @@ const React = require('react');
 const hashHistory = require('react-router').hashHistory;
 const SessionStore = require('../../stores/session_store');
 const ErrorActions = require('../../actions/error_actions');
+const ModalActions = require('../../actions/modal_actions');
 
 module.exports = React.createClass({
   _linkHome () {
@@ -11,7 +12,7 @@ module.exports = React.createClass({
     if (!SessionStore.loggedIn()) {
       // show signup form
       ErrorActions.removeErrors();
-      $("#SIGNUP-MODAL").modal("show");
+      ModalActions.show("USER", "SIGNUP");
     } else {
       hashHistory.push('/collection');
     }

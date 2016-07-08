@@ -21,6 +21,9 @@ module.exports = {
       actionType: "RECEIVE_CURRENT_USER",
       currentUser: user
     });
+    dispatcher.dispatch({
+      actionType: "HIDE_MODAL"
+    });
   },
   removeCurrentUser () {
     dispatcher.dispatch({

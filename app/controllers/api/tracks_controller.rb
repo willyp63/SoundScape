@@ -45,7 +45,11 @@ class Api::TracksController < ApplicationController
   end
 
   def build_liked
-    render json: build_liked_spotify_tracks(params[:tracks])
+    if logged_in?
+      render json: build_liked_spotify_tracks(params[:tracks])
+    else
+      render json: params[:tracks].values
+    end
   end
 
   def posted

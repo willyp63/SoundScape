@@ -67,19 +67,28 @@ module.exports = {
     }.bind(this));
   },
   postTrack (track) {
-    TrackApiUtil.postTrack(track,
-                           this.receiveTrack,
-                           ErrorActions.setErrors);
+    TrackApiUtil.postTrack(track, function (track) {
+      this.receiveTrack(track);
+      dispatcher.dispatch({
+        actionType: 'HIDE_MODAL'
+      });
+    }.bind(this), ErrorActions.setErrors);
   },
   updateTrack (track) {
-    TrackApiUtil.updateTrack(track,
-                             this.replaceTrack,
-                             ErrorActions.setErrors);
+    TrackApiUtil.updateTrack(track, function (oldTrack, newTrack) {
+      this.replaceTrack(oldTrack, newTrack);
+      dispatcher.dispatch({
+        actionType: 'HIDE_MODAL'
+      });
+    }.bind(this), ErrorActions.setErrors);
   },
   deleteTrack (track) {
-    TrackApiUtil.deleteTrack(track,
-                             this.removeTrack,
-                             ErrorActions.setErrors);
+    TrackApiUtil.deleteTrack(track, function (track) {
+      this.removeTrack(track);
+      dispatcher.dispatch({
+        actionType: 'HIDE_MODAL'
+      });
+    }.bind(this), ErrorActions.setErrors);
   },
   receiveTrack (track) {
     dispatcher.dispatch({

@@ -3,6 +3,7 @@ const PlayerActions = require('../../actions/player_actions');
 const TrackActions = require('../../actions/track_actions');
 const SessionStore = require('../../stores/session_store');
 const ErrorActions = require('../../actions/error_actions');
+const ModalActions = require('../../actions/modal_actions');
 
 module.exports = React.createClass({
   getInitialState () {
@@ -46,7 +47,7 @@ module.exports = React.createClass({
     if (!SessionStore.loggedIn()) {
       // show signup form
       ErrorActions.removeErrors();
-      $("#SIGNUP-MODAL").modal("show");
+      ModalActions.show("USER", "SIGNUP");
     } else {
       this.setState({loading: true});
       if (this.props.track.liked) {

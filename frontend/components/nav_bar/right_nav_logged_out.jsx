@@ -1,18 +1,19 @@
 const React = require('react');
 const ErrorActions = require('../../actions/error_actions');
+const ModalActions = require('../../actions/modal_actions');
 
 module.exports = React.createClass({
   _signup (e) {
     e.preventDefault();
     // show signup form
     ErrorActions.removeErrors();
-    $("#SIGNUP-MODAL").modal("show");
+    ModalActions.show("USER", "SIGNUP");
   },
   _login (e) {
     e.preventDefault();
     // show login form
     ErrorActions.removeErrors();
-    $("#LOGIN-MODAL").modal("show");
+    ModalActions.show("USER", "LOGIN");
   },
   render () {
     return (

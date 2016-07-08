@@ -20,12 +20,14 @@ module.exports = React.createClass({
     this.setState({tracks: PlayerStore.tracks(), trackIndex: 0}, this._beginPlaying);
   },
   _beginPlaying () {
+    AudioPlayer.moveProgressHead(0);
     if (this.state.tracks.length) {
-      AudioPlayer.init(this._onLoad, this._timeUpdate, this._onEnd);
+      this.setState({playing: true}, function () {
+        AudioPlayer.init(this._onLoad, this._timeUpdate, this._onEnd);
+      });
     }
   },
   _onLoad () {
-    AudioPlayer.moveProgressHead(0);
     this.setState({duration: AudioPlayer.duration()}, function () {
       AudioPlayer.play();
     });
@@ -35,7 +37,11 @@ module.exports = React.createClass({
     this.setState({currentTime: AudioPlayer.currentTime()});
   },
   _onEnd () {
-    this.setState({playing: false});
+    if (this.state.trackIndex >= this.state.tracks.length - 1) {
+      this.setState({playing: false});
+    } else {
+      this.setState({trackIndex: this.state.trackIndex + 1}, this._beginPlaying);
+    }
   },
   _togglePlay () {
     this.state.playing ? AudioPlayer.pause() : AudioPlayer.play();
