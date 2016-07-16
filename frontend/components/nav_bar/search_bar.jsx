@@ -69,7 +69,8 @@ module.exports = React.createClass({
                  onChange={this._onChange}
                  onClick={this._onClick}>
           </input>
-          <i className="glyphicon glyphicon-search"></i>
+          <i className="glyphicon glyphicon-search"
+             onClick={this._onSubmit}></i>
         </form>
         <div className="dropdown open">
           {this.state.showing && this.state.results.length ?

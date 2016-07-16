@@ -54,12 +54,3 @@ module.exports = React.createClass({
     );
   }
 });
-
-function randomLetters (n) {
-  let letters = "";
-  for (let i = 0; i < n; i++) {
-    const charCode = 97 + Math.floor(Math.random() * 26);
-    letters += String.fromCharCode(charCode);
-  }
-  return letters;
-};

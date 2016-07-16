@@ -7,25 +7,24 @@ const ModalActions = require('../../actions/modal_actions');
 const PlayerActions = require('../../actions/player_actions');
 
 const _listeners = [];
-let _loadingTracks = false;
 
 module.exports = React.createClass({
   getInitialState () {
-    return {tracks: TrackStore.all()};
+    return {tracks: [], loading: true};
   },
   componentWillMount () {
-    TrackActions.setIndexType(this.props.indexType);
     window.addEventListener('scroll', this._onScroll);
     _listeners.push(TrackStore.addListener(this._onChange));
+
+    TrackActions.setIndexType(this.props.indexType);
     this.props.fetchInitialTracks();
-    _loadingTracks = true;
   },
   componentWillReceiveProps (newProps) {
-    if (newProps.indexType !== this.props.indexType) {
-      TrackActions.setIndexType(newProps.indexType);
-    }
+    console.log('props');
+    this.setState({tracks: [], loading: true});
+    // TODO cannot dispatch here
+    TrackActions.setIndexType(newProps.indexType);
     newProps.fetchInitialTracks();
-    _loadingTracks = true;
   },
   componentWillUnmount () {
     window.removeEventListener('scroll', this._onScroll);
@@ -33,16 +32,14 @@ module.exports = React.createClass({
   },
   _onScroll (e) {
     const maxScrollY = $('.main-content').height() - (3 * window.innerHeight);
-    if (!_loadingTracks && window.scrollY >= maxScrollY) {
+    if (TrackStore.hasMoreTracks() && !this.state.loading && window.scrollY >= maxScrollY) {
+      this.setState({loading: true});
       const offset = this.state.tracks.length;
       this.props.fetchMoreTracks(offset);
-      _loadingTracks = true;
     }
   },
   _onChange () {
-    this.setState({tracks: TrackStore.all()}, function () {
-      _loadingTracks = false;
-    });
+    this.setState({tracks: TrackStore.all(), loading: false});
   },
   _updateTrack (track) {
     ErrorActions.removeErrors();
@@ -87,6 +84,16 @@ module.exports = React.createClass({
             );
           })
         }</div>
+        { this.state.loading ?
+          <div className="track-spinner">
+            <div className="rect1"></div>
+            <div className="rect2"></div>
+            <div className="rect3"></div>
+            <div className="rect4"></div>
+            <div className="rect5"></div>
+          </div> : ""}
+        { !this.state.loading && !this.state.tracks.length ?
+          <div className='no-results-text'>No Tracks Found...</div> : ''}
       </div>
     );
   }
