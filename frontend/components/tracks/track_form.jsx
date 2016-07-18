@@ -9,10 +9,8 @@ const _listeners = [];
 
 module.exports = React.createClass({
   getInitialState () {
-    if (this.props.track) {
-      return {errors: [], track: {title: this.props.track.title,
-                            image_url: this.props.track.image_url,
-                            audio_url: this.props.track.audio_url}};
+    if (this.props.data) {
+      return {errors: [], track: this.props.data};
     } else {
       return {errors: [], track: {title: "", image_url: "", audio_url: ""}};
     }
@@ -24,7 +22,7 @@ module.exports = React.createClass({
     _listeners.forEach(listener => listener.remove());
   },
   _closeModal () {
-    ModalActions.hide("TRACK", this.props.formType);
+    ModalActions.hide();
   },
   _titleChange (e) {
     const newTrack = this.state.track;
@@ -63,12 +61,12 @@ module.exports = React.createClass({
   },
   _onSubmit (e) {
     e.preventDefault();
-    if (this.props.formType === "NEW") {
+    if (this.props.action === "NEW") {
       TrackActions.postTrack(this.state.track);
     } else {
-      const track = {id: this.props.track.id,
-              storeId: this.props.track.storeId,
-              liked: this.props.track.liked,
+      const track = {id: this.props.data.id,
+              storeId: this.props.data.storeId,
+              liked: this.props.data.liked,
               title: this.state.track.title,
               image_url: this.state.track.image_url,
               audio_url: this.state.track.audio_url};
@@ -77,16 +75,16 @@ module.exports = React.createClass({
   },
   _onDelete (e) {
     e.preventDefault();
-    TrackActions.deleteTrack(this.props.track);
+    TrackActions.deleteTrack(this.props.data);
   },
   render () {
     return (
-      <div id={`${this.props.formType}-TRACK-MODAL`} className="modal fade" role="dialog">
+      <div id={`${this.props.action}-TRACK-MODAL`} className="modal fade" role="dialog">
         <div className="modal-dialog">
           <div className="modal-content cf">
             <div className="form-header cf">
               <button type="button" className="close" onClick={this._closeModal}>&times;</button>
-              <p className="modal-title">{this.props.formType === "NEW" ? "New" : "Edit"} Track</p>
+              <p className="modal-title">{this.props.action === "NEW" ? "New" : "Edit"} Track</p>
             </div>
             <form onSubmit={this._onSubmit} className="track-form">
               <div className="cf">
@@ -134,13 +132,13 @@ module.exports = React.createClass({
                 }</ul> : ""
               }
 
-               {this.props.formType === "UPDATE" ?
+               {this.props.action === "UPDATE" ?
                  <button className="btn btn-danger" onClick={this._onDelete}>
                    Delete Track
                  </button> :
                  ""}
                <input type="submit"
-                      value={`${this.props.formType === "NEW" ? "Create" : "Update"} Track`}
+                      value={`${this.props.action === "NEW" ? "Create" : "Update"} Track`}
                       className="btn btn-success"/>
             </form>
           </div>

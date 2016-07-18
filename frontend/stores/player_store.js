@@ -10,7 +10,12 @@ const PlayerStore = new Store(dispatcher);
 PlayerStore.tracks = () => _tracks.all();
 PlayerStore.newTracks = () => _newTracks;
 
+PlayerStore.hasTrack = function (track) {
+  return !!(_tracks.get(track.storeId));
+};
+
 PlayerStore.__onDispatch = function (payload) {
+  let track;
   switch (payload.actionType) {
     case "PLAY_TRACK":
       setTracks([payload.track]);
@@ -39,14 +44,18 @@ PlayerStore.__onDispatch = function (payload) {
       this.__emitChange();
       break;
     case "LIKE_PLAYING_TRACK":
-      _tracks.get(payload.track.storeId).liked = true;
-      _tracks.get(payload.track.storeId).like_count++;
+      track = _tracks.get(payload.track.storeId) || _tracks.get(payload.track.spotify_id);
+      if (!track) { break; }
+      track.liked = true;
+      track.like_count++;
       _newTracks = false;
       this.__emitChange();
       break;
     case "UNLIKE_PLAYING_TRACK":
-      _tracks.get(payload.track.storeId).liked = false;
-      _tracks.get(payload.track.storeId).like_count--;
+      track = _tracks.get(payload.track.storeId) || _tracks.get(payload.track.spotify_id);
+      if (!track) { break; }
+      track.liked = false;
+      track.like_count--;
       _newTracks = false;
       this.__emitChange();
       break;

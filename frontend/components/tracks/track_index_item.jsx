@@ -69,10 +69,6 @@ module.exports = React.createClass({
     this.props.updateTrack(this.props.track);
   },
   render () {
-    let text = this.props.track.title;
-    if (this.props.track.artist) {
-      text += ` - ${this.props.track.artist}`;
-    }
     return (
       <div className="track-index-item">
         <div className="track-image"
@@ -125,7 +121,7 @@ module.exports = React.createClass({
             </div> : ""}
         </div>
         <div className="track-text">
-          <p>{text}</p>
+          <p>{this.props.track.title}</p>
         </div>
       </div>
     );

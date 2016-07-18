@@ -1,3 +1,4 @@
+const dispatcher = require('../dispatcher');
 const SessionStore = require('../stores/session_store');
 
 module.exports = {
@@ -14,7 +15,12 @@ module.exports = {
         } else {
           callBack(tracks);
         }
-      }.bind(this)
+      }.bind(this),
+      error: function (data) {
+        dispatcher.dispatch({
+          actionType: 'CANNOT_LOAD_TRACKS'
+        });
+      }
     });
   },
   buildLikedTracks (callBack, tracks) {

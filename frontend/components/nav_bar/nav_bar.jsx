@@ -2,7 +2,6 @@ const React = require('react');
 
 const SessionStore = require('../../stores/session_store');
 const ModalStore = require('../../stores/modal_store');
-const ModalForm = require('../../stores/modal_store');
 
 const LeftNav = require('./left_nav');
 const RightNavLoggedIn = require('./right_nav_logged_in');
@@ -15,11 +14,11 @@ const _listeners = [];
 
 module.exports = React.createClass({
   getInitialState () {
-    return {loggedIn: SessionStore.loggedIn(), modalType: "", formType: ""};
+    return {loggedIn: SessionStore.loggedIn(), modal: null};
   },
   componentWillMount () {
     _listeners.push(SessionStore.addListener(this._sessionChange));
-    _listeners.push(ModalForm.addListener(this._modalChange));
+    _listeners.push(ModalStore.addListener(this._modalChange));
   },
   componentWillUnmount () {
     _listeners.forEach(listener => listener.remove());
@@ -28,34 +27,32 @@ module.exports = React.createClass({
     this.setState({loggedIn: SessionStore.loggedIn()});
   },
   _modalChange () {
-    if (!ModalStore.modalType()) {
-      $(`#${this.state.formType}-${this.state.modalType}-MODAL`).modal('hide');
+    if (ModalStore.modal()) {
+      // add modal to DOM and then show
+      this.setState({modal: ModalStore.modal()}, function () {
+        $(`#${this.state.modal.action}-${this.state.modal.type}-MODAL`).modal('show');
+      });
+    } else if (this.state.modal) {
+      // hide current modal and then remove from DOM
+      $(`#${this.state.modal.action}-${this.state.modal.type}-MODAL`).modal('hide');
+      setTimeout(function () {
+        this.setState({modal: null});
+      }.bind(this), 500);
     }
-    this.setState({modalType: ModalStore.modalType(),
-              formType: ModalStore.formType(),
-              track: ModalStore.track()}, function () {
-      $(`#${this.state.formType}-${this.state.modalType}-MODAL`).modal('show');
-    });
   },
   render () {
-    let modal = "";
-    if (this.state.modalType === "TRACK") {
-      if (this.state.track) {
-        modal = <TrackForm formType={this.state.formType} track={ModalStore.track()} />;
-      } else {
-        modal = <TrackForm formType={this.state.formType} />;
-      }
-    } else if (this.state.modalType === "USER") {
-      modal = <UserForm formType={this.state.formType} />;
-    }
     return (
       <div>
+        {this.state.modal ? (
+          this.state.modal.type === 'TRACK' ?
+          <TrackForm action={this.state.modal.action} data={this.state.modal.data}/> :
+          <UserForm action={this.state.modal.action} />
+          ) : '' }
         <nav className="nav-bar">
           <LeftNav pathname={this.props.pathname} />
           <SearchBar />
           { this.state.loggedIn ? <RightNavLoggedIn /> : <RightNavLoggedOut /> }
         </nav>
-        {modal}
       </div>
     );
   }

@@ -10,7 +10,7 @@ const _listeners = [];
 
 module.exports = React.createClass({
   getInitialState () {
-    return {tracks: [], loading: true};
+    return {tracks: [], loading: true, cannotLoad: false};
   },
   componentWillMount () {
     window.addEventListener('scroll', this._onScroll);
@@ -20,10 +20,7 @@ module.exports = React.createClass({
     this.props.fetchInitialTracks();
   },
   componentWillReceiveProps (newProps) {
-    console.log('props');
     this.setState({tracks: [], loading: true});
-    // TODO cannot dispatch here
-    TrackActions.setIndexType(newProps.indexType);
     newProps.fetchInitialTracks();
   },
   componentWillUnmount () {
@@ -39,7 +36,7 @@ module.exports = React.createClass({
     }
   },
   _onChange () {
-    this.setState({tracks: TrackStore.all(), loading: false});
+    this.setState({tracks: TrackStore.all(), loading: false, cannotLoad: TrackStore.cannotLoadTracks()});
   },
   _updateTrack (track) {
     ErrorActions.removeErrors();
@@ -92,8 +89,10 @@ module.exports = React.createClass({
             <div className="rect4"></div>
             <div className="rect5"></div>
           </div> : ""}
-        { !this.state.loading && !this.state.tracks.length ?
-          <div className='no-results-text'>No Tracks Found...</div> : ''}
+        { !this.state.loading && !this.state.tracks.length ? (
+            this.state.cannotLoad ?
+              <div className='no-results-text'>Unable to connect to Spotify API...</div> :
+              <div className='no-results-text'>No Tracks Found...</div>) : ''}
       </div>
     );
   }

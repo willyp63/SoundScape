@@ -5,7 +5,7 @@ module.exports = ["Britney Spears", "Jay Z", "Eminem", "Destiny's Child", "Green
     "Alice In Chains", "Foo Fighters", "Jennifer Lopez", "Lady Gaga", "Kesha", "Gwen Stefani",
      "Nicole Scherzinger", "Paris Hilton", "Katy Perry", "Lindsay Lohan", "The Pussycat Dolls",
       "Kanye West", "Drake", "2Pac", "The Notorious B.I.G.", "Lil Wayne", "J. Cole", "T.I.",
-       "Timbaland", "Kendrick Lamar", "50 Cent", "D12", "JAY Z", "Dr. Dre", "Ken Kaniff", "Obie Trice",
+       "Timbaland", "Kendrick Lamar", "50 Cent", "D12", "JAY Z", "Dr. Dre", "Obie Trice",
         "Bad Meets Evil", "Ludacris", "Kelly Rowland", "TLC", "Christina Milian", "Ciara", "Amerie",
          "Brandy", "Mýa", "Aaliyah", "Beyoncé", "Alicia Keys", "The Offspring", "blink-182", "Sum 41",
           "Good Charlotte", "Simple Plan", "Thirty Seconds To Mars", "Bowling For Soup", "Rise Against",

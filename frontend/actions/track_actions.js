@@ -3,6 +3,7 @@ const TrackApiUtil = require('../util/track_api_util');
 const ErrorActions = require('./error_actions');
 const PlayerActions = require('./player_actions');
 const TrackStore = require('../stores/track_store');
+const PlayerStore = require('../stores/player_store');
 
 module.exports = {
   fetchAllTracks (limit, offset) {
@@ -25,43 +26,43 @@ module.exports = {
   },
   likeTrack (track) {
     TrackApiUtil.likeTrack(track, function () {
-      if (TrackStore.hasTrack(track)) {
-        dispatcher.dispatch({
-          actionType: 'LIKE_TRACK',
-          track: track
-        });
-      } else {
-        PlayerActions.likePlayingTrack(track);
+      if (TrackStore.hasTrack(track) && PlayerStore.hasTrack(track)) {
+        track.like_count--;
       }
+      PlayerActions.likePlayingTrack(track);
+      dispatcher.dispatch({
+        actionType: 'LIKE_TRACK',
+        track: track
+      });
     });
   },
   postAndLikeTrack (track) {
     const that = this;
     TrackApiUtil.postAnonymousTrack(track, function (newTrack) {
       TrackApiUtil.likeTrack(newTrack, function () {
-        that.replaceTrack(track, newTrack);
         PlayerActions.replaceTrack(track, newTrack);
-        if (TrackStore.hasTrack(track)) {
-          dispatcher.dispatch({
-            actionType: 'LIKE_TRACK',
-            track: newTrack
-          });
-        } else {
-          PlayerActions.likePlayingTrack(newTrack);
+        that.replaceTrack(track, newTrack);
+        if (TrackStore.hasTrack(newTrack) && PlayerStore.hasTrack(newTrack)) {
+          newTrack.like_count--;
         }
+        PlayerActions.likePlayingTrack(newTrack);
+        dispatcher.dispatch({
+          actionType: 'LIKE_TRACK',
+          track: newTrack
+        });
       });
     }, ErrorActions.setErrors);
   },
   unlikeTrack (track) {
     TrackApiUtil.unlikeTrack(track, function () {
-      if (TrackStore.hasTrack(track)) {
-        dispatcher.dispatch({
-          actionType: 'UNLIKE_TRACK',
-          track: track
-        });
-      } else {
-        PlayerActions.unlikePlayingTrack(track);
+      if (TrackStore.hasTrack(track) && PlayerStore.hasTrack(track)) {
+        track.like_count++;
       }
+      PlayerActions.unlikePlayingTrack(track);
+      dispatcher.dispatch({
+        actionType: 'UNLIKE_TRACK',
+        track: track
+      });
     });
   },
   receiveTracks (tracks) {
@@ -79,7 +80,7 @@ module.exports = {
   unlikeAndRemoveTrack (track) {
     TrackApiUtil.unlikeTrack(track, function () {
       this.removeTrack(track);
-      PlayerActions.removePlayingTrack(track);
+      PlayerActions.unlikePlayingTrack(track);
     }.bind(this));
   },
   postTrack (track) {

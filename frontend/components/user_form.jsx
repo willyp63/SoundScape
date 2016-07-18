@@ -10,7 +10,7 @@ const _listeners = [];
 
 module.exports = React.createClass({
   getInitialState () {
-    if (this.props.formType === "UPDATE") {
+    if (this.props.action === "UPDATE") {
       const user = SessionStore.currentUser();
       return {errors: undefined, user: {id: user.id,
                                         username: user.username,
@@ -56,9 +56,9 @@ module.exports = React.createClass({
   },
   _onSubmit (e) {
     e.preventDefault();
-    if (this.props.formType === 'LOGIN') {
+    if (this.props.action === 'LOGIN') {
       SessionActions.login(this.state.user);
-    } else if (this.props.formType === 'SIGNUP') {
+    } else if (this.props.action === 'SIGNUP') {
       SessionActions.signup(this.state.user);
     } else {
       UserActions.updateUser(this.state.user);
@@ -69,20 +69,20 @@ module.exports = React.createClass({
     SessionActions.login({username: 'guest', password: 'db84n337vmz39alqp97'});
   },
   _closeModal () {
-    ModalActions.hide("USER", this.props.formType);
+    ModalActions.hide();
   },
   render () {
     let formTitle;
-    if (this.props.formType === 'LOGIN') {
+    if (this.props.action === 'LOGIN') {
       formTitle = 'Log In';
-    } else if (this.props.formType === 'SIGNUP') {
+    } else if (this.props.action === 'SIGNUP') {
       formTitle = 'Sign Up';
     } else {
       formTitle = 'Update Profile';
     }
 
     return (
-      <div id={`${this.props.formType}-USER-MODAL`} className="modal fade" role="dialog">
+      <div id={`${this.props.action}-USER-MODAL`} className="modal fade" role="dialog">
         <div className="modal-dialog">
           <div className="modal-content cf">
             <div className="form-header cf">
@@ -97,7 +97,7 @@ module.exports = React.createClass({
                        onChange={this._onChange} />
               </div>
 
-              { this.props.formType === "UPDATE" ?
+              { this.props.action === "UPDATE" ?
                 <div className="form-field cf">
                   <label for="old_password">Old Password:</label>
                   <input type="password" id="old_password"
@@ -107,14 +107,14 @@ module.exports = React.createClass({
 
               <div className="form-field cf">
                 <label for="password">
-                  {this.props.formType === "UPDATE" ? "New " : ""}Password:
+                  {this.props.action === "UPDATE" ? "New " : ""}Password:
                 </label>
                 <input type="password" id="password"
                        value={this.state.user.password}
                        onChange={this._onChange} />
               </div>
 
-              {this.props.formType !== "LOGIN" ?
+              {this.props.action !== "LOGIN" ?
                 <div className="cf">
                   <div className="my-col-2 cf">
                     {this.state.user.picture_url ?
@@ -144,7 +144,7 @@ module.exports = React.createClass({
                  }</ul> : ""
                }
               <button onClick={this._onSubmit} className="btn btn-success">{formTitle}</button>
-              {this.props.formType !== "UPDATE" ?
+              {this.props.action !== "UPDATE" ?
                 <button onClick={this._demoLogin} className="btn btn-success">Demo</button> :
                 ""}
             </form>

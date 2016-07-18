@@ -1,12 +1,10 @@
 const dispatcher = require('../dispatcher');
 
 module.exports = {
-  show (modalType, formType, track) {
+  show (type, action, data) {
     dispatcher.dispatch({
       actionType: "SHOW_MODAL",
-      modalType: modalType,
-      formType: formType,
-      track: track
+      modal: {type: type, action: action, data: data}
     });
   },
   hide () {

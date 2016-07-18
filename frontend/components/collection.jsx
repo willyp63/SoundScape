@@ -18,6 +18,7 @@ module.exports = React.createClass({
   },
   _navItemClick (e) {
     this.setState({indexType: e.target.id});
+    TrackActions.setIndexType(e.target.id);
   },
   render () {
     return (
