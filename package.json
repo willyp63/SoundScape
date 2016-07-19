@@ -19,11 +19,14 @@
     "babel-preset-react": "^6.11.0",
     "cloudinary": "^1.4.1",
     "flux": "^2.1.1",
+    "fs": "0.0.2",
+    "json-loader": "^0.5.4",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "react-player": "^0.7.4",
     "react-router": "^2.5.1",
-    "webpack": "^1.13.1"
+    "webpack": "^1.13.1",
+    "ytdl-core": "^0.7.17"
   },
   "engines": {
     "node": "6.0.0",
