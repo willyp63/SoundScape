@@ -1,6 +1,3 @@
-window.betterAudio = require('./search.js');
-
-
 const ReactDOM = require("react-dom");
 const React = require('react');
 
