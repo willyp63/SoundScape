@@ -23,6 +23,10 @@ module.exports = {
       {
         test: /\.node$/,
         loader: "node-loader"
+      },
+      {
+        test: /\.json$/,
+        loader: "json-loader"
       }
     ]
   },
