@@ -8,17 +8,20 @@ const ModalActions = require('../actions/modal_actions');
 const ErrorActions = require('../actions/error_actions');
 const TrackActions = require('../actions/track_actions');
 const SearchResult = require('./nav_bar/search_result');
+const DownloadActions = require('../actions/download_actions');
+const DownloadStore = require('../stores/download_store');
 
 const _listeners = [];
 
 module.exports = React.createClass({
   getInitialState () {
     return {tracks: PlayerStore.tracks(), playing: true, trackIndex: 0,
-      loading: false, currentTime: 0, duration: 0};
+      loadingLike: false, currentTime: 0, duration: 0, playingTrack: null};
   },
   componentWillMount () {
     _listeners.push(PlayerStore.addListener(this._onChange));
     _listeners.push(TrackStore.addListener(this._trackChange));
+    _listeners.push(DownloadStore.addListener(this._downloadChange));
   },
   componentWillUnmount () {
     _listeners.forEach(listener => listener.remove());
@@ -26,21 +29,32 @@ module.exports = React.createClass({
   _onChange () {
     if (PlayerStore.newTracks()) {
       if (this.state.tracks.length) { AudioPlayer.removeListeners(); }
-      this.setState({tracks: PlayerStore.tracks(), trackIndex: 0}, this._beginPlaying);
+      this.setState({tracks: PlayerStore.tracks(), trackIndex: 0}, this._downloadTrack);
     } else {
-      this.setState({tracks: PlayerStore.tracks(), loading: false});
+      this.setState({tracks: PlayerStore.tracks(), loadingLike: false});
     }
   },
   _trackChange () {
-    this.setState({loading: false});
+    this.setState({loadingLike: false});
+  },
+  _downloadChange () {
+    const playingTrack = this.state.tracks[this.state.trackIndex];
+    const downloadedTrack = DownloadStore.track();
+    if (playingTrack.storeId === downloadedTrack.storeId) {
+      this.setState({playingTrack: downloadedTrack}, this._beginPlaying);
+    }
+  },
+  _downloadTrack () {
+    const playingTrack = this.state.tracks[this.state.trackIndex];
+    if (playingTrack) {
+      DownloadActions.downloadTrack(playingTrack);
+    }
   },
   _beginPlaying () {
-    if (this.state.tracks.length) {
-      AudioPlayer.moveProgressHead(0);
-      this.setState({playing: true, currentTime: 0}, function () {
-        AudioPlayer.init(this._onLoad, this._timeUpdate, this._onEnd);
-      });
-    }
+    AudioPlayer.moveProgressHead(0);
+    this.setState({playing: true, currentTime: 0}, function () {
+      AudioPlayer.init(this._onLoad, this._timeUpdate, this._onEnd);
+    });
   },
   _onLoad () {
     this.setState({duration: AudioPlayer.duration()}, function () {
@@ -55,7 +69,7 @@ module.exports = React.createClass({
     if (this.state.trackIndex >= this.state.tracks.length - 1) {
       this.setState({playing: false});
     } else {
-      this.setState({trackIndex: this.state.trackIndex + 1}, this._beginPlaying);
+      this.setState({trackIndex: this.state.trackIndex + 1}, this._downloadTrack);
     }
   },
   _togglePlay () {
@@ -102,17 +116,17 @@ module.exports = React.createClass({
   _nextTrack () {
     let newIndex = this.state.trackIndex + 1;
     if (newIndex >= this.state.tracks.length) { newIndex = 0; }
-    this.setState({trackIndex: newIndex}, this._beginPlaying);
+    this.setState({trackIndex: newIndex}, this._downloadTrack);
   },
   _previousTrack () {
     let newIndex = this.state.trackIndex - 1;
     if (newIndex < 0) { newIndex = this.state.tracks.length - 1; }
-    this.setState({trackIndex: newIndex}, this._beginPlaying);
+    this.setState({trackIndex: newIndex}, this._downloadTrack);
   },
   _playTack (track) {
     const newIndex = this.state.tracks.indexOf(track);
     if (newIndex < 0) { return; }
-    this.setState({trackIndex: newIndex}, this._beginPlaying);
+    this.setState({trackIndex: newIndex}, this._downloadTrack);
   },
   _closePlayer () {
     AudioPlayer.removeListeners();
@@ -126,7 +140,7 @@ module.exports = React.createClass({
       ErrorActions.removeErrors();
       ModalActions.show("USER", "SIGNUP");
     } else {
-      this.setState({loading: true});
+      this.setState({loadingLike: true});
       if (track.liked) {
         if (TrackStore.indexType() === "MY_LIKES") {
           TrackActions.unlikeAndRemoveTrack(track);
@@ -143,7 +157,7 @@ module.exports = React.createClass({
     }
   },
   render () {
-    const track = this.state.tracks[this.state.trackIndex];
+    const track = this.state.playingTrack;
     return (
       <div>{
         track ?
@@ -155,7 +169,7 @@ module.exports = React.createClass({
               <i className="glyphicon glyphicon-remove" onClick={this._closePlayer}/>
               <img src={track.image_url} width="40" height="40"/>
               <div className="player-like-button" onClick={this._likeTrack}>
-                {this.state.loading ?
+                {this.state.loadingLike ?
                   <div className="sk-fading-circle">
                     <div className="sk-circle1 sk-circle"></div>
                     <div className="sk-circle2 sk-circle"></div>
