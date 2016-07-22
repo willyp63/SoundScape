@@ -26,7 +26,7 @@ function searchYoutube (q, cb) {
 
 function downloadAudio (ytid, cb) {
   // connect to ytdl server
-  var socket = io('localhost:8080',
+  var socket = io('http://thawing-bastion-97540.herokuapp.com',
                       {'transports': ['websocket', 'polling']});
 
   // attempt to download audio
