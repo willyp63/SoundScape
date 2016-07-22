@@ -3,81 +3,139 @@ const dispatcher = require('../dispatcher');
 const LinkedHashMap = require('../util/linked_hash_map');
 
 let _tracks = new LinkedHashMap();
-let _newTracks = false;
+let _urls = {};
+let _playIndex = 0;
 
 const PlayerStore = new Store(dispatcher);
 
 PlayerStore.tracks = () => _tracks.all();
-PlayerStore.newTracks = () => _newTracks;
+PlayerStore.playIndex = () => _playIndex;
+PlayerStore.playTrack = () => getPlayTrack();
+PlayerStore.nextTrack = () => getNextTrack();
 
 PlayerStore.hasTrack = function (track) {
   return !!(_tracks.get(track.storeId));
 };
 
+PlayerStore.loadingOrHasUrl = function (track) {
+  return !!(this.getUrl(track));
+};
+
+PlayerStore.hasUrl = function (track) {
+  const url = this.getUrl(track);
+  return (url && url !== 'LOADING');
+};
+
+PlayerStore.getUrl = function (track) {
+  return _urls[track.storeId];
+};
+
 PlayerStore.__onDispatch = function (payload) {
-  let track;
   switch (payload.actionType) {
-    case "PLAY_TRACK":
+    case "SET_TRACK":
       setTracks([payload.track]);
-      _newTracks = true;
       this.__emitChange();
       break;
-    case "PLAY_TRACKS":
+    case "SET_TRACKS":
       setTracks(payload.tracks);
-      _newTracks = true;
       this.__emitChange();
       break;
     case "CLOSE_PLAYER":
       setTracks([]);
       this.__emitChange();
-      _newTracks = true;
       break;
     case "REMOVE_PLAYING_TRACK":
-      _tracks.remove(payload.track.id);
-      _newTracks = true;
+      removeTrack(payload.track);
       this.__emitChange();
       break;
     case "REPLACE_PLAYING_TRACK":
-      payload.newTrack.storeId = payload.oldTrack.storeId;
-      _tracks.set(payload.oldTrack.storeId, payload.newTrack);
-      _newTracks = false;
+      replaceTrack(payload.oldTrack, payload.newTrack);
       this.__emitChange();
       break;
     case "LIKE_PLAYING_TRACK":
-      track = _tracks.get(payload.track.storeId) || _tracks.get(payload.track.spotify_id);
-      if (!track) { break; }
-      track.liked = true;
-      track.like_count++;
-      _newTracks = false;
+      likeTrack(payload.track);
       this.__emitChange();
       break;
     case "UNLIKE_PLAYING_TRACK":
-      track = _tracks.get(payload.track.storeId) || _tracks.get(payload.track.spotify_id);
-      if (!track) { break; }
-      track.liked = false;
-      track.like_count--;
-      _newTracks = false;
+      unlikeTrack(payload.track);
       this.__emitChange();
       break;
     case "SHUFFLE_TRACKS":
-      const shuffledTracks = shuffle(_tracks.all());
-      setTracks(shuffledTracks);
-      _newTracks = true;
+      shuffleTracks();
+      this.__emitChange();
+      break;
+    case "PLAY_NEXT_TRACK":
+      next();
+      this.__emitChange();
+      break;
+    case "PLAY_PREV_TRACK":
+      prev();
+      this.__emitChange();
+      break;
+    case "PLAY_THIS_TRACK":
+      playTrack(payload.track);
+      this.__emitChange();
+      break;
+    case "RECIEVE_DOWNLOADED_TRACK":
+      recieveDownloadedTrack(payload.track);
+      this.__emitChange();
+      break;
+    case "START_DOWNLOADING_TRACK":
+      startDownloadingTrack(payload.track);
       this.__emitChange();
       break;
   }
 };
 
 function setTracks (tracks) {
+  _playIndex = 0;
   _tracks = new LinkedHashMap();
+  _urls = {};
   tracks.forEach(track => {
-    storeTrack(track.id, track);
+    storeTrack(track.storeId, track);
   });
 }
 
 function storeTrack (id, track) {
   track.storeId = id;
   _tracks.addHead(id, track);
+}
+
+function removeTrack (track) {
+  _tracks.remove(track.storeId);
+  if (_playIndex >= _tracks.all().length) { _playIndex = 0; }
+}
+
+function replaceTrack (oldTrack, newTrack) {
+  newTrack.storeId = oldTrack.storeId;
+  _tracks.set(oldTrack.storeId, newTrack);
+}
+
+function likeTrack (t) {
+  const track = getTrack(t);
+  if (track) {
+    if (!track.like_count) { track.like_count = 0; }
+    track.liked = true;
+    track.like_count++;
+  }
+}
+
+function unlikeTrack (t) {
+  const track = getTrack(t);
+  if (track) {
+    track.liked = false;
+    track.like_count--;
+  }
+}
+
+function getTrack (track) {
+  const id = track.storeId || track.spotify_id;
+  return _tracks.get(id);
+}
+
+function shuffleTracks () {
+  const shuffledTracks = shuffle(_tracks.all());
+  setTracks(shuffledTracks);
 }
 
 function shuffle (tracks) {
@@ -91,6 +149,43 @@ function shuffle (tracks) {
     tracks[k] = temp;
   }
   return tracks;
+}
+
+function next () {
+  _playIndex += 1;
+  if (_playIndex >= _tracks.all().length) { _playIndex = 0; }
+}
+
+function prev () {
+  _playIndex -= 1;
+  if (_playIndex < 0) { _playIndex = _tracks.all().length - 1; }
+}
+
+function playTrack (track) {
+  const newIndex = _tracks.all().indexOf(track);
+  if (newIndex >= 0) { _playIndex = newIndex; }
+}
+
+function getPlayTrack () {
+  return _tracks.all()[_playIndex];
+}
+
+function getNextTrack () {
+  let nextIdx = _playIndex + 1;
+  if (nextIdx >= _tracks.all().length) { nextIdx = 0; }
+  return _tracks.all()[nextIdx];
+}
+
+function recieveDownloadedTrack (track) {
+  if (_tracks.get(track.storeId)) {
+    _urls[track.storeId] = track.audio_url;
+  }
+}
+
+function startDownloadingTrack (track) {
+  if (_tracks.get(track.storeId)) {
+    _urls[track.storeId] = 'LOADING';
+  }
 }
 
 module.exports = PlayerStore;

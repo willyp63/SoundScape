@@ -27,6 +27,7 @@ module.exports = {
   },
   removeListeners () {
     const audio = this.audio();
+    if (!audio) { return; }
     audio.removeEventListener("canplaythrough", this.canplaythrough);
     audio.removeEventListener("ended", _onEnd);
     audio.removeEventListener("timeupdate", _onUpdate);
@@ -47,9 +48,6 @@ module.exports = {
   stepBack () {
     this.audio().currentTime = 0;
   },
-  stepForward () {
-
-  },
   timeUpdate () {
     if (!_updating) { return; }
     const audio = this.audio();
@@ -67,7 +65,9 @@ module.exports = {
     audio.currentTime = audio.duration * percent;
   },
   setVolume (percent) {
-    this.audio().volume = percent;
+    const audio = this.audio();
+    if (!audio) { return; }
+    audio.volume = percent;
   },
   stopUpdating () {
     _updating = false;

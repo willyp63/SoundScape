@@ -46,8 +46,7 @@ module.exports = React.createClass({
     PlayerActions.playTracks(this.state.tracks);
   },
   _shuffleAll () {
-    PlayerActions.playTracks(this.state.tracks);
-    PlayerActions.shuffleTracks();
+    PlayerActions.playShuffledTracks(this.state.tracks);
   },
   render () {
     // seperate tracks into rows

@@ -81,8 +81,8 @@ function appendTracks (tracks) {
 }
 
 function replaceTrack (oldTrack, newTrack) {
-  newTrack.storeId = oldTrack.id;
-  _tracks.set(oldTrack.id, newTrack);
+  newTrack.storeId = oldTrack.storeId;
+  _tracks.set(oldTrack.storeId, newTrack);
 }
 
 function storeTrack (id, track) {

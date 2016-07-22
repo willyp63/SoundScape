@@ -8,49 +8,62 @@ const ModalActions = require('../actions/modal_actions');
 const ErrorActions = require('../actions/error_actions');
 const TrackActions = require('../actions/track_actions');
 const SearchResult = require('./nav_bar/search_result');
-const DownloadActions = require('../actions/download_actions');
-const DownloadStore = require('../stores/download_store');
 
 const _listeners = [];
 
 module.exports = React.createClass({
   getInitialState () {
-    return {tracks: PlayerStore.tracks(), playing: true, trackIndex: 0,
-      loadingLike: false, currentTime: 0, duration: 0, playingTrack: null};
+    return {tracks: PlayerStore.tracks(), playing: true, loadingLike: false,
+      loadingTrack: true, currentTime: 0, duration: 0, playingTrack: null, playingUrl: null};
   },
   componentWillMount () {
     _listeners.push(PlayerStore.addListener(this._onChange));
     _listeners.push(TrackStore.addListener(this._trackChange));
-    _listeners.push(DownloadStore.addListener(this._downloadChange));
   },
   componentWillUnmount () {
     _listeners.forEach(listener => listener.remove());
   },
   _onChange () {
-    if (PlayerStore.newTracks()) {
-      if (this.state.tracks.length) { AudioPlayer.removeListeners(); }
-      this.setState({tracks: PlayerStore.tracks(), trackIndex: 0}, this._downloadTrack);
+    // update tracks
+    const newTracks = PlayerStore.tracks();
+    this.setState({tracks: newTracks});
+
+    // close player if no tracks
+    if (!newTracks.length) {
+      this.setState({playingTrack: null});
+      return;
+    }
+
+    const newPlayTrack = PlayerStore.playTrack();
+    if (!this.state.playingTrack || newPlayTrack.storeId !== this.state.playingTrack.storeId) {
+      // update playing track
+      this.setState({playingTrack: newPlayTrack}, this._tryToPlayAudio);
     } else {
-      this.setState({tracks: PlayerStore.tracks(), loadingLike: false});
+      if (newPlayTrack.liked !== this.state.playingTrack.liked) {
+        // like track
+        this.setState({loadingLike: false, playingTrack: newPlayTrack});
+      } else if (this.state.loadingTrack) {
+        // check if audio is downloaded
+        this._tryToPlayAudio();
+      }
+    }
+  },
+  _tryToPlayAudio () {
+    AudioPlayer.removeListeners();
+
+    const playTrack = this.state.playingTrack;
+    if (PlayerStore.hasUrl(playTrack)) {
+      const url = PlayerStore.getUrl(playTrack);
+      this.setState({loadingTrack: false, playingUrl: url}, this._beginPlaying);
+    } else {
+      this.setState({loadingTrack: true, playingUrl: null});
     }
   },
   _trackChange () {
     this.setState({loadingLike: false});
   },
-  _downloadChange () {
-    const playingTrack = this.state.tracks[this.state.trackIndex];
-    const downloadedTrack = DownloadStore.track();
-    if (playingTrack.storeId === downloadedTrack.storeId) {
-      this.setState({playingTrack: downloadedTrack}, this._beginPlaying);
-    }
-  },
-  _downloadTrack () {
-    const playingTrack = this.state.tracks[this.state.trackIndex];
-    if (playingTrack) {
-      DownloadActions.downloadTrack(playingTrack);
-    }
-  },
   _beginPlaying () {
+    initVolume();
     AudioPlayer.moveProgressHead(0);
     this.setState({playing: true, currentTime: 0}, function () {
       AudioPlayer.init(this._onLoad, this._timeUpdate, this._onEnd);
@@ -66,13 +79,10 @@ module.exports = React.createClass({
     this.setState({currentTime: AudioPlayer.currentTime()});
   },
   _onEnd () {
-    if (this.state.trackIndex >= this.state.tracks.length - 1) {
-      this.setState({playing: false});
-    } else {
-      this.setState({trackIndex: this.state.trackIndex + 1}, this._downloadTrack);
-    }
+    PlayerActions.playNextTrack();
   },
   _togglePlay () {
+    if (this.state.loadingTrack) { return; }
     this.state.playing ? AudioPlayer.pause() : AudioPlayer.play();
     this.setState({playing: !this.state.playing});
   },
@@ -114,32 +124,26 @@ module.exports = React.createClass({
     $(window).on('mouseup', volumeHeadReleased);
   },
   _nextTrack () {
-    let newIndex = this.state.trackIndex + 1;
-    if (newIndex >= this.state.tracks.length) { newIndex = 0; }
-    this.setState({trackIndex: newIndex}, this._downloadTrack);
+    PlayerActions.playNextTrack();
   },
   _previousTrack () {
-    let newIndex = this.state.trackIndex - 1;
-    if (newIndex < 0) { newIndex = this.state.tracks.length - 1; }
-    this.setState({trackIndex: newIndex}, this._downloadTrack);
+    PlayerActions.playPrevTrack();
   },
   _playTack (track) {
-    const newIndex = this.state.tracks.indexOf(track);
-    if (newIndex < 0) { return; }
-    this.setState({trackIndex: newIndex}, this._downloadTrack);
+    PlayerActions.playThisTrack(track);
   },
   _closePlayer () {
     AudioPlayer.removeListeners();
     PlayerActions.closePlayer();
   },
   _likeTrack () {
-    const track = this.state.tracks[this.state.trackIndex];
     if (!SessionStore.loggedIn()) {
       // show signup form
 
       ErrorActions.removeErrors();
       ModalActions.show("USER", "SIGNUP");
     } else {
+      const track = this.state.playingTrack;
       this.setState({loadingLike: true});
       if (track.liked) {
         if (TrackStore.indexType() === "MY_LIKES") {
@@ -162,9 +166,6 @@ module.exports = React.createClass({
       <div>{
         track ?
           <nav className="audio-player-bar">
-            <audio controls id="audio-player">
-              <source src={track.audio_url} type="audio/mpeg"/>
-            </audio>
             <div className="playing-image">
               <i className="glyphicon glyphicon-remove" onClick={this._closePlayer}/>
               <img src={track.image_url} width="40" height="40"/>
@@ -199,18 +200,60 @@ module.exports = React.createClass({
                 <i className="glyphicon glyphicon-step-forward"
                    onClick={this._nextTrack}></i>
               </div>
-              <div className="audio-progress-bar">
-                <span className="audio-current-time">{formatTime(this.state.currentTime)}</span>
-                <div className="progress-bar">
-                  <div className="progress-bar-bg"
-                       onClick={this._clickProgressBar}/>
-                  <div className="progress-bar-fg"
-                       onClick={this._clickProgressBar}/>
-                  <div className="progress-bar-head"
-                       onMouseDown={this._clickProgressHead}/>
-                </div>
-                <span className="audio-total-time">{formatTime(this.state.duration)}</span>
-              </div>
+              {this.state.loadingTrack ?
+                <div className="audio-player-spinner">
+                  <div className="rect1"></div>
+                  <div className="rect2"></div>
+                  <div className="rect3"></div>
+                  <div className="rect4"></div>
+                  <div className="rect5"></div>
+                  <div className="rect6"></div>
+                  <div className="rect7"></div>
+                  <div className="rect8"></div>
+                  <div className="rect9"></div>
+                  <div className="rect10"></div>
+                  <div className="rect11"></div>
+                  <div className="rect12"></div>
+                  <div className="rect13"></div>
+                  <div className="rect14"></div>
+                  <div className="rect15"></div>
+                  <div className="rect16"></div>
+                  <div className="rect17"></div>
+                  <div className="rect18"></div>
+                  <div className="rect19"></div>
+                  <div className="rect20"></div>
+                  <div className="rect21"></div>
+                  <div className="rect22"></div>
+                  <div className="rect23"></div>
+                  <div className="rect24"></div>
+                  <div className="rect25"></div>
+                  <div className="rect26"></div>
+                  <div className="rect27"></div>
+                  <div className="rect28"></div>
+                  <div className="rect29"></div>
+                  <div className="rect30"></div>
+                  <div className="rect31"></div>
+                  <div className="rect32"></div>
+                  <div className="rect33"></div>
+                  <div className="rect34"></div>
+                  <div className="rect35"></div>
+                  <div className="rect36"></div>
+                </div> :
+                <div className="audio-progress-bar">
+                  <audio controls id="audio-player">
+                    <source src={this.state.playingUrl} type="audio/mpeg"/>
+                  </audio>
+                  <span className="audio-current-time">{formatTime(this.state.currentTime)}</span>
+                  <div className="progress-bar">
+                    <div className="progress-bar-bg"
+                         onClick={this._clickProgressBar}/>
+                    <div className="progress-bar-fg"
+                         onClick={this._clickProgressBar}/>
+                    <div className="progress-bar-head"
+                         onMouseDown={this._clickProgressHead}/>
+                  </div>
+                  <span className="audio-total-time">{formatTime(this.state.duration)}</span>
+                </div>}
               <div className="audio-volume-control">
                 <i className="glyphicon glyphicon-volume-up"
                    onClick={this._toggleVolumeSelector}></i>
@@ -286,6 +329,13 @@ function volumeHeadReleased (e) {
 
 function setVolume (percent) {
   $('.volume-head').css('top', percent * $(".volume-rail").height());
+  AudioPlayer.setVolume(1 - percent);
+}
+
+function initVolume () {
+  const topStr = $('.volume-head').css('top');
+  const top = parseInt(topStr.slice(0, topStr.length - 2));
+  const percent = top / $(".volume-rail").height();
   AudioPlayer.setVolume(1 - percent);
 }
 
