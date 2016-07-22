@@ -17,7 +17,6 @@ module.exports = {
     }.bind(this));
   },
   downloadNeededTracks () {
-    debugger
     const playTrack = PlayerStore.playTrack();
     if (!PlayerStore.loadingOrHasUrl(playTrack)) {
       this.downloadTrack(playTrack);
