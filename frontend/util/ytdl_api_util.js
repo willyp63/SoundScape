@@ -6,7 +6,7 @@ var WritableStream = require('stream').Writable;
 const FILTER_WORDS = ["live", "cover", "parody", "parodie", "karaoke",
                   "full album", "español", "concert", "tutorial", "mashup",
                   "acoustic", "instrumental", "karaote", "guitar lesson",
-                  "ukulele lesson", "drum lesson", "piano lesson",
+                  "ukulele lesson", "drum lesson", "piano lesson", "tablature",
                   "how to really play", "how to play", "busking", "tutorial"];
 
 const REJECTED_CHANNELS = ["gabriella9797", "guitarlessons365song",
@@ -73,9 +73,9 @@ function searchYoutube (track, cb) {
 function betterTitle (title) {
   // only take what is before '-' and '('
   let dashIdx = title.indexOf('-') - 1;
-  if (dashIdx < 0) { dashIdx = title.length; }
+  if (dashIdx <= 0) { dashIdx = title.length; }
   let parenIdx = title.indexOf('(') - 1;
-  if (parenIdx < 0) { parenIdx = title.length; }
+  if (parenIdx <= 0) { parenIdx = title.length; }
   const i = Math.min(dashIdx, parenIdx);
   return title.slice(0, i);
 }
