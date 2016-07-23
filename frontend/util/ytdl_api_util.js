@@ -107,18 +107,18 @@ function downloadAudio (ytid, cb) {
   ss(socket).emit('download', stream, {ytid: ytid});
   stream.pipe(new BlobStream())
     .on('finish', function () {
-      console.log(`***Finished Download for ytid:${ytid}***`);
       var url = this.toBlobURL();
       cb(url);
     });
 
   // track download
-  console.log(`***Begun Download for ytid:${ytid}***`);
-  let chunkNum = 0;
   const ws = new WritableStream();
   ws._write = function (chunk, type, next) {
-    console.log(`*Recieved Chunk#${chunkNum++} for ytid:${ytid}*`);
+    console.log(`*Recieved Chunk for ytid:${ytid}*`);
     next();
   };
-  stream.pipe(ws);
+  console.log(`***Begun Download for ytid:${ytid}***`);
+  stream.pipe(ws).on('finish', function () {
+    console.log(`***Finished Download for ytid:${ytid}***`);
+  });
 }
