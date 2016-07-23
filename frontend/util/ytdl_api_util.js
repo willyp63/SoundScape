@@ -52,7 +52,7 @@ function processRequest (track, callBack) {
 
 function searchYoutube (track, cb) {
   // get ytid from first valid result
-  let query = `${track.artist} ${track.title}`;
+  let query = `${track.artist} ${betterTitle(track.title)}`;
   gapi.client.youtube.search.list({
     part: 'snippet', q: query, maxResults: 50
   }).execute(function (response) {
@@ -66,6 +66,18 @@ function searchYoutube (track, cb) {
     }
     console.log('***Unable to find matching YT result***');
   });
+}
+
+function betterTitle (title) {
+  // only take what is before '-' and '('
+  const dashIdx = title.indexOf('-');
+  const parenIdx = title.indexOf('(');
+  const i = Math.max(dashIdx, parenIdx);
+  if (i > 0) {
+    return title.slice(0, i);
+  } else {
+    return title;
+  }
 }
 
 function validResult(result, track) {
