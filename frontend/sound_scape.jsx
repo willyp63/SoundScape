@@ -36,11 +36,3 @@ document.addEventListener("DOMContentLoaded", function () {
   ReactDOM.render(<Router history={hashHistory}>{routes}</Router>,
                   document.getElementById('root'));
 });
-
-// setup gapi
-window.onClientLoad = function () {
-  // setup yt api
-  gapi.client.load('youtube', 'v3', function () {
-    gapi.client.setApiKey('AIzaSyD8hbRI2KVPzef84BQPtkwcqXD9XcTLgbE');
-  });
-};
