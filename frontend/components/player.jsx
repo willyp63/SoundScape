@@ -169,7 +169,6 @@ module.exports = React.createClass({
           <nav className="audio-player-bar">
             <div className="playing-image">
               <i className="glyphicon glyphicon-remove" onClick={this._closePlayer}/>
-              <img src={track.image_url} width="40" height="40"/>
               <div className="player-like-button" onClick={this._likeTrack}>
                 {this.state.loadingLike ?
                   <div className="sk-fading-circle">
@@ -321,19 +320,26 @@ function padNumber (num) {
 
 // SPINNER
 const NUM_ELS = 50;
-const ANIME_TIME = 1.0;
+const ANIME_TIME = 1.2;
 
 function setupSpinner () {
   const aps = $('.audio-player-spinner');
   $('.spinner-el').remove();
   const elWidth = 100 / (NUM_ELS * 2.0);
-  for (var i = NUM_ELS - 1; i >= 0; i--) {
-    const el = $('<div><div>');
-    el.addClass('spinner-el');
-    const delayTime = (ANIME_TIME / NUM_ELS) * i;
-    el.css('-webkit-animation-delay', `-${delayTime}s`);
-    el.css('animation-delay', `-${delayTime}s`);
-    el.css('width', `${elWidth}%`);
-    aps.append(el);
+  for (let i = Math.floor(NUM_ELS / 2); i >= 0; i--) {
+    addSpinnerEl(aps, elWidth, i);
   }
+  for (let i = NUM_ELS - 1; i > NUM_ELS / 2; i--) {
+    addSpinnerEl(aps, elWidth, i);
+  }
+}
+
+function addSpinnerEl (aps, width, i) {
+  const el = $('<div><div>');
+  el.addClass('spinner-el');
+  const delayTime = (ANIME_TIME / NUM_ELS) * i;
+  el.css('-webkit-animation-delay', `-${delayTime}s`);
+  el.css('animation-delay', `-${delayTime}s`);
+  el.css('width', `${width}%`);
+  aps.append(el);
 }
