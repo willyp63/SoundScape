@@ -149,7 +149,7 @@ $player-bg: $ss-gray;
 }
 
 .progress-bar-fg {
-  background-color: $ss-dark-orange;
+  background-color: $ss-light-orange;
   position: absolute;
   top: ($player-height - 8px) / 2;
   left: 0;
@@ -161,7 +161,7 @@ $player-bg: $ss-gray;
 
 .progress-bar-head {
   position: absolute;
-  background-color: $ss-dark-orange;
+  background-color: $ss-light-orange;
   border: 1px solid $ss-gray;
   top: ($player-height - 18px) / 2;
   left: -8px;
@@ -285,7 +285,7 @@ $player-bg: $ss-gray;
   margin: 0 15px;
   flex-grow: 1;
   float: left;
-  height: 30px;
+  height: 25px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -293,9 +293,10 @@ $player-bg: $ss-gray;
 }
 
 .audio-player-spinner > .spinner-el {
-  background-color: $ss-dark-orange;
+  background-color: $ss-light-orange;
   height: 100%;
   width: 2%;
+  border-radius: 50%;
   display: inline-block;
 
   -webkit-animation: sk-stretchdelay 1.0s infinite ease-in-out;
@@ -303,14 +304,14 @@ $player-bg: $ss-gray;
 }
 
 @-webkit-keyframes sk-stretchdelay {
-  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }
+  0%, 40%, 100% { -webkit-transform: scaleY(0.6) }
   20% { -webkit-transform: scaleY(1.0) }
 }
 
 @keyframes sk-stretchdelay {
   0%, 40%, 100% {
-    transform: scaleY(0.4);
-    -webkit-transform: scaleY(0.4);
+    transform: scaleY(0.6);
+    -webkit-transform: scaleY(0.6);
   }  20% {
     transform: scaleY(1.0);
     -webkit-transform: scaleY(1.0);

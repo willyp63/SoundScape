@@ -39,8 +39,9 @@ module.exports = React.createClass({
     return (
       <div>
         <div className="banner">
-          <img src="http://res.cloudinary.com/dcwxxqs4l/image/upload/v1467765103/banner_g9ggmj.jpg"/>
-          <span className="tag-line">Sample Millions of Tracks</span>
+          <img src="http://res.cloudinary.com/dcwxxqs4l/image/upload/v1469248079/landscape_hbrvih.jpg"/>
+          <div className="right-splash-buffer" />
+          <div className="left-splash-buffer" />
           {this.state.loggedIn ? "" :
             <button className="btn btn-success" onClick={this._demoLogin}>Try It Out!</button>}
         </div>

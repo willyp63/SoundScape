@@ -14,8 +14,8 @@ const REJECTED_CHANNELS = ["gabriella9797", "guitarlessons365song",
                         "cifra club", "justinguitar songs"];
 
 // setup gapi
-_gapiLoaded = false;
-_unprocessedRequests = [];
+let _gapiLoaded = false;
+let _unprocessedRequests = [];
 window.onClientLoad = function () {
   // setup yt api
   gapi.client.load('youtube', 'v3', function () {
@@ -26,6 +26,7 @@ window.onClientLoad = function () {
     _unprocessedRequests.forEach(request => {
       processRequest(request[0], request[1]);
     });
+    _unprocessedRequests = [];
   });
 };
 
@@ -63,6 +64,7 @@ function searchYoutube (track, cb) {
         return;
       }
     }
+    console.log('***Unable to find matching YT result***');
   });
 }
 
@@ -87,24 +89,25 @@ function notRejectedChannel (result) {
 
 function downloadAudio (ytid, cb) {
   // connect to ytdl server
-  var socket = io('http://thawing-bastion-97540.herokuapp.com/');
+  var socket = io('https://thawing-bastion-97540.herokuapp.com/');
 
   // attempt to download audio
   var stream = ss.createStream();
   ss(socket).emit('download', stream, {ytid: ytid});
   stream.pipe(new BlobStream())
     .on('finish', function () {
-      console.log(`Finished Download for ytid:${ytid}`);
+      console.log(`***Finished Download for ytid:${ytid}***`);
       var url = this.toBlobURL();
       cb(url);
     });
 
   // track download
-  console.log(`Begun Download for ytid:${ytid}`);
+  console.log(`***Begun Download for ytid:${ytid}***`);
   let chunkNum = 0;
   const ws = new WritableStream();
   ws._write = function (chunk, type, next) {
-    console.log(`Recieved Chunk#${chunkNum++} for ytid:${ytid}`);
+    console.log(`*Recieved Chunk#${chunkNum++} for ytid:${ytid}*`);
+    next();
   };
   stream.pipe(ws);
 }

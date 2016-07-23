@@ -1,3 +1,5 @@
+@import "colors";
+
 .my-navbar {
   display: block;
   list-style: none;
@@ -16,6 +18,6 @@
 }
 
 .my-navbar li.selected {
-  color: #f70;
-  border-bottom: 2px solid #f70;
+  color: $ss-light-orange;
+  border-bottom: 2px solid $ss-light-orange;
 }
