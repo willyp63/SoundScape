@@ -56,13 +56,14 @@ module.exports = React.createClass({
       const url = PlayerStore.getUrl(playTrack);
       this.setState({loadingTrack: false, playingUrl: url}, this._beginPlaying);
     } else {
-      this.setState({loadingTrack: true, playingUrl: null});
+      this.setState({loadingTrack: true, playingUrl: null}, setupSpinner);
     }
   },
   _trackChange () {
     this.setState({loadingLike: false});
   },
   _beginPlaying () {
+    $('.spinner-el').remove();
     initVolume();
     AudioPlayer.moveProgressHead(0);
     this.setState({playing: true, currentTime: 0}, function () {
@@ -202,42 +203,6 @@ module.exports = React.createClass({
               </div>
               {this.state.loadingTrack ?
                 <div className="audio-player-spinner">
-                  <div className="rect1"></div>
-                  <div className="rect2"></div>
-                  <div className="rect3"></div>
-                  <div className="rect4"></div>
-                  <div className="rect5"></div>
-                  <div className="rect6"></div>
-                  <div className="rect7"></div>
-                  <div className="rect8"></div>
-                  <div className="rect9"></div>
-                  <div className="rect10"></div>
-                  <div className="rect11"></div>
-                  <div className="rect12"></div>
-                  <div className="rect13"></div>
-                  <div className="rect14"></div>
-                  <div className="rect15"></div>
-                  <div className="rect16"></div>
-                  <div className="rect17"></div>
-                  <div className="rect18"></div>
-                  <div className="rect19"></div>
-                  <div className="rect20"></div>
-                  <div className="rect21"></div>
-                  <div className="rect22"></div>
-                  <div className="rect23"></div>
-                  <div className="rect24"></div>
-                  <div className="rect25"></div>
-                  <div className="rect26"></div>
-                  <div className="rect27"></div>
-                  <div className="rect28"></div>
-                  <div className="rect29"></div>
-                  <div className="rect30"></div>
-                  <div className="rect31"></div>
-                  <div className="rect32"></div>
-                  <div className="rect33"></div>
-                  <div className="rect34"></div>
-                  <div className="rect35"></div>
-                  <div className="rect36"></div>
                 </div> :
                 <div className="audio-progress-bar">
                   <audio controls id="audio-player">
@@ -351,5 +316,24 @@ function padNumber (num) {
     return `0${num}`;
   } else {
     return num;
+  }
+}
+
+// SPINNER
+const NUM_ELS = 50;
+const ANIME_TIME = 1.0;
+
+function setupSpinner () {
+  const aps = $('.audio-player-spinner');
+  $('.spinner-el').remove();
+  const elWidth = 100 / (NUM_ELS * 2.0);
+  for (var i = NUM_ELS - 1; i >= 0; i--) {
+    const el = $('<div><div>');
+    el.addClass('spinner-el');
+    const delayTime = (ANIME_TIME / NUM_ELS) * i;
+    el.css('-webkit-animation-delay', `-${delayTime}s`);
+    el.css('animation-delay', `-${delayTime}s`);
+    el.css('width', `${elWidth}%`);
+    aps.append(el);
   }
 }

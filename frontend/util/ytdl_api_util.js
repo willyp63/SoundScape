@@ -1,7 +1,6 @@
 var io = require('socket.io-client');
 var ss = require('socket.io-stream');
 var BlobStream = require('blob-stream');
-var WritableStream = require('stream').Writable;
 
 const filterwords = ["live", "cover", "parody", "parodie", "karaoke",
                   "full album", "español", "concert", "tutorial", "mashup",
@@ -72,17 +71,7 @@ function downloadAudio (ytid, cb) {
   ss(socket).emit('download', stream, {ytid: ytid});
   stream.pipe(new BlobStream())
     .on('finish', function () {
-      console.log(`finished download: ${ytid}`);
       var url = this.toBlobURL();
       cb(url);
     });
-
-  // track progress
-  console.log(`starting download: ${ytid}`);
-  const ws = new WritableStream();
-  ws._write = function (chunk, type, next) {
-    console.log('recieved chunk');
-    next();
-  };
-  stream.pipe(ws);
 }

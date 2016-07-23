@@ -31,5 +31,4 @@ module.exports = ["Britney Spears", "Jay Z", "Eminem", "Destiny's Child", "Green
                     "Dierks Bentley", "Keith Urban", "Gary Allan", "Billy Currington", "Rascal Flatts", "Jason Aldean",
                      "Megadeth", "Slayer", "Anthrax", "Pantera", "Testament", "Motörhead", "Machine Head", "Sepultura",
                       "Iron Maiden", "Temple Of The Dog", "Jerry Cantrell", "Mad Season",
-                      "Candlebox", "Mother Love Bone", "Queens of the Stone Age", "The Smashing Pumpkins", "Dave Grohl",
-                       "Taylor Hawkins & The Coattail Riders"];
+                      "Candlebox", "Mother Love Bone", "Queens of the Stone Age", "The Smashing Pumpkins"];

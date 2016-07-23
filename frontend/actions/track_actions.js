@@ -23,7 +23,6 @@ module.exports = {
     TrackApiUtil.fetchPostedTracks(this.receiveTracks);
   },
   likeTrack (track) {
-    console.log('like');
     TrackApiUtil.likeTrack(track, function () {
       dispatcher.dispatch({
         actionType: 'LIKE_TRACK',
@@ -33,7 +32,6 @@ module.exports = {
     });
   },
   postAndLikeTrack (track) {
-    console.log('post/like');
     const that = this;
     TrackApiUtil.postAnonymousTrack(track, function (newTrack) {
       TrackApiUtil.likeTrack(newTrack, function () {
@@ -47,7 +45,6 @@ module.exports = {
     }, ErrorActions.setErrors);
   },
   unlikeTrack (track) {
-    console.log('unlike');
     TrackApiUtil.unlikeTrack(track, function () {
       dispatcher.dispatch({
         actionType: 'UNLIKE_TRACK',
