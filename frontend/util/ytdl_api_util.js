@@ -52,51 +52,50 @@ function processRequest (track, callBack) {
 
 function searchYoutube (track, cb) {
   // get ytid from first valid result
-  let query = `${track.artist} ${betterTitle(track.title)}`;
+  const trackTitle = betterTitle(track.title);
+  let query = `${track.artist} ${trackTitle}`;
   gapi.client.youtube.search.list({
     part: 'snippet', q: query, maxResults: 50
   }).execute(function (response) {
     for (let i = 0; i < response.items.length; i++) {
       let result = response.items[i];
-      if (notRejectedChannel(result) && validResult(result.snippet.title, track)){
+      if (!rejectedChannel(result) &&
+            validResult(result, track.artist, trackTitle)){
         const ytid = result.id.videoId;
         cb(ytid);
         return;
       }
     }
-    console.log('***Unable to find matching YT result***');
+    console.log(`***Unable to find YT results for query:${query}***`);
   });
 }
 
 function betterTitle (title) {
   // only take what is before '-' and '('
-  const dashIdx = title.indexOf('-');
-  const parenIdx = title.indexOf('(');
-  const i = Math.max(dashIdx, parenIdx);
-  if (i > 0) {
-    return title.slice(0, i);
-  } else {
-    return title;
-  }
+  let dashIdx = title.indexOf('-') - 1;
+  if (dashIdx < 0) { dashIdx = title.length; }
+  let parenIdx = title.indexOf('(') - 1;
+  if (parenIdx < 0) { parenIdx = title.length; }
+  const i = Math.min(dashIdx, parenIdx);
+  return title.slice(0, i);
 }
 
-function validResult(result, track) {
-  result = result.toLowerCase();
-  let bandName = track.artist.toLowerCase();
-  let songTitle = track.title.toLowerCase();
-  if (!result.includes(bandName) || !result.includes(songTitle)) {
+function validResult(result, artist, trackTitle) {
+  const resultTitle = result.snippet.title;
+  if (!resultTitle.match(new RegExp(artist, 'i')) ||
+        !resultTitle.match(new RegExp(trackTitle, 'i'))) {
     return false;
   }
   for (let i = 0; i < FILTER_WORDS.length; i++) {
-    if (result.includes(FILTER_WORDS[i])) {
+    if (resultTitle.match(new RegExp(FILTER_WORDS[i], 'i'))) {
       return false;
     }
   }
   return true;
 }
 
-function notRejectedChannel (result) {
-  return !REJECTED_CHANNELS.includes(result.snippet.channelTitle.toLowerCase());
+function rejectedChannel (result) {
+  return REJECTED_CHANNELS.includes(result.snippet.channelTitle.toLowerCase());
 }
 
 function downloadAudio (ytid, cb) {
