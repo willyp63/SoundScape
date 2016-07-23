@@ -55,8 +55,11 @@ module.exports = React.createClass({
   _handleResize (e) {
     this.setState({resultTextWidth: resultTextWidth()});
   },
-  _playTrack (track) {
-    PlayerActions.playTrack(track);
+  _chooseResult (track) {
+    $('#search-input').val("");
+    SearchActions.hideResults();
+    const q = `${track.title} - ${track.artist}`;
+    hashHistory.push(`/results/${q}`);
   },
   render () {
     return (
@@ -79,7 +82,7 @@ module.exports = React.createClass({
                 return <SearchResult key={track.id}
                                      track={track}
                                      textWidth={this.state.resultTextWidth}
-                                     onClick={this._playTrack}/>;
+                                     onClick={this._chooseResult}/>;
               })
             }</ul> :
             ""}
