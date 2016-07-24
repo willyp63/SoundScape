@@ -29,7 +29,7 @@ module.exports = React.createClass({
       <div className="nav-bar-right">
         <ul>
           <li className="dropdown">
-            <a href="#" className="dropdown-toggle" data-toggle="dropdown">
+            <a className="dropdown-toggle" data-toggle="dropdown">
               <img className="profile-badge"
                    src={SessionStore.currentUser().picture_url}
                    width="35" height="35"/>

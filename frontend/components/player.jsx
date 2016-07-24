@@ -65,7 +65,7 @@ module.exports = React.createClass({
   _updateSpinner () {
     const numSeconds = PlayerStore.getDuration(this.state.playingTrack);
     const numChunks = PlayerStore.getChunks(this.state.playingTrack);
-    const percent = (numChunks / numSeconds) * 1.04;
+    const percent = (numChunks / numSeconds) / 1.01;
     setSpinnerPercent(percent);
   },
   _trackChange () {
