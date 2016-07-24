@@ -206,6 +206,13 @@ function recieveDownloadChunk (track) {
 }
 
 function startDownloadingTrack (track, duration) {
+  Object.keys(_urls).forEach(id => {
+    if (_urls[id] === 'LOADING') {
+      _urls[id] = null;
+      _numChunks[id] = null;
+      _durations[id] = null;
+    }
+  });
   if (_tracks.get(track.storeId)) {
     _urls[track.storeId] = 'LOADING';
     _numChunks[track.storeId] = 0;

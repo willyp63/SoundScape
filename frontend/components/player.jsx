@@ -44,22 +44,34 @@ module.exports = React.createClass({
         this.setState({loadingLike: false, playingTrack: newPlayTrack});
       } else if (this.state.loadingTrack) {
         // check if audio has downloaded
-        this._tryToPlayAudio();
+        this._checkAudioDownload();
       }
     }
   },
-  _tryToPlayAudio () {
+  _checkAudioDownload () {
     AudioPlayer.removeListeners();
-
     const playTrack = this.state.playingTrack;
     if (PlayerStore.hasUrl(playTrack)) {
       const numSeconds = PlayerStore.getDuration(this.state.playingTrack);
       const numChunks = PlayerStore.getChunks(this.state.playingTrack);
-      const currPercent = (numChunks / numSeconds) / 1.01;
+      const currPercent = (numChunks / numSeconds) / 1.02;
       endSpinner(currPercent, function () {
         const url = PlayerStore.getUrl(playTrack);
         this.setState({loadingTrack: false, playingUrl: url}, this._beginPlaying);
       }.bind(this));
+    } else {
+      this.setState({loadingTrack: true, playingUrl: null}, function () {
+        setupSpinner();
+        this._updateSpinner();
+      }.bind(this));
+    }
+  },
+  _tryToPlayAudio () {
+    AudioPlayer.removeListeners();
+    const playTrack = this.state.playingTrack;
+    if (PlayerStore.hasUrl(playTrack)) {
+      const url = PlayerStore.getUrl(playTrack);
+      this.setState({loadingTrack: false, playingUrl: url}, this._beginPlaying);
     } else {
       this.setState({loadingTrack: true, playingUrl: null}, function () {
         setupSpinner();
