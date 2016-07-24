@@ -66,17 +66,21 @@ module.exports = React.createClass({
     const numSeconds = PlayerStore.getDuration(this.state.playingTrack);
     const numChunks = PlayerStore.getChunks(this.state.playingTrack);
     const percent = (numChunks / numSeconds) / 1.01;
-    setSpinnerPercent(percent);
+    setSpinnerPercent(percent, {limit: true});
   },
   _trackChange () {
     this.setState({loadingLike: false});
   },
   _beginPlaying () {
-    takeDownSpinner();
-    initVolume();
-    AudioPlayer.moveProgressHead(0);
-    this.setState({playing: true, currentTime: 0}, function () {
-      AudioPlayer.init(this._onLoad, this._timeUpdate, this._onEnd);
+    const numSeconds = PlayerStore.getDuration(this.state.playingTrack);
+    const numChunks = PlayerStore.getChunks(this.state.playingTrack);
+    const currPercent = (numChunks / numSeconds) / 1.01;
+    endSpinner(currPercent, function () {
+      initVolume();
+      AudioPlayer.moveProgressHead(0);
+      this.setState({playing: true, currentTime: 0}, function () {
+        AudioPlayer.init(this._onLoad, this._timeUpdate, this._onEnd);
+      });
     });
   },
   _onLoad () {
@@ -330,6 +334,7 @@ function padNumber (num) {
 // SPINNER
 const NUM_ELS = 50;
 const ANIME_TIME = 1.2;
+const END_ANIME_TIME = 1.0;
 let _spinnerSetup = false;
 
 function setupSpinner () {
@@ -351,6 +356,23 @@ function takeDownSpinner () {
   _spinnerSetup = false;
 }
 
+function endSpinner (currPercent, onFinish) {
+  const currEls = Math.floor(NUM_ELS * currPercent);
+  const stepTime = END_ANIME_TIME / (NUM_ELS - currEls);
+  stepSpinner(currEls + 1, stepTime, onFinish);
+}
+
+function stepSpinner (els, stepTime, onFinish) {
+  setSpinnerPercent(els / NUM_ELS, {limit: false});
+  if (els < NUM_ELS) {
+    setTimeout(function () {
+      stepSpinner(els + 1, stepTime, onFinish);
+    }, stepTime);
+  } else {
+    onFinish();
+  }
+}
+
 function addSpinnerEl (aps, width, i) {
   const el = $('<div><div>');
   el.addClass('spinner-el');
@@ -361,10 +383,16 @@ function addSpinnerEl (aps, width, i) {
   aps.append(el);
 }
 
-function setSpinnerPercent (percent) {
+function setSpinnerPercent (percent, options) {
   const spinnerEls = $('.spinner-el');
   let lastActiveIdx = Math.floor(NUM_ELS * percent);
-  if (lastActiveIdx > NUM_ELS) { lastActiveIdx = NUM_ELS; }
+  if (lastActiveIdx >= NUM_ELS) {
+    if (options.limit) {
+      lastActiveIdx = NUM_ELS - 1;
+    } else {
+      lastActiveIdx = NUM_ELS;
+    }
+  }
   for (var i = 0; i < lastActiveIdx; i++) {
     spinnerEls[i].className = 'spinner-el active';
   }
