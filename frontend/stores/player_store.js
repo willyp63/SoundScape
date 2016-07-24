@@ -195,8 +195,6 @@ function getNextTrack () {
 function recieveDownloadedTrack (track) {
   if (_tracks.get(track.storeId)) {
     _urls[track.storeId] = track.audio_url;
-    _numChunks[track.storeId] = null;
-    _durations[track.storeId] = null;
   }
 }
 

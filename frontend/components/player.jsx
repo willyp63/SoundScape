@@ -53,8 +53,13 @@ module.exports = React.createClass({
 
     const playTrack = this.state.playingTrack;
     if (PlayerStore.hasUrl(playTrack)) {
-      const url = PlayerStore.getUrl(playTrack);
-      this.setState({loadingTrack: false, playingUrl: url}, this._beginPlaying);
+      const numSeconds = PlayerStore.getDuration(this.state.playingTrack);
+      const numChunks = PlayerStore.getChunks(this.state.playingTrack);
+      const currPercent = (numChunks / numSeconds) / 1.01;
+      endSpinner(currPercent, function () {
+        const url = PlayerStore.getUrl(playTrack);
+        this.setState({loadingTrack: false, playingUrl: url}, this._beginPlaying);
+      }.bind(this));
     } else {
       this.setState({loadingTrack: true, playingUrl: null}, function () {
         setupSpinner();
@@ -72,15 +77,11 @@ module.exports = React.createClass({
     this.setState({loadingLike: false});
   },
   _beginPlaying () {
-    const numSeconds = PlayerStore.getDuration(this.state.playingTrack);
-    const numChunks = PlayerStore.getChunks(this.state.playingTrack);
-    const currPercent = (numChunks / numSeconds) / 1.01;
-    endSpinner(currPercent, function () {
-      initVolume();
-      AudioPlayer.moveProgressHead(0);
-      this.setState({playing: true, currentTime: 0}, function () {
-        AudioPlayer.init(this._onLoad, this._timeUpdate, this._onEnd);
-      });
+    takeDownSpinner();
+    initVolume();
+    AudioPlayer.moveProgressHead(0);
+    this.setState({playing: true, currentTime: 0}, function () {
+      AudioPlayer.init(this._onLoad, this._timeUpdate, this._onEnd);
     });
   },
   _onLoad () {
@@ -334,7 +335,7 @@ function padNumber (num) {
 // SPINNER
 const NUM_ELS = 50;
 const ANIME_TIME = 1.2;
-const END_ANIME_TIME = 1.0;
+const END_ANIME_STEP_TIME = 0.1;
 let _spinnerSetup = false;
 
 function setupSpinner () {
@@ -357,9 +358,9 @@ function takeDownSpinner () {
 }
 
 function endSpinner (currPercent, onFinish) {
-  const currEls = Math.floor(NUM_ELS * currPercent);
-  const stepTime = END_ANIME_TIME / (NUM_ELS - currEls);
-  stepSpinner(currEls + 1, stepTime, onFinish);
+  let currEls = Math.floor(NUM_ELS * currPercent);
+  if (currEls >= NUM_ELS) { currEls = NUM_ELS - 1; }
+  stepSpinner(currEls + 1, END_ANIME_STEP_TIME, onFinish);
 }
 
 function stepSpinner (els, stepTime, onFinish) {
@@ -367,9 +368,9 @@ function stepSpinner (els, stepTime, onFinish) {
   if (els < NUM_ELS) {
     setTimeout(function () {
       stepSpinner(els + 1, stepTime, onFinish);
-    }, stepTime);
+    }, stepTime * 1000);
   } else {
-    onFinish();
+    setTimeout(onFinish, stepTime * 1000);
   }
 }
 
@@ -397,7 +398,6 @@ function setSpinnerPercent (percent, options) {
     spinnerEls[i].className = 'spinner-el active';
   }
   for (var i = lastActiveIdx; i < NUM_ELS; i++) {
-    if (!spinnerEls[i]) {debugger}
     spinnerEls[i].className = 'spinner-el';
   }
 }
