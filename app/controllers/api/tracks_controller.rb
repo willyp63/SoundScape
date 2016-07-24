@@ -122,7 +122,7 @@ class Api::TracksController < ApplicationController
   end
 
   def track_hash(t)
-    {id: t.id, title: t.title, audio_url: t.audio_url, liked: false,
+    {id: t.id, title: t.title, artist: t.artist, audio_url: t.audio_url, liked: false,
       like_count: t.like_count, image_url: t.image_url, user_id: t.user_id,
       spotify_id: t.spotify_id}
   end
@@ -152,6 +152,6 @@ class Api::TracksController < ApplicationController
   end
 
   def track_params
-    params.require(:track).permit(:title, :audio_url, :image_url, :spotify_id)
+    params.require(:track).permit(:title, :artist, :audio_url, :image_url, :spotify_id)
   end
 end

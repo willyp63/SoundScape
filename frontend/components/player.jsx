@@ -36,14 +36,14 @@ module.exports = React.createClass({
 
     const newPlayTrack = PlayerStore.playTrack();
     if (!this.state.playingTrack || newPlayTrack.storeId !== this.state.playingTrack.storeId) {
-      // update playing track
+      // update playing track and try to play
       this.setState({playingTrack: newPlayTrack}, this._tryToPlayAudio);
     } else {
       if (newPlayTrack.liked !== this.state.playingTrack.liked) {
-        // like track
+        // update playing track and stop like loading
         this.setState({loadingLike: false, playingTrack: newPlayTrack});
       } else if (this.state.loadingTrack) {
-        // check if audio is downloaded
+        // check if audio has downloaded
         this._tryToPlayAudio();
       }
     }
