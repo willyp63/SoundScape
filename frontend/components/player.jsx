@@ -56,14 +56,23 @@ module.exports = React.createClass({
       const url = PlayerStore.getUrl(playTrack);
       this.setState({loadingTrack: false, playingUrl: url}, this._beginPlaying);
     } else {
-      this.setState({loadingTrack: true, playingUrl: null}, setupSpinner);
+      this.setState({loadingTrack: true, playingUrl: null}, function () {
+        setupSpinner();
+        this._updateSpinner();
+      }.bind(this));
     }
+  },
+  _updateSpinner () {
+    const numSeconds = PlayerStore.getDuration(this.state.playingTrack);
+    const numChunks = PlayerStore.getChunks(this.state.playingTrack);
+    const percent = (numChunks / numSeconds) * 1.04;
+    setSpinnerPercent(percent);
   },
   _trackChange () {
     this.setState({loadingLike: false});
   },
   _beginPlaying () {
-    $('.spinner-el').remove();
+    takeDownSpinner();
     initVolume();
     AudioPlayer.moveProgressHead(0);
     this.setState({playing: true, currentTime: 0}, function () {
@@ -321,10 +330,12 @@ function padNumber (num) {
 // SPINNER
 const NUM_ELS = 50;
 const ANIME_TIME = 1.2;
+let _spinnerSetup = false;
 
 function setupSpinner () {
+  if (_spinnerSetup) { return; }
   const aps = $('.audio-player-spinner');
-  $('.spinner-el').remove();
+  takeDownSpinner();
   const elWidth = 100 / (NUM_ELS * 2.0);
   for (let i = Math.floor(NUM_ELS / 2); i >= 0; i--) {
     addSpinnerEl(aps, elWidth, i);
@@ -332,6 +343,12 @@ function setupSpinner () {
   for (let i = NUM_ELS - 1; i > NUM_ELS / 2; i--) {
     addSpinnerEl(aps, elWidth, i);
   }
+  _spinnerSetup = true;
+}
+
+function takeDownSpinner () {
+  $('.spinner-el').remove();
+  _spinnerSetup = false;
 }
 
 function addSpinnerEl (aps, width, i) {
@@ -342,4 +359,17 @@ function addSpinnerEl (aps, width, i) {
   el.css('animation-delay', `-${delayTime}s`);
   el.css('width', `${width}%`);
   aps.append(el);
+}
+
+function setSpinnerPercent (percent) {
+  const spinnerEls = $('.spinner-el');
+  let lastActiveIdx = Math.floor(NUM_ELS * percent);
+  if (lastActiveIdx > NUM_ELS) { lastActiveIdx = NUM_ELS; }
+  for (var i = 0; i < lastActiveIdx; i++) {
+    spinnerEls[i].className = 'spinner-el active';
+  }
+  for (var i = lastActiveIdx; i < NUM_ELS; i++) {
+    if (!spinnerEls[i]) {debugger}
+    spinnerEls[i].className = 'spinner-el';
+  }
 }

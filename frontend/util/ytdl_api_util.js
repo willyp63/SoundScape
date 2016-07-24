@@ -24,35 +24,38 @@ window.onClientLoad = function () {
 
     // process requests
     _unprocessedRequests.forEach(request => {
-      processRequest(request[0], request[1]);
+      processRequest(request[0], request[1], request[2], request[3]);
     });
     _unprocessedRequests = [];
   });
 };
 
 module.exports = {
-  downloadTrack (track, callBack) {
+  downloadTrack (track, onStart, onCunk, onFinish) {
     if (!_gapiLoaded) {
       // store request
-      _unprocessedRequests.push([track, callBack]);
+      _unprocessedRequests.push([track, onStart, onCunk, onFinish]);
     } else {
-      processRequest(track, callBack);
+      processRequest(track, onStart, onCunk, onFinish);
     }
   }
 };
 
-function processRequest (track, callBack) {
-  searchYoutube(track, function (ytid) {
-    downloadAudio(ytid, function (url) {
+function processRequest (track, onStart, onChunk, onFinish) {
+  searchYoutube(track, function (ytid, duration) {
+    onStart(track, duration);
+    downloadAudio(ytid, function () {
+      onChunk(track);
+    }, function (url) {
       track.audio_url = url;
-      callBack(track);
+      onFinish(track);
     });
   });
 }
 
 function searchYoutube (track, cb) {
   // get ytid from first valid result
-  const trackTitle = betterTitle(track.title);
+  const trackTitle = titleCleaner(track.title);
   let query = `${track.artist} ${trackTitle}`;
   gapi.client.youtube.search.list({
     part: 'snippet', q: query, maxResults: 50
@@ -62,7 +65,9 @@ function searchYoutube (track, cb) {
       if (!rejectedChannel(result) &&
             validResult(result, track.artist, trackTitle)){
         const ytid = result.id.videoId;
-        cb(ytid);
+        getVideoLength(ytid, function (duration) {
+          cb(ytid, duration);
+        });
         return;
       }
     }
@@ -70,15 +75,40 @@ function searchYoutube (track, cb) {
   });
 }
 
-function betterTitle (title) {
-  // only take what is before '-' and '('
-  let dashIdx = title.indexOf('-') - 1;
-  if (dashIdx <= 0) { dashIdx = title.length; }
-  let parenIdx = title.indexOf('(') - 1;
-  if (parenIdx <= 0) { parenIdx = title.length; }
-  const i = Math.min(dashIdx, parenIdx);
-  return title.slice(0, i);
+function getVideoLength (ytid, cb) {
+  gapi.client.youtube.videos.list({
+    part: 'contentDetails', id: ytid
+  }).execute(function (response) {
+    const str = response.items[0].contentDetails.duration;
+    cb(extractDuration(str));
+  });
 }
+
+function extractDuration (str) {
+  const minutes = parseInt(str.match(new RegExp('PT(.*)M.*S'))[1]);
+  const seconds = parseInt(str.match(new RegExp('PT.*M(.*)S'))[1]);
+  return (minutes * 60) + seconds;
+}
+
+function titleCleaner (title) {
+ // only take what is before ' - ' and not in parens '(...)'
+ let cleanedTitle = "";
+ let betweenParens = false;
+ let end_point = title.indexOf(" - ");
+ end_point = (end_point === -1 ? title.length : end_point);
+ for (let i = 0; i < end_point; i++) {
+   if (betweenParens) {
+     continue;
+   } else if (title[i] === "(") {
+     betweenParens = true;
+   } else if (title[i] === ")" && betweenParens) {
+     betweenParens = false;
+   } else {
+     cleanedTitle += title[i];
+   }
+ }
+ return cleanedTitle;
+};
 
 function validResult(result, artist, trackTitle) {
   const resultTitle = result.snippet.title;
@@ -98,7 +128,7 @@ function rejectedChannel (result) {
   return REJECTED_CHANNELS.includes(result.snippet.channelTitle.toLowerCase());
 }
 
-function downloadAudio (ytid, cb) {
+function downloadAudio (ytid, onChunk, onFinish) {
   // connect to ytdl server
   var socket = io('https://thawing-bastion-97540.herokuapp.com/');
 
@@ -108,13 +138,14 @@ function downloadAudio (ytid, cb) {
   stream.pipe(new BlobStream())
     .on('finish', function () {
       var url = this.toBlobURL();
-      cb(url);
+      onFinish(url);
     });
 
   // track download
   const ws = new WritableStream();
   ws._write = function (chunk, type, next) {
     console.log(`*Recieved Chunk for ytid:${ytid}*`);
+    onChunk();
     next();
   };
   console.log(`***Begun Download for ytid:${ytid}***`);

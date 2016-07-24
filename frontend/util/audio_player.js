@@ -51,6 +51,7 @@ module.exports = {
   timeUpdate () {
     if (!_updating) { return; }
     const audio = this.audio();
+    if (!audio) { return; }
     var percent = (audio.currentTime / audio.duration);
     this.moveProgressHead(percent);
   },

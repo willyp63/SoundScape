@@ -10,6 +10,7 @@ $player-bg: $ss-gray;
   bottom: 0;
   z-index: 99;
   width: 100%;
+  min-width: 750px;
   height: $player-height;
   background-color: $player-bg;
 }
@@ -288,7 +289,7 @@ $player-bg: $ss-gray;
 }
 
 .audio-player-spinner > .spinner-el {
-  background-color: $ss-light-orange;
+  background-color: $ss-dark-orange;
   height: 100%;
   width: 2%;
   border-radius: 50%;
@@ -296,6 +297,10 @@ $player-bg: $ss-gray;
 
   -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
   animation: sk-stretchdelay 1.2s infinite ease-in-out;
+}
+
+.spinner-el.active {
+  background-color: $ss-light-orange;
 }
 
 @-webkit-keyframes sk-stretchdelay {

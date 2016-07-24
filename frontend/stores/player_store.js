@@ -4,6 +4,8 @@ const LinkedHashMap = require('../util/linked_hash_map');
 
 let _tracks = new LinkedHashMap();
 let _urls = {};
+let _numChunks = {};
+let _durations = {};
 let _playIndex = 0;
 
 const PlayerStore = new Store(dispatcher);
@@ -28,6 +30,14 @@ PlayerStore.hasUrl = function (track) {
 
 PlayerStore.getUrl = function (track) {
   return _urls[track.storeId];
+};
+
+PlayerStore.getChunks = function (track) {
+  return _numChunks[track.storeId];
+};
+
+PlayerStore.getDuration = function (track) {
+  return _durations[track.storeId];
 };
 
 PlayerStore.__onDispatch = function (payload) {
@@ -81,7 +91,11 @@ PlayerStore.__onDispatch = function (payload) {
       this.__emitChange();
       break;
     case "START_DOWNLOADING_TRACK":
-      startDownloadingTrack(payload.track);
+      startDownloadingTrack(payload.track, payload.duration);
+      this.__emitChange();
+      break;
+    case "RECIEVE_DOWNLOAD_CHUNK":
+      recieveDownloadChunk(payload.track);
       this.__emitChange();
       break;
   }
@@ -90,6 +104,8 @@ PlayerStore.__onDispatch = function (payload) {
 function setTracks (tracks) {
   _playIndex = 0;
   _tracks = new LinkedHashMap();
+  _numChunks = {};
+  _durations = {};
   _urls = {};
   tracks.forEach(track => {
     storeTrack(track.storeId, track);
@@ -179,12 +195,23 @@ function getNextTrack () {
 function recieveDownloadedTrack (track) {
   if (_tracks.get(track.storeId)) {
     _urls[track.storeId] = track.audio_url;
+    _numChunks[track.storeId] = null;
+    _durations[track.storeId] = null;
   }
 }
 
-function startDownloadingTrack (track) {
+function recieveDownloadChunk (track) {
   if (_tracks.get(track.storeId)) {
     _urls[track.storeId] = 'LOADING';
+    _numChunks[track.storeId]++;
+  }
+}
+
+function startDownloadingTrack (track, duration) {
+  if (_tracks.get(track.storeId)) {
+    _urls[track.storeId] = 'LOADING';
+    _numChunks[track.storeId] = 0;
+    _durations[track.storeId] = duration;
   }
 }
 

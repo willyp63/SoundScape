@@ -4,11 +4,18 @@ const PlayerStore = require('../stores/player_store');
 
 module.exports = {
   downloadTrack (track) {
-    dispatcher.dispatch({
-      actionType: "START_DOWNLOADING_TRACK",
-      track: track
-    });
-    YtdlApiUtil.downloadTrack(track, function (newTrack) {
+    YtdlApiUtil.downloadTrack(track, function (downloadTrack, duration) {
+      dispatcher.dispatch({
+        actionType: "START_DOWNLOADING_TRACK",
+        track: downloadTrack,
+        duration: duration
+      });
+    }, function (downloadTrack) {
+      dispatcher.dispatch({
+        actionType: "RECIEVE_DOWNLOAD_CHUNK",
+        track: downloadTrack
+      });
+    }, function (newTrack) {
       dispatcher.dispatch({
         actionType: "RECIEVE_DOWNLOADED_TRACK",
         track: newTrack
