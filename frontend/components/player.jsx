@@ -347,7 +347,7 @@ function padNumber (num) {
 // SPINNER
 const NUM_ELS = 50;
 const ANIME_TIME = 1.2;
-const END_ANIME_STEP_TIME = 0.1;
+const END_ANIME_STEP_TIME = 0.15;
 let _spinnerSetup = false;
 
 function setupSpinner () {
