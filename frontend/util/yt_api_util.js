@@ -5,11 +5,12 @@ const FILTER_WORDS = ["live", "cover", "parody", "parodie", "karaoke",
                   "acoustic", "instrumental", "karaote", "guitar lesson",
                   "ukulele lesson", "drum lesson", "piano lesson", "tablature",
                   "how to really play", "how to play", "busking", "tutorial"];
-
 const REJECTED_CHANNELS = ["gabriella9797", "guitarlessons365song",
                         "mathieu terrade", "rock class 101", "ole's music",
                         "cifra club", "justinguitar songs", "the beatles", "bbc radio 1",
                       "hollywiretv"];
+
+const TIME_DEVIATION = 20;
 
 // setup gapi
 let _gapiLoaded = false;
@@ -19,7 +20,6 @@ window.onClientLoad = function () {
   gapi.client.load('youtube', 'v3', function () {
     gapi.client.setApiKey('AIzaSyD8hbRI2KVPzef84BQPtkwcqXD9XcTLgbE');
     _gapiLoaded = true;
-
     // process requests
     _unprocessedRequests.forEach(request => {
       processRequest(request[0], request[1]);
@@ -47,7 +47,7 @@ function processRequest (track, cb) {
   gapi.client.youtube.search.list({
     part: 'snippet', q: query, maxResults: 50
   }).execute(function (response) {
-    checkResults(response.items, 0, track.artist, cleanTitle, function (validResult) {
+    checkResults(response.items, 0, track.artist, cleanTitle, track.duration_sec, function (validResult) {
       if (validResult) {
         const ytid = validResult.id.videoId;
         videoDuration(ytid, function (duration) {
@@ -60,50 +60,55 @@ function processRequest (track, cb) {
   });
 }
 
-function checkResults (results, i, artist, trackTitle, cb) {
+function checkResults (results, i, artist, trackTitle, trackDuration, cb) {
   if (!results[i]) {
     cb(null);
     return;
   } else {
-    validResult(results[i], artist, trackTitle, function (valid) {
+    validResult(results[i], artist, trackTitle, trackDuration, function (valid) {
       if (valid) {
         cb(results[i]);
       } else {
-        checkResults (results, i + 1, artist, trackTitle, cb);
+        checkResults(results, i + 1, artist, trackTitle, trackDuration, cb);
       }
     });
   }
 }
 
-function validResult (result, artist, trackTitle, cb) {
+function validResult (result, artist, trackTitle, trackDuration, cb) {
   // check for blacklisted channels
   if (REJECTED_CHANNELS.includes(result.snippet.channelTitle.toLowerCase())) {
     cb(false);
     return;
   }
 
-  const resultTitle = result.snippet.title;
-  const channelTitle = result.snippet.channelId;
-  const artistRegExp = new RegExp(SearchStringUtil.wildCardSpacesAndStars(artist), 'i');
-  const trackTitleRegExp = new RegExp(SearchStringUtil.wildCardSpacesAndStars(trackTitle), 'i');
-
-  // title OR channel must match artist AND title must match trackTitle
-  if (!(resultTitle.match(artistRegExp) || channelTitle.match(artistRegExp)) ||
-        !resultTitle.match(trackTitleRegExp)) {
-    cb(false);
-    return;
-  }
-  // can not match any filter words
-  for (let i = 0; i < FILTER_WORDS.length; i++) {
-    if (resultTitle.match(new RegExp(FILTER_WORDS[i], 'i'))) {
+  videoDuration(result.id.videoId, function (duration) {
+    if (trackDuration < duration - TIME_DEVIATION || trackDuration > duration + TIME_DEVIATION) {
       cb(false);
       return;
     }
-  }
 
-  // valid if not restricted
-  ageRestricted(result.id.videoId, function (restricted) {
-    cb(!restricted);
+    const resultTitle = result.snippet.title;
+    const channelTitle = result.snippet.channelId;
+    const artistRegExp = new RegExp(SearchStringUtil.wildCardSpacesAndStars(artist), 'i');
+    const trackTitleRegExp = new RegExp(SearchStringUtil.wildCardSpacesAndStars(trackTitle), 'i');
+    // title OR channel must match artist AND title must match trackTitle
+    if (!(resultTitle.match(artistRegExp) || channelTitle.match(artistRegExp)) ||
+          !resultTitle.match(trackTitleRegExp)) {
+      cb(false);
+      return;
+    }
+    // can not match any filter words
+    for (let i = 0; i < FILTER_WORDS.length; i++) {
+      if (resultTitle.match(new RegExp(FILTER_WORDS[i], 'i'))) {
+        cb(false);
+        return;
+      }
+    }
+    // valid if not restricted
+    ageRestricted(result.id.videoId, function (restricted) {
+      cb(!restricted);
+    });
   });
 }
 
