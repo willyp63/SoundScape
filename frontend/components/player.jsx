@@ -231,7 +231,7 @@ module.exports = React.createClass({
                 </div> :
                 <div className="audio-progress-bar">
                   <audio controls id="audio-player">
-                    <source src={this.state.playingUrl}} type="audio/mpeg"/>
+                    <source src={this.state.playingUrl} type="audio/mpeg"/>
                   </audio>
                   <span className="audio-current-time">{formatTime(this.state.currentTime)}</span>
                   <div className="progress-bar">
