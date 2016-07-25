@@ -21,7 +21,7 @@ module.exports = {
  dropStars (title) {
     let str = "";
     for (var i = 0; i < title.length; i++) {
-      if (title[i] !== "*") {
+      if (title[i] !== "*" && title[i] !== "#") {
         str += title[i];
       }
     }
@@ -31,7 +31,7 @@ module.exports = {
     let str = "";
     let spaceOrStar = false;
     for (var i = 0; i < title.length; i++) {
-      if (title[i] !== " " || title[i] !== "*" ) {
+      if (title[i] === " " || title[i] === "*" || title[i] === "#") {
         if (spaceOrStar) {
           continue;
         } else {
