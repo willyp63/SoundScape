@@ -43,7 +43,7 @@ function extractTrack (track) {
  const hasImage = !!track.album.images.length;
  return {title: track.name,
          image_url: (hasImage ? track.album.images[1].url : ""),
-         artist: track.artists[0].name,
+         artists: track.artists.map(artist => artist.name),
          id: track.id,
          duration_sec: track.duration_ms/1000,
          spotify_id: track.id};

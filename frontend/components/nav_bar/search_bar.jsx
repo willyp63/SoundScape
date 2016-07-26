@@ -68,7 +68,7 @@ module.exports = React.createClass({
           <input id="search-input"
                  type="text"
                  autoComplete="off"
-                 placeholder="Search for Tracks..."
+                 placeholder="Search for Tracks, Albums, or Artists..."
                  onChange={this._onChange}
                  onClick={this._onClick}>
           </input>
