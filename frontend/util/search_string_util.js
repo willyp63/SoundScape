@@ -31,6 +31,7 @@ module.exports = {
   wildCardSpacesAndStars (title) {
     let str = "";
     let spaceOrStar = false;
+    title = title.replace(new RegExp("the|an|a", "ig"), "");
     for (var i = 0; i < title.length; i++) {
       if (title[i] === " " || title[i] === "*" || title[i] === "#" || title[i] === "$") {
         if (spaceOrStar) {
