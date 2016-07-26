@@ -75,6 +75,10 @@ function removeTrack (track) {
   _tracks.remove(track.storeId);
 }
 
+function appendTrack (track) {
+  storeTrack(track.storeId, track);
+}
+
 function replaceTrack (oldTrack, newTrack) {
   newTrack.storeId = oldTrack.storeId;
   _tracks.set(oldTrack.storeId, newTrack);
