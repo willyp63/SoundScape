@@ -3,7 +3,7 @@ const dispatcher = require('../dispatcher');
 
 let _ids = {};
 
-const YTDL_URL_PREFIX = 'http://thawing-bastion-97540.herokuapp.com/download/';
+const YTDL_URL_PREFIX = 'http://localhost:8080/download/';
 
 const YtidStore = new Store(dispatcher);
 

@@ -116,8 +116,17 @@ function validResult (result, artist, trackTitle, trackDuration, cb) {
     ageRestricted(result.id.videoId, function (restricted) {
       if (restricted) {
         console.log(`!Result:${result.snippet.title} Invalid b/c Age Restriction!`);
+        cb(false);
+        return;
       }
-      cb(!restricted);
+
+      // audio format must be 'opus'
+      validAudioFormat(result.id.videoId, function (validFormat) {
+        if (!validFormat) {
+          console.log(`!Result:${result.snippet.title} Invalid b/c Audio Format!`);
+        }
+        cb(validFormat);
+      });
     });
   });
 }
@@ -142,5 +151,16 @@ function videoDuration (ytid, cb) {
     const str = response.items[0].contentDetails.duration;
     const duration = SearchStringUtil.extractDuration(str);
     cb(duration);
+  });
+}
+
+function validAudioFormat (ytid, cb) {
+  $.ajax({
+    url: `http://localhost:8080/check/${ytid}`,
+    method: 'GET',
+    dataType: 'JSON',
+    success (response) {
+      cb(response.validFormat);
+    }
   });
 }
