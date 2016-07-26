@@ -4,13 +4,13 @@ const FILTER_WORDS = ["live", "cover", "parody", "parodie", "karaoke",
                   "full album", "español", "concert", "tutorial", "mashup",
                   "acoustic", "instrumental", "karaote", "guitar lesson",
                   "ukulele lesson", "drum lesson", "piano lesson", "tablature",
-                  "how to really play", "how to play", "busking", "tutorial"];
+                  "how to really play", "how to play", "busking", "tutorial", "rehearsal"];
 const REJECTED_CHANNELS = ["gabriella9797", "guitarlessons365song",
                         "mathieu terrade", "rock class 101", "ole's music",
                         "cifra club", "justinguitar songs", "the beatles", "bbc radio 1",
                       "hollywiretv"];
 
-const TIME_DEVIATION = 20;
+const TIME_DEVIATION = 40;
 
 // setup gapi
 let _gapiLoaded = false;

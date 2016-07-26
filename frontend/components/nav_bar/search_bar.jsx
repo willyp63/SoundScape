@@ -58,7 +58,7 @@ module.exports = React.createClass({
   _chooseResult (track) {
     $('#search-input').val("");
     SearchActions.hideResults();
-    const q = `${track.title} - ${track.artist}`;
+    const q = `${track.title} - ${track.artists[0]}`;
     hashHistory.push(`/results/${q}`);
   },
   render () {

@@ -7,8 +7,8 @@ module.exports = React.createClass({
   },
   render () {
     let text = this.props.track.title;
-    if (this.props.track.artist) {
-      text += ` - ${this.props.track.artist}`;
+    if (this.props.track.artists[0]) {
+      text += ` - ${this.props.track.artists[0]}`;
     }
     if (getWidthOfText(text) > this.props.textWidth) {
       text = shortenText(text, this.props.textWidth);

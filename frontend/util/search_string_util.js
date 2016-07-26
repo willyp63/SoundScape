@@ -3,8 +3,9 @@ module.exports = {
    // only take what is before ' - ' and not in parens '(...)'
    let cleanedTitle = "";
    let betweenParens = false;
-   let endPoint = title.indexOf(" - ");
-   endPoint = (endPoint === -1 ? title.length : endPoint);
+   let dashPoint = title.indexOf("-") + 1 || title.length + 1;
+   let semipoint = title.indexOf(":") + 1 || title.length + 1;
+   let endPoint = Math.min(dashPoint, semipoint) - 1;
    for (let i = 0; i < endPoint; i++) {
      if (betweenParens) {
        continue;
