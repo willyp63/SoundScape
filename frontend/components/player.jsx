@@ -1,5 +1,7 @@
 const React = require('react');
 const PlayerStore = require('../stores/player_store');
+const YtidStore = require('../stores/ytid_store');
+const YtActions = require('../actions/yt_actions');
 const TrackStore = require('../stores/track_store');
 const SessionStore = require('../stores/session_store');
 const AudioPlayer = require('../util/audio_player');
@@ -13,91 +15,53 @@ const _listeners = [];
 
 module.exports = React.createClass({
   getInitialState () {
-    return {tracks: PlayerStore.tracks(), playing: true, loadingLike: false,
-      loadingTrack: true, currentTime: 0, duration: 0, playingTrack: null, playingUrl: null};
+    return {tracks: [], playing: false, loadingLike: false,
+      loadingTrack: false, currentTime: 0, duration: 0, playIdx: 0, playUrl: null};
   },
   componentWillMount () {
     _listeners.push(PlayerStore.addListener(this._onChange));
+    _listeners.push(YtidStore.addListener(this._tryToPlayAudio));
     _listeners.push(TrackStore.addListener(this._trackChange));
   },
   componentWillUnmount () {
     _listeners.forEach(listener => listener.remove());
   },
   _onChange () {
-    // update tracks
-    const newTracks = PlayerStore.tracks();
-    this.setState({tracks: newTracks});
-
-    // close player if no tracks
-    if (!newTracks.length) {
-      this.setState({playingTrack: null});
-      return;
-    }
-
-    const newPlayTrack = PlayerStore.playTrack();
-    if (!this.state.playingTrack || newPlayTrack.storeId !== this.state.playingTrack.storeId) {
-      // update playing track and try to play
-      this.setState({playingTrack: newPlayTrack}, this._tryToPlayAudio);
+    if (PlayerStore.newTracks()) {
+      this.setState({tracks: PlayerStore.tracks(), playIdx: 0}, this._tryToPlayAudio);
     } else {
-      if (newPlayTrack.liked !== this.state.playingTrack.liked) {
-        // update playing track and stop like loading
-        this.setState({loadingLike: false, playingTrack: newPlayTrack});
-      } else if (this.state.loadingTrack) {
-        // check if audio has downloaded
-        this._checkAudioDownload();
-      }
+      this.setState({loadingLike: false});
     }
-  },
-  _checkAudioDownload () {
-    AudioPlayer.removeListeners();
-    const playTrack = this.state.playingTrack;
-    if (PlayerStore.hasUrl(playTrack)) {
-      const numSeconds = PlayerStore.getDuration(this.state.playingTrack);
-      const numChunks = PlayerStore.getChunks(this.state.playingTrack);
-      const currPercent = (numChunks / numSeconds) / 1.02;
-      endSpinner(currPercent, function () {
-        const url = PlayerStore.getUrl(playTrack);
-        this.setState({loadingTrack: false, playingUrl: url}, this._beginPlaying);
-      }.bind(this));
-    } else {
-      this.setState({loadingTrack: true, playingUrl: null}, function () {
-        setupSpinner();
-        this._updateSpinner();
-      }.bind(this));
-    }
-  },
-  _tryToPlayAudio () {
-    AudioPlayer.removeListeners();
-    const playTrack = this.state.playingTrack;
-    if (PlayerStore.hasUrl(playTrack)) {
-      const url = PlayerStore.getUrl(playTrack);
-      this.setState({loadingTrack: false, playingUrl: url}, this._beginPlaying);
-    } else {
-      this.setState({loadingTrack: true, playingUrl: null}, function () {
-        setupSpinner();
-        this._updateSpinner();
-      }.bind(this));
-    }
-  },
-  _updateSpinner () {
-    const numSeconds = PlayerStore.getDuration(this.state.playingTrack);
-    const numChunks = PlayerStore.getChunks(this.state.playingTrack);
-    const percent = (numChunks / numSeconds) / 1.01;
-    setSpinnerPercent(percent, {limit: true});
   },
   _trackChange () {
     this.setState({loadingLike: false});
   },
+  _tryToPlayAudio () {
+    AudioPlayer.removeListeners();
+    const playTrack = this.state.tracks[this.state.playIdx];
+    if (!playTrack) { return; }
+    if (YtidStore.hasId(playTrack)) {
+      this.setState({playing: true, loadingTrack: true, playUrl: YtidStore.getUrl(playTrack)}, this._beginPlaying);
+    } else {
+      this.setState({playing: false, loadingTrack: true, playUrl: null}, this._fetchAudio);
+    }
+  },
+  _fetchAudio () {
+    setupSpinner();
+    const playTrack = this.state.tracks[this.state.playIdx];
+    YtActions.searchYoutube(playTrack);
+  },
   _beginPlaying () {
-    takeDownSpinner();
     initVolume();
+    setupSpinner();
     AudioPlayer.moveProgressHead(0);
     this.setState({playing: true, currentTime: 0}, function () {
       AudioPlayer.init(this._onLoad, this._timeUpdate, this._onEnd);
     });
   },
   _onLoad () {
-    this.setState({duration: AudioPlayer.duration()}, function () {
+    this.setState({duration: AudioPlayer.duration(), loadingTrack: false}, function () {
+      takeDownSpinner();
       AudioPlayer.play();
     });
   },
@@ -106,7 +70,7 @@ module.exports = React.createClass({
     this.setState({currentTime: AudioPlayer.currentTime()});
   },
   _onEnd () {
-    PlayerActions.playNextTrack();
+    this._nextTrack();
   },
   _togglePlay () {
     if (this.state.loadingTrack) { return; }
@@ -116,6 +80,7 @@ module.exports = React.createClass({
   _clickProgressBar (e) {
     const percent = mousePercentProgressBar(e);
     AudioPlayer.setCurrentTime(percent);
+    AudioPlayer.moveProgressHead(percent);
   },
   _clickProgressHead (e) {
     AudioPlayer.stopUpdating();
@@ -151,13 +116,19 @@ module.exports = React.createClass({
     $(window).on('mouseup', volumeHeadReleased);
   },
   _nextTrack () {
-    PlayerActions.playNextTrack();
+    let nextIdx = this.state.playIdx + 1;
+    if (nextIdx >= this.state.tracks.length) { nextIdx = 0; }
+    this.setState({playIdx: nextIdx}, this._tryToPlayAudio);
   },
   _previousTrack () {
-    PlayerActions.playPrevTrack();
+    let nextIdx = this.state.playIdx - 1;
+    if (nextIdx < 0) { nextIdx = this.state.tracks.length - 1; }
+    this.setState({playIdx: nextIdx}, this._tryToPlayAudio);
   },
   _playTack (track) {
-    PlayerActions.playThisTrack(track);
+    let nextIdx = this.state.tracks.indexOf(track);
+    if (nextIdx < 0) { return; }
+    this.setState({playIdx: nextIdx}, this._tryToPlayAudio);
   },
   _closePlayer () {
     AudioPlayer.removeListeners();
@@ -188,11 +159,15 @@ module.exports = React.createClass({
     }
   },
   render () {
-    const track = this.state.playingTrack;
+    const track = this.state.tracks[this.state.playIdx];
     return (
       <div>{
         track ?
           <nav className="audio-player-bar">
+            {this.state.playUrl ?
+              <audio controls id="audio-player">
+                <source src={this.state.playUrl} type="audio/mpeg"/>
+              </audio> : ""}
             <div className="playing-image">
               <i className="glyphicon glyphicon-remove" onClick={this._closePlayer}/>
               <div className="player-like-button" onClick={this._likeTrack}>
@@ -230,9 +205,6 @@ module.exports = React.createClass({
                 <div className="audio-player-spinner">
                 </div> :
                 <div className="audio-progress-bar">
-                  <audio controls id="audio-player">
-                    <source src={this.state.playingUrl} type="audio/mpeg"/>
-                  </audio>
                   <span className="audio-current-time">{formatTime(this.state.currentTime)}</span>
                   <div className="progress-bar">
                     <div className="progress-bar-bg"
@@ -347,7 +319,6 @@ function padNumber (num) {
 // SPINNER
 const NUM_ELS = 50;
 const ANIME_TIME = 1.2;
-const END_ANIME_STEP_TIME = 0.15;
 let _spinnerSetup = false;
 
 function setupSpinner () {
@@ -369,23 +340,6 @@ function takeDownSpinner () {
   _spinnerSetup = false;
 }
 
-function endSpinner (currPercent, onFinish) {
-  let currEls = Math.floor(NUM_ELS * currPercent);
-  if (currEls >= NUM_ELS) { currEls = NUM_ELS - 1; }
-  stepSpinner(currEls + 1, END_ANIME_STEP_TIME, onFinish);
-}
-
-function stepSpinner (els, stepTime, onFinish) {
-  setSpinnerPercent(els / NUM_ELS, {limit: false});
-  if (els < NUM_ELS) {
-    setTimeout(function () {
-      stepSpinner(els + 1, stepTime, onFinish);
-    }, stepTime * 1000);
-  } else {
-    setTimeout(onFinish, stepTime * 1000);
-  }
-}
-
 function addSpinnerEl (aps, width, i) {
   const el = $('<div><div>');
   el.addClass('spinner-el');
@@ -394,22 +348,4 @@ function addSpinnerEl (aps, width, i) {
   el.css('animation-delay', `-${delayTime}s`);
   el.css('width', `${width}%`);
   aps.append(el);
-}
-
-function setSpinnerPercent (percent, options) {
-  const spinnerEls = $('.spinner-el');
-  let lastActiveIdx = Math.floor(NUM_ELS * percent);
-  if (lastActiveIdx >= NUM_ELS) {
-    if (options.limit) {
-      lastActiveIdx = NUM_ELS - 1;
-    } else {
-      lastActiveIdx = NUM_ELS;
-    }
-  }
-  for (var i = 0; i < lastActiveIdx; i++) {
-    spinnerEls[i].className = 'spinner-el active';
-  }
-  for (var i = lastActiveIdx; i < NUM_ELS; i++) {
-    spinnerEls[i].className = 'spinner-el';
-  }
 }

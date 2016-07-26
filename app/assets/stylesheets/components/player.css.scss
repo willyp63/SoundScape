@@ -289,7 +289,7 @@ $player-bg: $ss-gray;
 }
 
 .audio-player-spinner > .spinner-el {
-  background-color: $ss-dark-dark-orange;
+  background-color: $ss-light-orange;
   height: 100%;
   width: 2%;
   border-radius: 50%;
@@ -297,10 +297,6 @@ $player-bg: $ss-gray;
 
   -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
   animation: sk-stretchdelay 1.2s infinite ease-in-out;
-}
-
-.spinner-el.active {
-  background-color: $ss-light-orange;
 }
 
 @-webkit-keyframes sk-stretchdelay {

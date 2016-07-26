@@ -43,18 +43,17 @@ function processRequest (track, cb) {
   // get ytid from first valid result
   const cleanTitle = SearchStringUtil.cleanSpotifyTitle(track.title);
   let query = `${track.artist} ${SearchStringUtil.dropStars(cleanTitle)}`;
-  console.log(`***Searched YT for: ${query}***`);
+  console.log(`???Searching YT for: ${query}???`);
   gapi.client.youtube.search.list({
     part: 'snippet', q: query, maxResults: 50
   }).execute(function (response) {
     checkResults(response.items, 0, track.artist, cleanTitle, track.duration_sec, function (validResult) {
       if (validResult) {
         const ytid = validResult.id.videoId;
-        videoDuration(ytid, function (duration) {
-          cb(ytid, duration);
-        });
+        console.log(`???Found Valid Result:${validResult.snippet.title}???`);
+        cb(ytid);
       } else {
-        console.log(`***Unable to find YT results for query:${query}***`);
+        console.log(`!!!No Valid Results!!!`);
       }
     });
   });
@@ -65,6 +64,7 @@ function checkResults (results, i, artist, trackTitle, trackDuration, cb) {
     cb(null);
     return;
   } else {
+    console.log(`?Checking Result:${results[i].snippet.title}?`);
     validResult(results[i], artist, trackTitle, trackDuration, function (valid) {
       if (valid) {
         cb(results[i]);
@@ -78,35 +78,45 @@ function checkResults (results, i, artist, trackTitle, trackDuration, cb) {
 function validResult (result, artist, trackTitle, trackDuration, cb) {
   // check for blacklisted channels
   if (REJECTED_CHANNELS.includes(result.snippet.channelTitle.toLowerCase())) {
+    console.log(`!Result:${result.snippet.title} Invalid b/c Rejected Channel!`);
     cb(false);
     return;
   }
 
+  // title OR channel must match artist AND title must match trackTitle
+  const resultTitle = result.snippet.title;
+  const channelTitle = result.snippet.channelTitle;
+  const artistRegExp = new RegExp(SearchStringUtil.wildCardSpacesAndStars(artist), 'i');
+  const trackTitleRegExp = new RegExp(SearchStringUtil.wildCardSpacesAndStars(trackTitle), 'i');
+  if (!(resultTitle.match(artistRegExp) || channelTitle.match(artistRegExp)) ||
+        !resultTitle.match(trackTitleRegExp)) {
+    console.log(`!Result:${result.snippet.title} Invalid b/c Title/Artist Match!`);
+    cb(false);
+    return;
+  }
+
+  // can not match any filter words
+  for (let i = 0; i < FILTER_WORDS.length; i++) {
+    if (resultTitle.match(new RegExp(FILTER_WORDS[i], 'i'))) {
+      console.log(`!Result:${result.snippet.title} Invalid b/c Filter Words!`);
+      cb(false);
+      return;
+    }
+  }
+
+  // valid if within time deviation
   videoDuration(result.id.videoId, function (duration) {
     if (trackDuration < duration - TIME_DEVIATION || trackDuration > duration + TIME_DEVIATION) {
+      console.log(`!Result:${result.snippet.title} Invalid b/c Time Deviation!`);
       cb(false);
       return;
     }
 
-    const resultTitle = result.snippet.title;
-    const channelTitle = result.snippet.channelId;
-    const artistRegExp = new RegExp(SearchStringUtil.wildCardSpacesAndStars(artist), 'i');
-    const trackTitleRegExp = new RegExp(SearchStringUtil.wildCardSpacesAndStars(trackTitle), 'i');
-    // title OR channel must match artist AND title must match trackTitle
-    if (!(resultTitle.match(artistRegExp) || channelTitle.match(artistRegExp)) ||
-          !resultTitle.match(trackTitleRegExp)) {
-      cb(false);
-      return;
-    }
-    // can not match any filter words
-    for (let i = 0; i < FILTER_WORDS.length; i++) {
-      if (resultTitle.match(new RegExp(FILTER_WORDS[i], 'i'))) {
-        cb(false);
-        return;
-      }
-    }
     // valid if not restricted
     ageRestricted(result.id.videoId, function (restricted) {
+      if (restricted) {
+        console.log(`!Result:${result.snippet.title} Invalid b/c Age Restriction!`);
+      }
       cb(!restricted);
     });
   });

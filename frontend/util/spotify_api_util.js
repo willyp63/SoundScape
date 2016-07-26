@@ -42,7 +42,6 @@ module.exports = {
 function extractTrack (track) {
  const hasImage = !!track.album.images.length;
  return {title: track.name,
-         audio_url: track.preview_url,
          image_url: (hasImage ? track.album.images[1].url : ""),
          artist: track.artists[0].name,
          id: track.id,
