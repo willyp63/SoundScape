@@ -11,14 +11,14 @@ module.exports = {
     _loaded = false;
 
     const audio = this.audio();
-    audio.load();
-    audio.addEventListener("canplaythrough", this.canplaythrough, false);
+    audio.addEventListener("canplay", this.canplay, false);
     audio.addEventListener("ended", _onEnd, false);
     audio.addEventListener("timeupdate", _onUpdate, false);
+    audio.load();
     _updating = true;
     $(window).on("resize", this.timeUpdate.bind(this));
   },
-  canplaythrough () {
+  canplay () {
     // only fire _onLoad once
     if (!_loaded) {
       _onLoad();
@@ -28,7 +28,7 @@ module.exports = {
   removeListeners () {
     const audio = this.audio();
     if (!audio) { return; }
-    audio.removeEventListener("canplaythrough", this.canplaythrough);
+    audio.removeEventListener("canplay", this.canplay);
     audio.removeEventListener("ended", _onEnd);
     audio.removeEventListener("timeupdate", _onUpdate);
     $(window).off("resize", this.timeUpdate.bind(this));

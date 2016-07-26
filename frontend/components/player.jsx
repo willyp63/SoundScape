@@ -41,7 +41,7 @@ module.exports = React.createClass({
     const playTrack = this.state.tracks[this.state.playIdx];
     if (!playTrack) { return; }
     if (YtidStore.hasId(playTrack)) {
-      this.setState({playing: true, loadingTrack: true, playUrl: YtidStore.getUrl(playTrack)}, this._beginPlaying);
+      this.setState({playing: false, loadingTrack: true, playUrl: YtidStore.getUrl(playTrack)}, this._beginPlaying);
     } else {
       this.setState({playing: false, loadingTrack: true, playUrl: null}, this._fetchAudio);
     }
@@ -55,12 +55,12 @@ module.exports = React.createClass({
     initVolume();
     setupSpinner();
     AudioPlayer.moveProgressHead(0);
-    this.setState({playing: true, currentTime: 0}, function () {
+    this.setState({currentTime: 0}, function () {
       AudioPlayer.init(this._onLoad, this._timeUpdate, this._onEnd);
     });
   },
   _onLoad () {
-    this.setState({duration: AudioPlayer.duration(), loadingTrack: false}, function () {
+    this.setState({duration: AudioPlayer.duration(), loadingTrack: false, playing: true}, function () {
       takeDownSpinner();
       AudioPlayer.play();
     });
