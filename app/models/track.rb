@@ -17,12 +17,7 @@ class Track < ActiveRecord::Base
   has_many :track_likes
   has_many :likers, through: :track_likes, source: :user
 
-  validates(
-    :title,
-    :audio_url,
-    :image_url,
-    presence: true
-  )
+  validates :title, presence: true
 
   def self.all_tracks(limit, offset)
     Track.limit(limit).offset(offset)

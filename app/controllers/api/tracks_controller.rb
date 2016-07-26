@@ -76,8 +76,9 @@ class Api::TracksController < ApplicationController
   end
 
   def create_anonymous
-    track = Track.new(track_params);
-
+    t_params = params[:track]
+    track = Track.new(title: t_params[:title], artists: t_params[:artists],
+                spotify_id: t_params[:spotify_id], image_url: t_params[:image_url])
     if track.save
       render json: track
     else
@@ -122,7 +123,7 @@ class Api::TracksController < ApplicationController
   end
 
   def track_hash(t)
-    {id: t.id, title: t.title, artist: t.artist, audio_url: t.audio_url, liked: false,
+    {id: t.id, title: t.title, artists: t.artists, audio_url: t.audio_url, liked: false,
       like_count: t.like_count, image_url: t.image_url, user_id: t.user_id,
       spotify_id: t.spotify_id}
   end

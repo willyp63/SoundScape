@@ -305,17 +305,17 @@ admin = User.create!(username: 'admin', password: 'password',
 
 guest = User.create!(username: 'guest', password: 'db84n337vmz39alqp97',
     picture_url: "http://res.cloudinary.com/dcwxxqs4l/image/upload/v1469257095/Wil_Pirino_nzntwr.jpg")
-
-titles.length.times do |i|
-  if i < 3
-    track = Track.create!(title: titles[i], image_url: image_urls[i],
-                    audio_url: audio_urls[i], like_count: rand(39) + 1)
-    TrackLike.create!(user_id: guest.id, track_id: track.id)
-  elsif i >= titles.length - 3
-    Track.create!(title: titles[i], image_url: image_urls[i],
-                    audio_url: audio_urls[i], like_count: rand(40), user_id: guest.id)
-  else
-    Track.create!(title: titles[i], image_url: image_urls[i],
-                    audio_url: audio_urls[i], like_count: rand(40))
-  end
-end
+# 
+# titles.length.times do |i|
+#   if i < 3
+#     track = Track.create!(title: titles[i], image_url: image_urls[i],
+#                     audio_url: audio_urls[i], like_count: rand(39) + 1)
+#     TrackLike.create!(user_id: guest.id, track_id: track.id)
+#   elsif i >= titles.length - 3
+#     Track.create!(title: titles[i], image_url: image_urls[i],
+#                     audio_url: audio_urls[i], like_count: rand(40), user_id: guest.id)
+#   else
+#     Track.create!(title: titles[i], image_url: image_urls[i],
+#                     audio_url: audio_urls[i], like_count: rand(40))
+#   end
+# end

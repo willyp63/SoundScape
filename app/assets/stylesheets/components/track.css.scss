@@ -1,37 +1,31 @@
 @import 'colors';
-
 $track_size: 225px;
 $track_top_bottom_margin: 20px;
-
 $title_height: 50px;
 $title_font_size: 16px;
-
 $play_button_size: 125px;
-
 $like_button_size: 40px;
 $like_button_x_offset: $track_size - ($like_button_size * 4 / 3);
 $like_button_y_offset: $like_button_size / 3;
-$update_button_x_offset: $like_button_size / 3;
-
-
+$plus_button_size: 40px;
+$plus_button_x_offset: $track_size - ($plus_button_size * 4 / 3);
+$plus_button_y_offset: $plus_button_size * 4.3;
+$update_button_x_offset: $plus_button_size / 3;
 .track-index-row {
   display: flex;
   justify-content: space-around;
   margin-top: $track_top_bottom_margin;
   margin-bottom: $title_height + (2 * $track_top_bottom_margin);
 }
-
 .track-index-item {
   flex: none;
   position: relative;
   width: $track_size;
   height: $track_size;
 }
-
 .track-index-item img {
   box-shadow: 0px 1px 5px black;
 }
-
 .track-text {
   display: flex;
   align-items: center;
@@ -42,18 +36,15 @@ $update_button_x_offset: $like_button_size / 3;
   left: 0;
   padding: $track_top_bottom_margin 0;
 }
-
 .track-text p {
   display: block;
   width: 100%;
   text-align: center;
   font-size: $title_font_size;
 }
-
 .track-image img {
   position: absolute;
 }
-
 .track-image-overlay {
   position: absolute;
   height: $track_size;
@@ -61,13 +52,10 @@ $update_button_x_offset: $like_button_size / 3;
   background-color: transparent;
   display: block;
 }
-
 .track-image-overlay.active {
   background-color: rgba(0,0,0,0.25);
 }
-
 $play_button_offset: ($track_size - $play_button_size) / 2;
-
 .play-circle-icon {
   position: absolute !important;
   top: $play_button_offset !important;
@@ -79,7 +67,6 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
   color: $ss-dark-orange;
   cursor: pointer;
 }
-
 .play-circle-bg {
   position: absolute;
   top: $play_button_offset + 5px;
@@ -89,11 +76,9 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
   background-color: #fff;
   border-radius: $play_button_size/2;
 }
-
 .play-circle-bg.highlighted {
   background-color: $ss-light-gray;
 }
-
 .like-icon {
   position: absolute !important;
   top: $like_button_y_offset + 1px !important;
@@ -104,11 +89,9 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
   text-align: center;
   color: $ss-dark-gray;
 }
-
 .like-icon.liked {
   color: #f39;
 }
-
 .like-icon-bg {
   position: absolute;
   top: $like_button_y_offset;
@@ -118,11 +101,9 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
   border-radius: 10px;
   background-color: #fff;
 }
-
 .like-icon-bg.highlighted {
   background-color: $ss-light-gray;
 }
-
 .like-count {
   position: absolute;
   z-index: 10;
@@ -136,7 +117,29 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
   font-size: 18px;
   cursor: pointer;
 }
-
+.plus-icon {
+  position: absolute !important;
+  top: $plus_button_y_offset - 2px !important;
+  left: $plus_button_x_offset + 1px !important;
+  width: $plus_button_size + 4px;
+  line-height: $plus_button_size + 4px !important;
+  font-size: $plus_button_size - 2px;
+  text-align: center;
+  color: $ss-light-orange;
+  cursor: pointer;
+}
+.plus-icon-bg {
+  position: absolute;
+  top: $plus_button_y_offset;
+  left: $plus_button_x_offset + 1px;
+  width: $plus_button_size;
+  height: $plus_button_size;
+  border-radius: 10px;
+  background-color: #fff;
+}
+.plus-icon-bg.highlighted {
+  background-color: $ss-light-gray;
+}
 .update-icon {
   position: absolute !important;
   top: $like_button_y_offset !important;
@@ -148,7 +151,6 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
   color: #333;
   cursor: pointer;
 }
-
 .update-icon-bg {
   position: absolute;
   top: $like_button_y_offset;
@@ -158,27 +160,22 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
   border-radius: 10px;
   background-color: #fff;
 }
-
 .update-icon-bg.highlighted {
   background-color: $ss-light-gray;
 }
-
 .play-buttons {
   width: 100%;
   height: 50px;
 }
-
 .play-buttons button {
   float: right;
   margin-top: 10px;
   margin-right: 75px;
 }
-
 .no-results-text {
   margin: 25px 50px;
   font-size: 24px;
 }
-
 /* CIRCLE SPINNER */
 .sk-fading-circle {
   position: relative;
@@ -187,7 +184,6 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
   width: $like_button_size - 8px;
   height: $like_button_size - 8px;
 }
-
 .sk-fading-circle .sk-circle {
   width: 100%;
   height: 100%;
@@ -195,7 +191,6 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
   left: 0;
   top: 0;
 }
-
 .sk-fading-circle .sk-circle:before {
   content: '';
   display: block;
@@ -306,19 +301,15 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
   -webkit-animation-delay: -0.1s;
           animation-delay: -0.1s;
 }
-
 @-webkit-keyframes sk-circleFadeDelay {
   0%, 39%, 100% { opacity: 0; }
   40% { opacity: 1; }
 }
-
 @keyframes sk-circleFadeDelay {
   0%, 39%, 100% { opacity: 0; }
   40% { opacity: 1; }
 }
-
 /* SQUARE SPINNER */
-
 .track-spinner {
   margin: 100px auto;
   width: 150px;
@@ -326,43 +317,35 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
   text-align: center;
   font-size: 10px;
 }
-
 .track-spinner > div {
   background-color: #333;
   margin-left: 10px;
   height: 100%;
   width: 20px;
   display: inline-block;
-
   -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
   animation: sk-stretchdelay 1.2s infinite ease-in-out;
 }
-
 .track-spinner .rect2 {
   -webkit-animation-delay: -1.1s;
   animation-delay: -1.1s;
 }
-
 .track-spinner .rect3 {
   -webkit-animation-delay: -1.0s;
   animation-delay: -1.0s;
 }
-
 .track-spinner .rect4 {
   -webkit-animation-delay: -0.9s;
   animation-delay: -0.9s;
 }
-
 .track-spinner .rect5 {
   -webkit-animation-delay: -0.8s;
   animation-delay: -0.8s;
 }
-
 @-webkit-keyframes sk-stretchdelay {
   0%, 40%, 100% { -webkit-transform: scaleY(0.4) }
   20% { -webkit-transform: scaleY(1.0) }
 }
-
 @keyframes sk-stretchdelay {
   0%, 40%, 100% {
     transform: scaleY(0.4);

@@ -30,7 +30,7 @@ module.exports = React.createClass({
     if (PlayerStore.newTracks()) {
       this.setState({tracks: PlayerStore.tracks(), playIdx: 0}, this._tryToPlayAudio);
     } else {
-      this.setState({loadingLike: false});
+      this.setState({tracks: PlayerStore.tracks(), loadingLike: false});
     }
   },
   _trackChange () {
@@ -141,7 +141,7 @@ module.exports = React.createClass({
       ErrorActions.removeErrors();
       ModalActions.show("USER", "SIGNUP");
     } else {
-      const track = this.state.playingTrack;
+      const track = this.state.tracks[this.state.playIdx];
       this.setState({loadingLike: true});
       if (track.liked) {
         if (TrackStore.indexType() === "MY_LIKES") {

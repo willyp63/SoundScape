@@ -38,7 +38,7 @@ PlayerStore.__onDispatch = function (payload) {
       break;
     case "REPLACE_PLAYING_TRACK":
       replaceTrack(payload.oldTrack, payload.newTrack);
-      _newTracks = true;
+      _newTracks = false;
       this.__emitChange();
       break;
     case "LIKE_PLAYING_TRACK":
@@ -56,6 +56,11 @@ PlayerStore.__onDispatch = function (payload) {
       shuffleTracks();
       this.__emitChange();
       break;
+    case "APPEND_PLAYING_TRACK":
+     _newTracks = false;
+     appendTrack(payload.track);
+     this.__emitChange();
+     break;
   }
 };
 

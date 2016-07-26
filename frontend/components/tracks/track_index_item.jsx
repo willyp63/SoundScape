@@ -1,5 +1,6 @@
 const React = require('react');
 const PlayerActions = require('../../actions/player_actions');
+const PlayerStore = require('../../stores/player_store');
 const TrackActions = require('../../actions/track_actions');
 const SessionStore = require('../../stores/session_store');
 const ErrorActions = require('../../actions/error_actions');
@@ -23,6 +24,12 @@ module.exports = React.createClass({
   },
   _unhighlightLike () {
     $('.like-icon-bg').removeClass('highlighted');
+  },
+  _highlightPlus () {
+    $('.plus-icon-bg').addClass('highlighted');
+  },
+  _unhighlightPlus () {
+    $('.plus-icon-bg').removeClass('highlighted');
   },
   _highlightUpdate () {
     $('.update-icon-bg').addClass('highlighted');
@@ -67,6 +74,13 @@ module.exports = React.createClass({
   },
   _updateTrack () {
     this.props.updateTrack(this.props.track);
+  },
+  _appendTrack () {
+    if (PlayerStore.tracks().length) {
+      PlayerActions.appendTrack(this.props.track);
+    } else {
+      PlayerActions.playTrack(this.props.track);
+    }
   },
   render () {
     return (
@@ -117,6 +131,13 @@ module.exports = React.createClass({
                       {this.props.track.like_count}
                     </span>
                   </div>}
+                </div>
+                <div>
+                  <span className="plus-icon-bg"></span>
+                  <i className={"glyphicon glyphicon-plus plus-icon"}
+                                onMouseEnter={this._highlightPlus}
+                                onMouseLeave={this._unhighlightPlus}
+                                onClick={this._appendTrack}/>
                 </div>
             </div> : ""}
         </div>
