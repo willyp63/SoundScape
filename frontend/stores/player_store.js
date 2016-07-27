@@ -82,6 +82,7 @@ function removeTrack (track) {
 }
 
 function appendTrack (track) {
+  if (_tracks.get(track.storeId)) { return; }
   storeTrack(track.storeId, track);
 }
 

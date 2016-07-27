@@ -130,7 +130,10 @@ module.exports = React.createClass({
     const playTrack = this.state.tracks[this.state.playIdx];
     PlayerActions.removePlayingTrack(track);
     if (track.storeId === playTrack.storeId) {
-      this.setState({playIdx: this.state.playIdx}, this._tryToPlayAudio);
+      AudioPlayer.removeListeners();
+      let nextIdx = this.state.playIdx;
+      if (nextIdx >= this.state.tracks.length - 1) { nextIdx = 0; }
+      this.setState({playIdx: nextIdx}, this._tryToPlayAudio);
     } else {
       const idx = this.state.tracks.indexOf(track);
       if (idx < this.state.playIdx) {
@@ -259,7 +262,7 @@ module.exports = React.createClass({
                 this.state.tracks.map(track => {
                   return <SearchResult key={track.storeId}
                   track={track}
-                  textWidth={200}
+                  textWidth={210}
                   onRemove={this._removeTrack}
                   onClick={this._playTrack}
                   type="queue" />;

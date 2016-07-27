@@ -143,12 +143,12 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
 .minus-icon {
   top: 0 !important;
   left: 0;
-  width: 40px;
+  width: 50px;
   line-height: 50px !important;
-  font-size: $plus_button_size - 15px !important;
+  font-size: $plus_button_size - 10px !important;
   float: left;
   text-align: center;
-  color: blue;
+  color: $ss-dark-dark-orange;
   cursor: pointer;
 }
 .minus-icon.highlighted {
