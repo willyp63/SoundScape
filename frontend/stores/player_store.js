@@ -51,9 +51,10 @@ PlayerStore.__onDispatch = function (payload) {
       _newTracks = false;
       this.__emitChange();
       break;
-    case "SHUFFLE_TRACKS":
-      _newTracks = true;
+    case "SET_SHUFFLED_TRACKS":
+      setTracks(payload.tracks);
       shuffleTracks();
+      _newTracks = true;
       this.__emitChange();
       break;
     case "APPEND_PLAYING_TRACK":

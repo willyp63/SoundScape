@@ -20,7 +20,7 @@ module.exports = React.createClass({
   },
   componentWillMount () {
     _listeners.push(PlayerStore.addListener(this._onChange));
-    _listeners.push(YtidStore.addListener(this._tryToPlayAudio));
+    _listeners.push(YtidStore.addListener(this._onYtid));
     _listeners.push(TrackStore.addListener(this._trackChange));
   },
   componentWillUnmount () {
@@ -36,12 +36,23 @@ module.exports = React.createClass({
   _trackChange () {
     this.setState({loadingLike: false});
   },
+  _onYtid () {
+    if (!this.state.playing) {
+      this._tryToPlayAudio();
+    }
+  },
   _tryToPlayAudio () {
     AudioPlayer.removeListeners();
     const playTrack = this.state.tracks[this.state.playIdx];
     if (!playTrack) { return; }
     if (YtidStore.hasId(playTrack)) {
       this.setState({playing: false, loadingTrack: true, playUrl: YtidStore.getUrl(playTrack)}, this._beginPlaying);
+      let nextIdx = this.state.playIdx + 1;
+      if (nextIdx >= this.state.tracks.length) { nextIdx = 0; }
+      const nextTrack = this.state.tracks[nextIdx];
+      if (!YtidStore.hasId(nextTrack)) {
+        YtActions.searchYoutube(nextTrack);
+      }
     } else {
       this.setState({playing: false, loadingTrack: true, playUrl: null}, this._fetchAudio);
     }
@@ -125,7 +136,7 @@ module.exports = React.createClass({
     if (nextIdx < 0) { nextIdx = this.state.tracks.length - 1; }
     this.setState({playIdx: nextIdx}, this._tryToPlayAudio);
   },
-  _playTack (track) {
+  _playTrack (track) {
     let nextIdx = this.state.tracks.indexOf(track);
     if (nextIdx < 0) { return; }
     this.setState({playIdx: nextIdx}, this._tryToPlayAudio);
@@ -234,10 +245,10 @@ module.exports = React.createClass({
             <div>
               <ul className="track-queue">{
                 this.state.tracks.map(track => {
-                  return <SearchResult key={track.id}
+                  return <SearchResult key={track.storeId}
                   track={track}
                   textWidth={220}
-                  onClick={this._playTack} />;
+                  onClick={this._playTrack} />;
                 })
               }</ul>
             </div>

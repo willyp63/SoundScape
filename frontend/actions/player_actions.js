@@ -45,11 +45,8 @@ module.exports = {
  },
  playShuffledTracks (tracks) {
    dispatcher.dispatch({
-     actionType: 'SET_TRACKS',
+     actionType: 'SET_SHUFFLED_TRACKS',
      tracks: tracks
-   });
-   dispatcher.dispatch({
-     actionType: 'SHUFFLE_TRACKS'
    });
  },
  appendTrack (track) {
