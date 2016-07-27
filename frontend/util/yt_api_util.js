@@ -5,6 +5,7 @@ const FILTER_WORDS = ["live", "cover", "parody", "parodie", "karaoke",
                   "acoustic", "instrumental", "karaote", "guitar lesson",
                   "ukulele lesson", "drum lesson", "piano lesson", "tablature",
                   "how to really play", "how to play", "busking", "tutorial", "rehearsal"];
+
 const REJECTED_CHANNELS = ["gabriella9797", "guitarlessons365song",
                         "mathieu terrade", "rock class 101", "ole's music",
                         "cifra club", "justinguitar songs", "the beatles", "bbc radio 1",
@@ -28,6 +29,7 @@ window.onClientLoad = function () {
   });
 };
 
+// EXPORTS
 module.exports = {
   searchYoutube (track, cb) {
     if (!_gapiLoaded) {
@@ -60,6 +62,7 @@ function processRequest (track, cb) {
 }
 
 function checkResults (results, i, artists, trackTitle, trackDuration, cb) {
+  // check each result sequentially
   if (!results[i]) {
     cb(null);
     return;
@@ -118,53 +121,39 @@ function validResult (result, artists, trackTitle, trackDuration, cb) {
     }
   }
 
-  // valid if within time deviation
-  videoDuration(result.id.videoId, function (duration) {
+  getYtInfo(result.id.videoId, function (duration, restricted) {
+    // valid if not restricted
+    if (restricted) {
+      console.log(`!Result:${result.snippet.title} Invalid b/c Age Restriction!`);
+      cb(false);
+      return;
+    }
+
+    // valid if within time deviation
     if (trackDuration < duration - TIME_DEVIATION || trackDuration > duration + TIME_DEVIATION) {
       console.log(`!Result:${result.snippet.title} Invalid b/c Time Deviation!`);
       cb(false);
       return;
     }
 
-    // valid if not restricted
-    ageRestricted(result.id.videoId, function (restricted) {
-      if (restricted) {
-        console.log(`!Result:${result.snippet.title} Invalid b/c Age Restriction!`);
-        cb(false);
-        return;
+    // audio format must be 'opus'
+    validAudioFormat(result.id.videoId, function (validFormat) {
+      if (!validFormat) {
+        console.log(`!Result:${result.snippet.title} Invalid b/c Audio Format!`);
       }
-
-      // audio format must be 'opus'
-      validAudioFormat(result.id.videoId, function (validFormat) {
-        if (!validFormat) {
-          console.log(`!Result:${result.snippet.title} Invalid b/c Audio Format!`);
-        }
-        cb(validFormat);
-      });
+      cb(validFormat);
     });
   });
 }
 
-function ageRestricted (ytid, cb) {
+function getYtInfo (ytid, cb) {
   gapi.client.youtube.videos.list({
     part: 'contentDetails', id: ytid
   }).execute(function (response) {
     const details = response.items[0].contentDetails;
-    if (details.contentRating) {
-      cb(details.contentRating.ytRating === "ytAgeRestricted");
-    } else {
-      cb(false);
-    }
-  });
-}
-
-function videoDuration (ytid, cb) {
-  gapi.client.youtube.videos.list({
-    part: 'contentDetails', id: ytid
-  }).execute(function (response) {
-    const str = response.items[0].contentDetails.duration;
-    const duration = SearchStringUtil.extractDuration(str);
-    cb(duration);
+    const duration = SearchStringUtil.extractDuration(details.duration);
+    const restricted = (details.contentRating && details.contentRating.ytRating === "ytAgeRestricted");
+    cb(duration, restricted);
   });
 }
 
