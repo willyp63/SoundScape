@@ -1,5 +1,7 @@
 const SearchStringUtil = require('./search_string_util');
 
+const STREAMING_URL = 'thawing-bastion-97540.herokuapp.com';
+
 const FILTER_WORDS = ["live", "cover", "parody", "parodie", "karaoke",
                   "full album", "español", "concert", "tutorial", "mashup",
                   "acoustic", "instrumental", "karaote", "guitar lesson",
@@ -42,7 +44,22 @@ module.exports = {
 }
 
 function processRequest (track, cb) {
-  // get ytid from first valid result
+  // check if server has ytid
+  $.ajax({
+    url: `http://${STREAMING_URL}/ytid/${track.spotify_id}`,
+    method: 'GET',
+    dataType: 'JSON',
+    success (response) {
+      if (response.ytid) {
+        cb(response.ytid);
+      } else {
+        searchTrack(track, cb);
+      }
+    }
+  });
+}
+
+function searchTrack (track, cb) {
   const cleanTitle = SearchStringUtil.cleanSpotifyTitle(track.title);
   let query = `${track.artists[0]} ${SearchStringUtil.dropStars(cleanTitle)}`;
   console.log(`???Searching YT for: ${query}???`);
@@ -54,6 +71,12 @@ function processRequest (track, cb) {
         const ytid = validResult.id.videoId;
         console.log(`???Found Valid Result:${validResult.snippet.title}???`);
         cb(ytid);
+
+        // cache ytid in server
+        $.ajax({
+          url: `http://${STREAMING_URL}/cache?ytid=${ytid}&spotifyId=${track.spotify_id}`,
+          method: 'GET'
+        });
       } else {
         console.log(`!!!No Valid Results!!!`);
       }
@@ -159,11 +182,14 @@ function getYtInfo (ytid, cb) {
 
 function validAudioFormat (ytid, cb) {
   $.ajax({
-    url: `http://thawing-bastion-97540.herokuapp.com/audioEncoding/${ytid}`,
+    url: `http://${STREAMING_URL}/audioEncoding/${ytid}`,
     method: 'GET',
     dataType: 'JSON',
     success (response) {
       cb(response.validFormat);
+    },
+    error (err) {
+      cb(false);
     }
   });
 }

@@ -58,5 +58,9 @@ module.exports = {
       const seconds = secondsMatch ? parseInt(secondsMatch[1]) : 0;
       return (minutes * 60) + seconds;
     }
+  },
+  queryString (track) {
+    const cleanTitle = this.cleanSpotifyTitle(track.title);
+    return `${track.artists[0]} ${this.dropStars(cleanTitle)}`;
   }
 };
