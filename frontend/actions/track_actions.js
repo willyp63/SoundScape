@@ -2,6 +2,7 @@ const dispatcher = require('../dispatcher');
 const TrackApiUtil = require('../util/track_api_util');
 const ErrorActions = require('./error_actions');
 const PlayerActions = require('./player_actions');
+const TrackStore = require('../stores/track_store');
 
 module.exports = {
   fetchAllTracks (limit, offset) {
@@ -24,11 +25,18 @@ module.exports = {
   },
   likeTrack (track) {
     TrackApiUtil.likeTrack(track, function () {
-      dispatcher.dispatch({
-        actionType: 'LIKE_TRACK',
-        track: track
-      });
-      PlayerActions.replaceTrack(track, track);
+      if (TrackStore.hasTrack(track)) {
+        dispatcher.dispatch({
+          actionType: 'LIKE_TRACK',
+          track: track
+        });
+        PlayerActions.replaceTrack(track, track);
+      } else {
+        dispatcher.dispatch({
+          actionType: 'LIKE_PLAYING_TRACK',
+          track: track
+        });
+      }
     });
   },
   postAndLikeTrack (track) {

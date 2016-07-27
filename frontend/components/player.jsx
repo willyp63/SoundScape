@@ -45,12 +45,12 @@ module.exports = React.createClass({
     AudioPlayer.removeListeners();
     const playTrack = this.state.tracks[this.state.playIdx];
     if (!playTrack) { return; }
-    if (YtidStore.hasId(playTrack)) {
+    if (playTrack.audio_url || YtidStore.hasId(playTrack)) {
       this.setState({playing: false, loadingTrack: true, playUrl: YtidStore.getUrl(playTrack)}, this._beginPlaying);
       let nextIdx = this.state.playIdx + 1;
       if (nextIdx >= this.state.tracks.length) { nextIdx = 0; }
       const nextTrack = this.state.tracks[nextIdx];
-      if (!YtidStore.hasId(nextTrack)) {
+      if (!nextTrack.audio_url && !YtidStore.hasId(nextTrack)) {
         YtActions.searchYoutube(nextTrack);
       }
     } else {
@@ -192,7 +192,7 @@ module.exports = React.createClass({
           <nav className="audio-player-bar">
             {this.state.playUrl ?
               <audio controls id="audio-player">
-                <source src={this.state.playUrl} type="audio/mpeg"/>
+                <source src={track.audio_url || this.state.playUrl} type="audio/mpeg"/>
               </audio> : ""}
             <div className="playing-image">
               <i className="glyphicon glyphicon-remove" onClick={this._closePlayer}/>
