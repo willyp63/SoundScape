@@ -125,8 +125,11 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
   line-height: $plus_button_size + 4px !important;
   font-size: $plus_button_size - 2px;
   text-align: center;
-  color: $ss-light-orange;
+  color: $ss-dark-dark-orange;
   cursor: pointer;
+}
+.plus-icon.active {
+  color: $ss-light-orange;
 }
 .plus-icon-bg {
   position: absolute;

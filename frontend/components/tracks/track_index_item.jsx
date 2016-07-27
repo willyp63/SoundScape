@@ -8,7 +8,7 @@ const ModalActions = require('../../actions/modal_actions');
 
 module.exports = React.createClass({
   getInitialState () {
-    return {hover: false, loading: false};
+    return {hover: false, loading: false, adding: false};
   },
   componentWillReceiveProps (newProps) {
     this.setState({loading: false});
@@ -76,6 +76,11 @@ module.exports = React.createClass({
     this.props.updateTrack(this.props.track);
   },
   _appendTrack () {
+    this.setState({adding: true}, function () {
+      setTimeout(function () {
+        this.setState({adding: false});
+      }.bind(this), 100);
+    }.bind(this));
     if (PlayerStore.tracks().length) {
       PlayerActions.appendTrack(this.props.track);
     } else {
@@ -134,7 +139,7 @@ module.exports = React.createClass({
                 </div>
                 <div>
                   <span className="plus-icon-bg"></span>
-                  <i className={"glyphicon glyphicon-plus plus-icon"}
+                  <i className={`glyphicon glyphicon-plus plus-icon${this.state.adding ? ' active' : ''}`}
                                 onMouseEnter={this._highlightPlus}
                                 onMouseLeave={this._unhighlightPlus}
                                 onClick={this._appendTrack}/>

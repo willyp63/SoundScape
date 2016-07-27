@@ -170,7 +170,7 @@ function videoDuration (ytid, cb) {
 
 function validAudioFormat (ytid, cb) {
   $.ajax({
-    url: `http://thawing-bastion-97540.herokuapp.com/check/${ytid}`,
+    url: `http://thawing-bastion-97540.herokuapp.com/audioEncoding/${ytid}`,
     method: 'GET',
     dataType: 'JSON',
     success (response) {
