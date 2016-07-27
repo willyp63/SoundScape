@@ -1,5 +1,6 @@
 const dispatcher = require('../dispatcher');
 const SessionStore = require('../stores/session_store');
+const SearchStringUtil = require('./search_string_util');
 
 module.exports = {
   searchTracks (callBack, query, limit, offset) {
@@ -7,7 +8,8 @@ module.exports = {
       url: 'https://api.spotify.com/v1/search',
       data: {q: query, type: 'track', limit: limit, offset: offset},
       success: function (response) {
-        const tracks = response.tracks.items.map(extractTrack);
+        let tracks = response.tracks.items.map(extractTrack);
+        tracks = uniqueTracks(tracks);
         if (SessionStore.loggedIn()) {
           this.buildLikedTracks(function (builtTracks) {
             callBack(builtTracks);
@@ -38,6 +40,20 @@ module.exports = {
     });
   }
 };
+
+function uniqueTracks (tracks) {
+  const seenQueries = {};
+  const uniqueTracks = [];
+  tracks.forEach(function (track) {
+    const title = SearchStringUtil.cleanSpotifyTitle(track.title)
+    const query = track.artists[0] + title;
+    if (!seenQueries[query]) {
+      seenQueries[query] = true;
+      uniqueTracks.push(track);
+    }
+  });
+  return uniqueTracks;
+}
 
 function extractTrack (track) {
  const hasImage = !!track.album.images.length;

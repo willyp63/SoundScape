@@ -33,7 +33,7 @@ PlayerStore.__onDispatch = function (payload) {
       break;
     case "REMOVE_PLAYING_TRACK":
       removeTrack(payload.track);
-      _newTracks = true;
+      _newTracks = false;
       this.__emitChange();
       break;
     case "REPLACE_PLAYING_TRACK":

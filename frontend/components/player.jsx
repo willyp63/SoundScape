@@ -126,6 +126,18 @@ module.exports = React.createClass({
     $(window).on('mousemove', moveVolumeHead);
     $(window).on('mouseup', volumeHeadReleased);
   },
+  _removeTrack (track) {
+    const playTrack = this.state.tracks[this.state.playIdx];
+    PlayerActions.removePlayingTrack(track);
+    if (track.storeId === playTrack.storeId) {
+      this.setState({playIdx: this.state.playIdx}, this._tryToPlayAudio);
+    } else {
+      const idx = this.state.tracks.indexOf(track);
+      if (idx < this.state.playIdx) {
+        this.setState({playIdx: this.state.playIdx - 1});
+      }
+    }
+  },
   _nextTrack () {
     let nextIdx = this.state.playIdx + 1;
     if (nextIdx >= this.state.tracks.length) { nextIdx = 0; }
@@ -247,8 +259,10 @@ module.exports = React.createClass({
                 this.state.tracks.map(track => {
                   return <SearchResult key={track.storeId}
                   track={track}
-                  textWidth={220}
-                  onClick={this._playTrack} />;
+                  textWidth={200}
+                  onRemove={this._removeTrack}
+                  onClick={this._playTrack}
+                  type="queue" />;
                 })
               }</ul>
             </div>

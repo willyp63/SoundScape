@@ -82,7 +82,8 @@ module.exports = React.createClass({
                 return <SearchResult key={track.id}
                                      track={track}
                                      textWidth={this.state.resultTextWidth}
-                                     onClick={this._chooseResult}/>;
+                                     onClick={this._chooseResult}
+                                     type="search-result"/>;
               })
             }</ul> :
             ""}

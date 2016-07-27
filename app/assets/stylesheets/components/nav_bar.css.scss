@@ -1,18 +1,12 @@
 @import 'colors';
-
 $nav-bar-height: 50px;
 $search-bar-height: 35px;
 $profile-badge-height: 40px;
-
 $nav-bar-font-size: 18px;
-
 $left-width: 274px;
 $right-width: $left-width;
-
 $dropdown-option-height: 40px;
-
 $logo-width: 96px;
-
 $nav-bar-bg: $ss-gray;
 $nav-bar-active-color: $ss-dark-gray;
 $logo-bg-light: $ss-light-orange;
@@ -20,7 +14,6 @@ $logo-bg-dark: $ss-dark-orange;
 $text-color: $ss-light-gray;
 $search-icon-active-color: #666;
 $text-color-active: #fff;
-
 /* FLEX */
 .nav-bar {
   display: flex;
@@ -32,24 +25,19 @@ $text-color-active: #fff;
   height: $nav-bar-height;
   background-color: $nav-bar-bg;
 }
-
 .nav-bar-left, .nav-bar-right {
   height: $nav-bar-height;
   flex-grow: 0;
 }
-
 .nav-bar-left {
   flex-basis: $left-width;
 }
-
 .nav-bar-right {
   flex-basis: $right-width;
 }
-
 .nav-bar-center {
   flex-grow: 1;
 }
-
 /* LEFT NAV */
 .nav-bar-logo {
   float: left;
@@ -58,16 +46,13 @@ $text-color-active: #fff;
   margin-left: 10px;
   padding: 0 2px;
 }
-
 .nav-bar-logo img {
   margin-top: 2px;
 }
-
 .nav-bar-left > ul {
   float: left;
   list-style: none;
 }
-
 .nav-bar-left > ul > li {
   float: left;
   line-height: $nav-bar-height;
@@ -76,32 +61,25 @@ $text-color-active: #fff;
   color: $text-color;
   cursor: pointer;
 }
-
 .nav-bar-left > ul > li:first-of-type {
   width: 67px;
 }
-
 .nav-bar-left > ul > li:last-of-type {
   width: 97px;
 }
-
 .nav-bar-left > ul > li:hover {
   color: $text-color-active;
 }
-
 .nav-bar-left > ul > li.active {
   color: $text-color-active;
   background-color: $nav-bar-active-color;
 }
-
 /* SEARCH BAR */
 .nav-bar-center {
   height: $nav-bar-height;
   position: relative;
 }
-
 $search-bar-y-offset: ($nav-bar-height - $search-bar-height)/2;
-
 .nav-bar-center #search-input {
   width: calc(100% - 32px);
   height: $search-bar-height - 16px;
@@ -111,11 +89,9 @@ $search-bar-y-offset: ($nav-bar-height - $search-bar-height)/2;
   border-radius: 8px;
   outline: 0;
 }
-
 .nav-bar-center #search-input:focus {
   box-shadow: 0 0 1pt 1pt #0cf;
 }
-
 .nav-bar-center i {
   position: absolute;
   line-height: $search-bar-height;
@@ -126,17 +102,14 @@ $search-bar-y-offset: ($nav-bar-height - $search-bar-height)/2;
   color: $text-color;
   cursor: pointer;
 }
-
 .nav-bar-center i:hover {
   color: $search-icon-active-color;
 }
-
 /* RIGHT NAV */
 .nav-bar-right > ul {
   float: right;
   list-style: none;
 }
-
 .nav-bar-right > ul > li {
   float: right;
   position: relative;
@@ -148,32 +121,26 @@ $search-bar-y-offset: ($nav-bar-height - $search-bar-height)/2;
   color: $text-color;
   cursor: pointer;
 }
-
 .nav-bar-right > ul > li:hover {
   color: $text-color-active;
 }
-
 .dropdown-toggle {
   position: relative;
   vertical-align: middle;
 }
-
 .dropdown-toggle:hover {
   color: $text-color-active;
 }
-
 .profile-carrot {
   padding-left: 40px;
   line-height: $nav-bar-height;
 }
-
 .profile-badge {
   position: absolute;
   top: -40%;
   right: calc(100% - 30px);
   border-radius: $profile-badge-height/2;
 }
-
 /* DROP DOWN MENU */
 .dropdown-menu {
   position: absolute;
@@ -186,7 +153,6 @@ $search-bar-y-offset: ($nav-bar-height - $search-bar-height)/2;
   background-color: $nav-bar-active-color !important;
   cursor: default;
 }
-
 .dropdown-menu > li {
   margin: 0;
   padding: 0 15px;
@@ -197,53 +163,43 @@ $search-bar-y-offset: ($nav-bar-height - $search-bar-height)/2;
   color: $text-color;
   cursor: pointer;
 }
-
 .nav-bar-right .dropdown-menu > li:first-of-type {
   cursor: default;
 }
-
 .dropdown-menu > li.divider {
   background-color: $text-color;
   padding: 0;
 }
-
 .dropdown-menu > li.divider:hover {
   background-color: $text-color;
 }
-
 .dropdown-menu > li:hover {
   color: $text-color-active;
   background-color: $nav-bar-bg;
 }
-
 .nav-bar-right .dropdown-menu > li:first-of-type:hover {
   color: $text-color;
   background-color: transparent;
 }
-
 /* SEARCH RESULTS */
 .nav-bar-center {
   position: relative;
 }
-
 .search-results {
   position: absolute !important;
   top: 0 !important;
   left: 0 !important;
   width: 100%;
 }
-
 .search-results li {
   text-align: left;
   height: 50px;
 }
-
 .search-results li p {
   float: left;
   line-height: 50px;
   font-size: 18px;
 }
-
 .search-results li img {
   margin-top: 5px;
   float: right;

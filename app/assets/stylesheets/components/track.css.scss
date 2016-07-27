@@ -140,6 +140,20 @@ $play_button_offset: ($track_size - $play_button_size) / 2;
 .plus-icon-bg.highlighted {
   background-color: $ss-light-gray;
 }
+.minus-icon {
+  top: 0 !important;
+  left: 0;
+  width: 40px;
+  line-height: 50px !important;
+  font-size: $plus_button_size - 15px !important;
+  float: left;
+  text-align: center;
+  color: blue;
+  cursor: pointer;
+}
+.minus-icon.highlighted {
+  color: $ss-light-orange;
+}
 .update-icon {
   position: absolute !important;
   top: $like_button_y_offset !important;

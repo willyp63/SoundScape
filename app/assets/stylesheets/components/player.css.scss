@@ -1,8 +1,6 @@
 @import 'colors';
-
 $player-height: 50px;
 $player-bg: $ss-gray;
-
 .audio-player-bar {
   display: flex;
   align-items: center;
@@ -14,17 +12,14 @@ $player-bg: $ss-gray;
   height: $player-height;
   background-color: $player-bg;
 }
-
 .audio-player-bar audio {
   display: none;
 }
-
 .playing-track {
   flex-basis: 25%;
   color: white;
   text-align: center;
 }
-
 .playing-image {
   flex-basis: 25%;
   height: 50px;
@@ -32,7 +27,6 @@ $player-bg: $ss-gray;
   align-items: center;
   justify-content: space-around;
 }
-
 .playing-image i {
   float: left;
   font-size: 32px;
@@ -40,11 +34,9 @@ $player-bg: $ss-gray;
   color: $ss-light-gray;
   cursor: pointer;
 }
-
 .playing-image i:hover {
   color: #fff;
 }
-
 .player-like-button {
   float: left;
   position: relative;
@@ -54,22 +46,18 @@ $player-bg: $ss-gray;
   height: 40px;
   cursor: pointer;
 }
-
 .player-like-button:hover {
   background-color: $ss-light-gray;
 }
-
 .player-like-button i {
   margin-top: 2px;
   line-height: 40px;
   font-size: 38px;
   color: $ss-dark-gray !important;
 }
-
 .player-like-button i.liked {
   color: #f39 !important;
 }
-
 .player-like-button span {
   position: absolute;
   top: 0;
@@ -80,7 +68,6 @@ $player-bg: $ss-gray;
   font-size: 18px;
   text-align: center;
 }
-
 .player-like-button .sk-fading-circle {
   position: absolute;
   top: 4px;
@@ -88,14 +75,12 @@ $player-bg: $ss-gray;
   height: 32px;
   width: 32px;
 }
-
 .audio-player-center {
   flex-basis: 50%;
   height: 50px;
   display: flex;
   align-items: center;
 }
-
 .audio-controls {
   flex-basis: 100px;
   float: left;
@@ -104,36 +89,30 @@ $player-bg: $ss-gray;
   line-height: $player-height;
   text-align: center;
 }
-
 .audio-controls i {
   line-height: $player-height;
   cursor: pointer;
 }
-
 .audio-controls i:hover {
   color: #fff;
 }
-
 .audio-progress-bar {
   flex-grow: 1;
   float: left;
   display: flex;
   align-items: center;
 }
-
 .audio-current-time, .audio-total-time  {
   flex-basis: 80px;
   text-align: center;
   line-height: $player-height;
   color: $ss-light-gray;
 }
-
 .progress-bar {
   flex-grow: 1;
   height: $player-height;
   position: relative;
 }
-
 .progress-bar-bg {
   background-color: $ss-dark-gray;
   position: absolute;
@@ -144,7 +123,6 @@ $player-bg: $ss-gray;
   border-radius: 2px;
   cursor: pointer;
 }
-
 .progress-bar-fg {
   background-color: $ss-light-orange;
   position: absolute;
@@ -155,7 +133,6 @@ $player-bg: $ss-gray;
   border-radius: 2px;
   cursor: pointer;
 }
-
 .progress-bar-head {
   position: absolute;
   background-color: $ss-light-orange;
@@ -167,7 +144,6 @@ $player-bg: $ss-gray;
   border-radius: 8px;
   cursor: pointer;
 }
-
 .audio-volume-control {
   flex-basis: 35px;
   float: left;
@@ -177,15 +153,12 @@ $player-bg: $ss-gray;
   text-align: center;
   cursor: pointer;
 }
-
 .audio-volume-control:hover {
   color: #fff;
 }
-
 .audio-volume-control i {
   line-height: $player-height;
 }
-
 .playing-track {
   display: flex;
   position: relative;
@@ -194,58 +167,48 @@ $player-bg: $ss-gray;
   color: $ss-light-gray;
   cursor: pointer;
 }
-
 .playing-track:hover {
   color: #fff;
 }
-
 .playing-track p {
   flex-grow: 1;
   padding: 0 10px;
   font-size: 14px;
   margin: 0;
 }
-
 .playing-track i {
   font-size: 16px;
 }
-
 .track-queue {
   position: absolute !important;
   display: none;
   bottom: 100% !important;
   right: 0 !important;
   max-height: 325px;
-  width: 300px;
+  width: 325px;
   overflow-y: scroll;
   background-color: $ss-dark-gray;
   color: $ss-light-gray;
   cursor: pointer;
 }
-
 .track-queue li {
   text-align: left;
   height: 50px;
 }
-
 .track-queue li:hover {
   background-color: $ss-gray;
   color: #fff;
 }
-
 .track-queue li p {
   float: left;
   line-height: 50px;
   font-size: 18px;
-  margin-left: 15px;
 }
-
 .track-queue li img {
   margin-top: 5px;
   float: right;
   margin-right: 15px;
 }
-
 .volume-selector {
   position: absolute;
   display: none;
@@ -255,7 +218,6 @@ $player-bg: $ss-gray;
   width: 100%;
   background-color: $ss-dark-gray;
 }
-
 .volume-rail {
   margin: 15px 16px;
   width: 3px;
@@ -263,7 +225,6 @@ $player-bg: $ss-gray;
   background-color: $ss-light-gray;
   border-radius: 1.5px;
 }
-
 .volume-head {
   margin: 8px 10px;
   position: absolute;
@@ -275,7 +236,6 @@ $player-bg: $ss-gray;
   border: 1px solid $ss-gray;
   border-radius: 7px;
 }
-
 /* SQUARE SPINNER */
 .audio-player-spinner {
   margin: 0 15px;
@@ -287,23 +247,19 @@ $player-bg: $ss-gray;
   justify-content: space-between;
   align-items: center;
 }
-
 .audio-player-spinner > .spinner-el {
   background-color: $ss-light-orange;
   height: 100%;
   width: 2%;
   border-radius: 50%;
   display: inline-block;
-
   -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
   animation: sk-stretchdelay 1.2s infinite ease-in-out;
 }
-
 @-webkit-keyframes sk-stretchdelay {
   0%, 40%, 100% { -webkit-transform: scaleY(0.3) }
   20% { -webkit-transform: scaleY(1.0) }
 }
-
 @keyframes sk-stretchdelay {
   0%, 40%, 100% {
     transform: scaleY(0.3);

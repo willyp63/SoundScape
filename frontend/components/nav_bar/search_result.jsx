@@ -1,9 +1,26 @@
 const React = require('react');
 
 module.exports = React.createClass({
+  _highlightMinus (e) {
+    $(e.target).addClass('highlighted');
+  },
+  _unhighlightMinus (e) {
+    $(e.target).removeClass('highlighted');
+  },
   _onClick (e) {
     e.stopPropagation();
     this.props.onClick(this.props.track);
+  },
+  _onRemove (e) {
+    e.stopPropagation();
+    this.props.onRemove(this.props.track);
+  },
+  minus_sign () {
+    if (this.props.type === "search-result") {
+     return <div></div>;
+    } else {
+     return <i className="glyphicon glyphicon-minus minus-icon" onClick={this._onRemove} onMouseEnter={this._highlightMinus} onMouseLeave={this._unhighlightMinus}/>;
+    }
   },
   render () {
     let text = this.props.track.title;
@@ -15,9 +32,10 @@ module.exports = React.createClass({
     }
     return (
       <li onClick={this._onClick} className="cf">
-        <p>{text}</p>
-        <img src={this.props.track.image_url} width="40" height="40"/>
-      </li>
+       {this.minus_sign()}
+       <p>{text}</p>
+       <img src={this.props.track.image_url} width="40" height="40"/>
+     </li>
     );
   }
 });
