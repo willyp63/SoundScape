@@ -24,7 +24,7 @@ module.exports = React.createClass({
   },
   render () {
     let text = this.props.track.title;
-    if (this.props.track.artists[0]) {
+    if (this.props.track.artists && this.props.track.artists[0]) {
       text += ` - ${this.props.track.artists[0]}`;
     }
     if (getWidthOfText(text) > this.props.textWidth) {
