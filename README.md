@@ -1,10 +1,9 @@
 # SoundScape
 
 [Heroku link][heroku]
+[heroku]: http://www.soundsscape.com/
 
-[heroku]: https://soundsscape.com
-
-SoundScape utilizes Ruby on Rails and Facebook's React.js with a Flux design to delivery front end content. A secondary Node.js server is used for streaming audio.
+SoundScape utilizes Ruby on Rails and React.js with a Flux design. A secondary Node.js server is used for streaming audio.
 
 SoundScape is a great place to explore new music. You can search for and play millions of popular songs! While navigating the site add songs to your player's queue, or like the song to add it to your personal collection. Users can even upload and manage their own songs!
 
@@ -12,7 +11,7 @@ SoundScape is a great place to explore new music. You can search for and play mi
 
 ## Where do the Songs Come from?
 
-By integrating with two powerful APIs, SoundScape is able to deliver high-quality audio for millions of popular songs. SoundScape's search results come from Spotify API. When a user wants to play a song returned from Spotify, a search request is made to the Youtube API. SoundScape's algorithm analyzes each result returned from Youtube and makes its best guess at what video contains the desired audio. Once the video is located, SoundScape's Node.js opens an audio stream and pipes it back to the client.
+By integrating with two powerful APIs, SoundScape is able to deliver high-quality audio for millions of popular songs. SoundScape's search results come from Spotify API. When a user wants to play a song returned from Spotify, a search request is made to the Youtube API. SoundScape's algorithm analyzes each result returned from Youtube and makes its best guess at what video contains the desired audio. Once the video is located, SoundScape's Node.js server opens an audio stream and pipes it back to the client.
 
 ![search]
 
