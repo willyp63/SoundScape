@@ -2,7 +2,7 @@
 
 [Heroku link][heroku]
 
-[heroku]: https://salty-falls-17641.herokuapp.com
+[heroku]: https://soundsscape.com
 
 SoundScape utilizes Ruby on Rails and Facebook's React.js with a Flux design to delivery front end content. A secondary Node.js server is used for streaming audio.
 
