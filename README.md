@@ -1,6 +1,6 @@
 # SoundScape
 
-[Heroku link][heroku]
+[Live Link][heroku]
 [heroku]: http://www.soundsscape.com/
 
 SoundScape utilizes Ruby on Rails and React.js with a Flux design. A secondary Node.js server is used for streaming audio.
