@@ -3,7 +3,7 @@ const SessionStore = require('../stores/session_store');
 const SearchStringUtil = require('./search_string_util');
 
 module.exports = {
-  searchTracks (callBack, query, limit, offset) {
+  searchTracks (callBack, query, limit, offset, attempts) {
     $.ajax({
       url: 'https://api.spotify.com/v1/search',
       data: {q: query, type: 'track', limit: limit, offset: offset},
@@ -19,10 +19,18 @@ module.exports = {
         }
       }.bind(this),
       error: function (data) {
-        dispatcher.dispatch({
-          actionType: 'CANNOT_LOAD_TRACKS'
-        });
-      }
+        attempts = attempts ? attempts + 1 : 1;
+        if (attempts > 5) {
+          // give up
+          dispatcher.dispatch({
+            actionType: 'CANNOT_LOAD_TRACKS'
+          });
+        } else {
+          // try again
+          console.log('trying again...');
+          this.searchTracks(callBack, query, limit, offset, attempts);
+        }
+      }.bind(this)
     });
   },
   buildLikedTracks (callBack, tracks) {
