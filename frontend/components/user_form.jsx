@@ -66,7 +66,7 @@ module.exports = React.createClass({
   },
   _demoLogin (e) {
     e.preventDefault();
-    SessionActions.login({username: 'guest', password: 'db84n337vmz39alqp97'});
+    SessionActions.login({username: 'guest123', password: 'mrqhkl71'});
   },
   _closeModal () {
     ModalActions.hide();

@@ -33,19 +33,19 @@ module.exports = React.createClass({
     SearchActions.fetchResults(_randomQuery, ADDITIONAL_REQUEST_SIZE, offset);
   },
   _demoLogin () {
-    SessionActions.login({username: 'guest', password: 'db84n337vmz39alqp97'});
+    SessionActions.login({username: 'guest123', password: 'mrqhkl71'});
   },
   render () {
     return (
       <div>
         <div className="banner">
-          <p className='tag-line-1'>Your Favorite Music</p>
-          <p className='tag-line-2'>Ad-Free and Uninterrupted</p>
+          <p className='tag-line-1'>All Your Favorite Music</p>
+          <p className='tag-line-2'>Uninterrupted and Ad-Free</p>
           <img src="http://res.cloudinary.com/dcwxxqs4l/image/upload/v1469248079/landscape_hbrvih.jpg"/>
           <div className="right-splash-buffer" />
           <div className="left-splash-buffer" />
           {this.state.loggedIn ? "" :
-            <button className="btn btn-success" onClick={this._demoLogin}>Try It Out!</button>}
+            <button className="btn btn-success try-it-button" onClick={this._demoLogin}>Try It Out!</button>}
         </div>
         <div className="search-results-header">
           <p>{`Tracks by: ${_randomQuery}`}</p>

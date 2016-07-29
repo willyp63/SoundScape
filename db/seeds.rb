@@ -300,12 +300,12 @@ image_urls = ["https://i.scdn.co/image/29524c6b4c9c821d7b57702ba05f380ac49144af"
                                                                                                     "https://i.scdn.co/image/7a5988a2baded04e9c74e12395ad0baf54bb8602",
                                                                                                      "https://i.scdn.co/image/107f739168bfea065f5b77aeb7f77a6161fe4ca6"]
 
-admin = User.create!(username: 'admin', password: 'password',
-    picture_url: "http://res.cloudinary.com/dcwxxqs4l/image/upload/v1469257095/Wil_Pirino_nzntwr.jpg")
+admin = User.create!(username: 'admin456', password: 'upubsv2y',
+    picture_url: "http://res.cloudinary.com/dcwxxqs4l/image/upload/v1469825821/nobody_wix2c9.jpg")
 
-guest = User.create!(username: 'guest', password: 'db84n337vmz39alqp97',
-    picture_url: "http://res.cloudinary.com/dcwxxqs4l/image/upload/v1469257095/Wil_Pirino_nzntwr.jpg")
-# 
+guest = User.create!(username: 'guest123', password: 'mrqhkl71',
+    picture_url: "http://res.cloudinary.com/dcwxxqs4l/image/upload/v1469825821/nobody_wix2c9.jpg")
+#
 # titles.length.times do |i|
 #   if i < 3
 #     track = Track.create!(title: titles[i], image_url: image_urls[i],
