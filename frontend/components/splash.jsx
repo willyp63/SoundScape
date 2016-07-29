@@ -39,6 +39,8 @@ module.exports = React.createClass({
     return (
       <div>
         <div className="banner">
+          <p className='tag-line-1'>Your Favorite Music</p>
+          <p className='tag-line-2'>Ad-Free and Uninterrupted</p>
           <img src="http://res.cloudinary.com/dcwxxqs4l/image/upload/v1469248079/landscape_hbrvih.jpg"/>
           <div className="right-splash-buffer" />
           <div className="left-splash-buffer" />
