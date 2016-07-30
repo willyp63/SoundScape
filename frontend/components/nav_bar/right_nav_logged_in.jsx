@@ -1,5 +1,3 @@
-const React = require('react');
-
 const SessionActions = require('../../actions/session_actions');
 const SessionStore = require('../../stores/session_store');
 const hashHistory = require('react-router').hashHistory;

@@ -1,4 +1,3 @@
-const React = require('react');
 const NavBar = require('./nav_bar/nav_bar');
 const Player = require('./player');
 const SearchActions = require('../actions/search_actions');

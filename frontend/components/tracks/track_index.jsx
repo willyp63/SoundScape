@@ -1,4 +1,3 @@
-const React = require('react');
 const TrackIndexItem = require('./track_index_item');
 const TrackStore = require('../../stores/track_store');
 const TrackActions = require('../../actions/track_actions');

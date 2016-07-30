@@ -1,5 +1,3 @@
-const React = require('react');
-
 module.exports = React.createClass({
   _highlightMinus (e) {
     $(e.target).addClass('highlighted');

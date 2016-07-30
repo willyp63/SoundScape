@@ -1,4 +1,3 @@
-const React = require('react');
 const ErrorStore = require('../../stores/error_store');
 const TrackActions = require('../../actions/track_actions');
 const ModalActions = require('../../actions/modal_actions');

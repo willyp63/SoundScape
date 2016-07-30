@@ -1,4 +1,3 @@
-const React = require('react');
 const ErrorActions = require('../../actions/error_actions');
 const ModalActions = require('../../actions/modal_actions');
 

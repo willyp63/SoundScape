@@ -1,4 +1,3 @@
-const React = require('react');
 const SearchActions = require('../actions/search_actions');
 const SessionActions = require('../actions/session_actions');
 const SessionStore = require('../stores/session_store');

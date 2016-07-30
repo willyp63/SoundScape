@@ -1,6 +1,3 @@
-const ReactDOM = require("react-dom");
-const React = require('react');
-
 const ReactRouter = require('react-router');
 const Router = ReactRouter.Router;
 const Route = ReactRouter.Route;

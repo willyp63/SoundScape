@@ -1,4 +1,3 @@
-const React = require('react');
 const SearchActions = require('../actions/search_actions');
 const TrackIndex = require('./tracks/track_index');
 

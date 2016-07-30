@@ -1,4 +1,3 @@
-const React = require('react');
 const PlayerStore = require('../stores/player_store');
 const YtidStore = require('../stores/ytid_store');
 const YtActions = require('../actions/yt_actions');

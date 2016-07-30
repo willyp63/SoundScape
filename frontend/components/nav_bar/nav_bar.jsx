@@ -1,5 +1,3 @@
-const React = require('react');
-
 const SessionStore = require('../../stores/session_store');
 const ModalStore = require('../../stores/modal_store');
 
