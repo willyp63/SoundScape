@@ -14,6 +14,7 @@ class User < ActiveRecord::Base
   has_many :tracks
   has_many :track_likes
   has_many :liked_tracks, through: :track_likes, source: :track
+  has_many :sessions
 
   validates :username, uniqueness: true
   validates :password, length: { minimum: 6, allow_nil: true }
