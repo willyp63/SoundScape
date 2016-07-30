@@ -28,6 +28,9 @@ module.exports = {
     }
     return str;
   },
+  replaceAnds (str) {
+     return str.replace(new RegExp(" & ", "g"), " and ");
+   },
   wildCardSpacesAndStars (title) {
     let str = "";
     let spaceOrStar = false;

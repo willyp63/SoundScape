@@ -61,7 +61,7 @@ function processRequest (track, cb) {
 
 function searchTrack (track, cb) {
   const cleanTitle = SearchStringUtil.cleanSpotifyTitle(track.title);
-  let query = `${track.artists[0]} ${SearchStringUtil.dropStars(cleanTitle)}`;
+  let query = `${SearchStringUtil.replaceAnds(track.artists[0])} ${SearchStringUtil.dropStars(cleanTitle)}`;
   console.log(`???Searching YT for: ${query}???`);
   gapi.client.youtube.search.list({
     part: 'snippet', q: query, maxResults: 50
@@ -121,7 +121,7 @@ function validResult (result, artists, trackTitle, trackDuration, cb) {
   const channelTitle = result.snippet.channelTitle;
   let artistMatch = false;
   for (var i = 0; i < artists.length; i++) {
-    const artistRegExp = new RegExp(SearchStringUtil.wildCardSpacesAndStars(artists[i]), 'i');
+    const artistRegExp = new RegExp(SearchStringUtil.wildCardSpacesAndStars(SearchStringUtil.replaceAnds(artists[i])), 'i');
     if (resultTitle.match(artistRegExp) || channelTitle.match(artistRegExp)) {
       artistMatch = true;
       break;
