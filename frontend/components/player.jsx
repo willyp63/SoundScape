@@ -15,7 +15,7 @@ const _listeners = [];
 
 module.exports = React.createClass({
   getInitialState () {
-    return {tracks: [], playing: false, loadingLike: false,
+    return {tracks: [], playing: false, loadingLike: false, unableToLoadTrack: false,
       loadingTrack: false, currentTime: 0, duration: 0, playIdx: 0, playUrl: null};
   },
   componentWillMount () {
@@ -46,7 +46,12 @@ module.exports = React.createClass({
     const playTrack = this.state.tracks[this.state.playIdx];
     if (!playTrack) { return; }
     if (playTrack.audio_url || YtidStore.hasId(playTrack)) {
-      this.setState({playing: false, loadingTrack: true, playUrl: YtidStore.getUrl(playTrack)}, this._beginPlaying);
+      if (YtidStore.getId(playTrack) === 'NOT_FOUND') {
+        takeDownSpinner();
+        this.setState({playing: false, loadingTrack: true, playUrl: null, unableToLoadTrack: true});
+      } else {
+        this.setState({playing: false, loadingTrack: true, playUrl: YtidStore.getUrl(playTrack)}, this._beginPlaying);
+      }
       let nextIdx = this.state.playIdx + 1;
       if (nextIdx >= this.state.tracks.length) { nextIdx = 0; }
       const nextTrack = this.state.tracks[nextIdx];
@@ -54,7 +59,7 @@ module.exports = React.createClass({
         YtActions.searchYoutube(nextTrack);
       }
     } else {
-      this.setState({playing: false, loadingTrack: true, playUrl: null}, this._fetchAudio);
+      this.setState({playing: false, loadingTrack: true, playUrl: null, unableToLoadTrack: false}, this._fetchAudio);
     }
   },
   _fetchAudio () {
@@ -227,9 +232,14 @@ module.exports = React.createClass({
                 <i className="glyphicon glyphicon-step-forward"
                    onClick={this._nextTrack}></i>
               </div>
-              {this.state.loadingTrack ?
-                <div className="audio-player-spinner">
-                </div> :
+              {this.state.loadingTrack ? (
+                this.state.unableToLoadTrack ?
+                  <div className="unable-to-load-track">
+                    <i className="glyphicon glyphicon-remove"></i>
+                    <p>Sorry. We couldn't locate audio for this track.</p>
+                  </div> :
+                  <div className="audio-player-spinner"></div>
+                ) :
                 <div className="audio-progress-bar">
                   <span className="audio-current-time">{formatTime(this.state.currentTime)}</span>
                   <div className="progress-bar">

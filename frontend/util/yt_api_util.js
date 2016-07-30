@@ -79,6 +79,7 @@ function searchTrack (track, cb) {
         });
       } else {
         console.log(`!!!No Valid Results!!!`);
+        cb(null);
       }
     });
   });

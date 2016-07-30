@@ -236,6 +236,26 @@ $player-bg: $ss-gray;
   border: 1px solid $ss-gray;
   border-radius: 7px;
 }
+.unable-to-load-track {
+  margin: 0 15px;
+  flex-grow: 1;
+  float: left;
+  height: $player-height;
+  text-align: center;
+  font-size: 16px;
+  color: red;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.unable-to-load-track i {
+  flex-basis: 50px;
+  font-size: 32px;
+}
+.unable-to-load-track p {
+  flex-grow: 1;
+}
 /* SQUARE SPINNER */
 .audio-player-spinner {
   margin: 0 15px;

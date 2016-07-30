@@ -11,6 +11,10 @@ YtidStore.hasId = function (track) {
   return !!(_ids[track.storeId]);
 };
 
+YtidStore.getId = function (track) {
+  return _ids[track.storeId];
+};
+
 YtidStore.getUrl = function (track) {
   return YTDL_URL_PREFIX + _ids[track.storeId];
 };
@@ -18,7 +22,7 @@ YtidStore.getUrl = function (track) {
 YtidStore.__onDispatch = function (payload) {
   switch (payload.actionType) {
     case "RECIEVE_YTID":
-      _ids[payload.track.storeId] = payload.ytid;
+      _ids[payload.track.storeId] = payload.ytid ? payload.ytid : 'NOT_FOUND';
       this.__emitChange();
       break;
   }
