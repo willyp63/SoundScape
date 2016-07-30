@@ -1,38 +1,47 @@
 class Api::TrackLikesController < ApplicationController
   def create
+    unless logged_in?
+      render json: ["Nobody signed in"], status: 404
+      return
+    end
+
     # perfer to set spotify id
     spotify_id = params[:track_like][:spotify_id]
     if spotify_id && !spotify_id.empty?
-      track_like = TrackLike.new(spotify_id: spotify_id);
-      Track.find_by(spotify_id: spotify_id).incrementLikeCount
+      unless TrackLike.find_by(spotify_id: spotify_id, user_id: current_user.id)
+        track_like = TrackLike.new(spotify_id: spotify_id, user_id: current_user.id)
+        track_like.save!
+        Track.find_by(spotify_id: spotify_id).incrementLikeCount
+      end
     else
-      track_like = TrackLike.new(track_id: params[:track_like][:track_id]);
-      track_like.track.incrementLikeCount
+      unless TrackLike.find_by(track_id: params[:track_like][:track_id], user_id: current_user.id)
+        track_like = TrackLike.new(track_id: params[:track_like][:track_id], user_id: current_user.id)
+        track_like.save!
+        track_like.track.incrementLikeCount
+      end
     end
-
-    if logged_in?
-      track_like.user_id = current_user.id
-    end
-
-    if track_like.save
-      render json: track_like
-    else
-      render json: track_like.errors.full_messages
-    end
+    render json: track_like
   end
 
   def destroy
-    if params[:id].to_i.to_s != params[:id]
-      track_like = TrackLike.find_by(spotify_id: params[:id], user_id: current_user.id);
-      Track.find_by(spotify_id: params[:id]).decrementLikeCount
-    else
-      track_like = TrackLike.find_by(track_id: params[:id], user_id: current_user.id);
-      track_like.track.decrementLikeCount
+    unless logged_in?
+      render json: ["Nobody signed in"], status: 404
+      return
     end
 
-    # match either id type
-    track_like ||= TrackLike.find_by(spotify_id: params[:id], user_id: current_user.id);
-    track_like.destroy!
+    if params[:id].to_i.to_s != params[:id]
+      track_like = TrackLike.find_by(spotify_id: params[:id], user_id: current_user.id);
+      if track_like
+        Track.find_by(spotify_id: params[:id]).decrementLikeCount
+        track_like.destroy!
+      end
+    else
+      track_like = TrackLike.find_by(track_id: params[:id], user_id: current_user.id);
+      if track_like
+        track_like.track.decrementLikeCount
+        track_like.destroy!
+      end
+    end
     render json: track_like
   end
 
