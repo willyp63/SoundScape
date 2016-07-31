@@ -17,7 +17,8 @@ module.exports = React.createClass({
                                         password: "",
                                         picture_url: user.picture_url}};
     } else {
-      return {errors: undefined, user: {username: "", password: "", picture_url: ""}};
+      return {errors: undefined, user: {username: "", password: "",
+              picture_url: "http://res.cloudinary.com/dcwxxqs4l/image/upload/v1469825821/nobody_wix2c9.jpg"}};
     }
   },
   componentDidMount () {
