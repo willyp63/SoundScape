@@ -53,7 +53,7 @@ function uniqueTracks (tracks) {
   const seenQueries = {};
   const uniqueTracks = [];
   tracks.forEach(function (track) {
-    const title = SearchStringUtil.cleanSpotifyTitle(track.title)
+    const title = SearchStringUtil.cleanSpotifyTitle(track.title);
     const query = track.artists[0] + title;
     if (!seenQueries[query]) {
       seenQueries[query] = true;
@@ -69,6 +69,6 @@ function extractTrack (track) {
          image_url: (hasImage ? track.album.images[1].url : ""),
          artists: track.artists.map(artist => artist.name),
          id: track.id,
-         duration_sec: track.duration_ms/1000,
+         duration_sec: track.duration_ms / 1000,
          spotify_id: track.id};
 }

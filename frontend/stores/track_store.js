@@ -4,12 +4,14 @@ const LinkedHashMap = require('../util/linked_hash_map');
 
 // allows store to keep tracks in order
 let _tracks = new LinkedHashMap();
+let _splashTracks;
 let _indexType, _hasMoreTracks;
 let _cannotLoadTracks = false;
 
 const TrackStore = new Store(dispatcher);
 
 TrackStore.all = () => _tracks.all();
+TrackStore.splashTracks = () => _splashTracks;
 TrackStore.indexType = () => _indexType;
 TrackStore.cannotLoadTracks = () => _cannotLoadTracks;
 TrackStore.hasMoreTracks = function () {
@@ -25,6 +27,11 @@ TrackStore.__onDispatch = function (payload) {
     case "RECEIVE_TRACKS":
       _cannotLoadTracks = false;
       setTracks(payload.tracks);
+      this.__emitChange();
+      break;
+    case "RECEIVE_SPLASH_TRACK":
+      _cannotLoadTracks = false;
+      _splashTracks = payload.trackHash;
       this.__emitChange();
       break;
     case "APPEND_TRACKS":

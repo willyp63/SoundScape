@@ -1,4 +1,41 @@
+const SpotifyApiUtil = require('./spotify_api_util');
+const randomQueries = require('../constants/random_queries');
+
 module.exports = {
+  fetchSplashTracks (trackKeys, callBack) {
+    let trackHash = {};
+    let trackKeyCount = 0;
+    function checkKeyCount () {
+      trackKeyCount++;
+      if (trackKeyCount >= trackKeys.length) {
+        callBack(trackHash);
+      }
+    }
+
+    trackKeys.forEach(key => {
+      switch (key) {
+        case 'MOST_LIKED':
+          this.fetchMostLikedTracks(function (tracks) {
+            trackHash[key] = tracks;
+            checkKeyCount();
+          }, 20, 0);
+          break;
+        case 'MOST_RECENT':
+          this.fetchMostRecentTracks(function (tracks) {
+            trackHash[key] = tracks;
+            checkKeyCount();
+          }, 20, 0);
+          break;
+        case 'RANDOM_ARTIST':
+          const i = Math.floor(Math.random() * randomQueries.length);
+          SpotifyApiUtil.searchTracks(function (tracks) {
+            trackHash[key] = tracks;
+            checkKeyCount();
+          }, randomQueries[i], 20, 0);
+          break;
+      }
+    });
+  },
   fetchAllTracks (callBack, limit, offset) {
     $.ajax({
       url: '/api/tracks',

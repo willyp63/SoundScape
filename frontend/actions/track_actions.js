@@ -5,6 +5,9 @@ const PlayerActions = require('./player_actions');
 const TrackStore = require('../stores/track_store');
 
 module.exports = {
+  fetchSplashTracks (trackKeys) {
+    TrackApiUtil.fetchSplashTracks(trackKeys, this.receiveSplashTrack);
+  },
   fetchAllTracks (limit, offset) {
     const cb = offset ? this.appendTracks : this.receiveTracks;
     TrackApiUtil.fetchAllTracks(cb, limit, offset);
@@ -107,6 +110,12 @@ module.exports = {
     dispatcher.dispatch({
       actionType: 'RECEIVE_TRACK',
       track: track
+    });
+  },
+  receiveSplashTrack (trackHash) {
+    dispatcher.dispatch({
+      actionType: 'RECEIVE_SPLASH_TRACK',
+      trackHash: trackHash
     });
   },
   removeTrack (track) {
