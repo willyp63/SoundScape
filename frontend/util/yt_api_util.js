@@ -25,7 +25,7 @@ window.onClientLoad = function () {
     _gapiLoaded = true;
     // process requests
     _unprocessedRequests.forEach(request => {
-      processRequest(request[0], request[1]);
+      processRequest(request[0], request[1], request[2]);
     });
     _unprocessedRequests = [];
   });
@@ -33,40 +33,40 @@ window.onClientLoad = function () {
 
 // EXPORTS
 module.exports = {
-  searchYoutube (track, cb) {
+  searchYoutube (track, options, cb) {
     if (!_gapiLoaded) {
       // store request
-      _unprocessedRequests.push([track, cb]);
+      _unprocessedRequests.push([track, options, cb]);
     } else {
-      processRequest(track, cb);
+      processRequest(track, options, cb);
     }
   }
-}
+};
 
-function processRequest (track, cb) {
+function processRequest (track, options, cb) {
   // check if server has ytid
   $.ajax({
     url: `http://${STREAMING_URL}/ytid/${track.spotify_id}`,
     method: 'GET',
     dataType: 'JSON',
     success (response) {
-      if (response.ytid) {
+      if (response.ytid && !options['blacklistIds'].includes(response.ytid)) {
         cb(response.ytid);
       } else {
-        searchTrack(track, cb);
+        searchTrack(track, options, cb);
       }
     }
   });
 }
 
-function searchTrack (track, cb) {
+function searchTrack (track, options, cb) {
   const cleanTitle = SearchStringUtil.cleanSpotifyTitle(track.title);
   let query = `${SearchStringUtil.replaceAnds(track.artists[0])} ${SearchStringUtil.dropStars(cleanTitle)}`;
   console.log(`???Searching YT for: ${query}???`);
   gapi.client.youtube.search.list({
     part: 'snippet', q: query, maxResults: 50
   }).execute(function (response) {
-    checkResults(response.items, 0, track.artists, cleanTitle, track.duration_sec, function (validResult) {
+    checkResults(response.items, options, 0, track.artists, cleanTitle, track.duration_sec, function (validResult) {
       if (validResult) {
         const ytid = validResult.id.videoId;
         console.log(`???Found Valid Result:${validResult.snippet.title}???`);
@@ -85,27 +85,27 @@ function searchTrack (track, cb) {
   });
 }
 
-function checkResults (results, i, artists, trackTitle, trackDuration, cb) {
+function checkResults (results, options, i, artists, trackTitle, trackDuration, cb) {
   // check each result sequentially
   if (!results[i]) {
     cb(null);
     return;
   } else {
     console.log(`?Checking Result:${results[i].snippet.title}?`);
-    validResult(results[i], artists, trackTitle, trackDuration, function (valid) {
+    validResult(results[i], options, artists, trackTitle, trackDuration, function (valid) {
       if (valid) {
         cb(results[i]);
       } else {
-        checkResults(results, i + 1, artists, trackTitle, trackDuration, cb);
+        checkResults(results, options, i + 1, artists, trackTitle, trackDuration, cb);
       }
     });
   }
 }
 
-function validResult (result, artists, trackTitle, trackDuration, cb) {
+function validResult (result, options, artists, trackTitle, trackDuration, cb) {
   // check for videoId
-  if (!result.id.videoId) {
-    console.log(`!Result:${result.snippet.title} Invalid b/c No YTID!`);
+  if (!result.id.videoId || options['blacklistIds'].includes(result.id.videoId)) {
+    console.log(`!Result:${result.snippet.title} Invalid b/c Invalid YTID!`);
     cb(false);
     return;
   }

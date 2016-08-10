@@ -34,6 +34,12 @@ $player-bg: $ss-gray;
   color: $ss-light-gray;
   cursor: pointer;
 }
+.playing-image i.disabled:hover {
+  color: $ss-light-gray;
+}
+.playing-image i.disabled {
+  cursor: default;
+}
 .playing-image i:hover {
   color: #fff;
 }
@@ -95,6 +101,12 @@ $player-bg: $ss-gray;
 }
 .audio-controls i:hover {
   color: #fff;
+}
+.audio-controls i.disabled:hover {
+  color: $ss-light-gray;
+}
+.audio-controls i.disabled {
+  cursor: default;
 }
 .audio-progress-bar {
   flex-grow: 1;

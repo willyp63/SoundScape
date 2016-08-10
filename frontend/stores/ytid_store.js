@@ -1,9 +1,9 @@
 const Store = require('flux/utils').Store;
 const dispatcher = require('../dispatcher');
 
-let _ids = {};
-
 const YTDL_URL_PREFIX = 'http://thawing-bastion-97540.herokuapp.com/stream/';
+const _ids = {};
+const _blacklist = {};
 
 const YtidStore = new Store(dispatcher);
 
@@ -19,10 +19,22 @@ YtidStore.getUrl = function (track) {
   return YTDL_URL_PREFIX + _ids[track.storeId];
 };
 
+YtidStore.getBlacklist = function (track) {
+  return _blacklist[track.storeId];
+};
+
 YtidStore.__onDispatch = function (payload) {
   switch (payload.actionType) {
     case "RECIEVE_YTID":
       _ids[payload.track.storeId] = payload.ytid ? payload.ytid : 'NOT_FOUND';
+      this.__emitChange();
+      break;
+    case "BLACKLIST_YTID":
+      if (_blacklist[payload.track.storeId]) {
+        _blacklist[payload.track.storeId].push(payload.ytid);
+      } else {
+        _blacklist[payload.track.storeId] = [payload.ytid];
+      }
       this.__emitChange();
       break;
   }

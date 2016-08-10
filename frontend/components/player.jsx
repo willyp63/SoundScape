@@ -188,6 +188,18 @@ module.exports = React.createClass({
       }
     }
   },
+  _retrySearch () {
+    AudioPlayer.removeListeners();
+
+    const playTrack = this.state.tracks[this.state.playIdx];
+    const oldYtid = YtidStore.getId(playTrack);
+    YtActions.blacklistId(playTrack, oldYtid);
+
+    this.setState({playing: false, loadingTrack: true, playUrl: null, unableToLoadTrack: false}, function () {
+      setupSpinner();
+      YtActions.searchYoutube(playTrack, {'blacklistIds': YtidStore.getBlacklist(playTrack)});
+    });
+  },
   render () {
     const track = this.state.tracks[this.state.playIdx];
     return (
@@ -200,6 +212,9 @@ module.exports = React.createClass({
               </audio> : ""}
             <div className="playing-image">
               <i className="glyphicon glyphicon-remove" onClick={this._closePlayer}/>
+              {this.state.loadingTrack ?
+                <i className="glyphicon glyphicon-alert disabled" /> :
+                <i className="glyphicon glyphicon-alert" onClick={this._retrySearch}/>}
               <div className="player-like-button" onClick={this._likeTrack}>
                 {this.state.loadingLike ?
                   <div className="sk-fading-circle">
@@ -226,8 +241,10 @@ module.exports = React.createClass({
               <div className="audio-controls">
                 <i className="glyphicon glyphicon-step-backward"
                    onClick={this._previousTrack}></i>
-                <i className={`glyphicon ${this.state.playing ? "glyphicon-pause" : "glyphicon-play"}`}
-                   onClick={this._togglePlay}></i>
+                {this.state.loadingTrack ?
+                  <i className="glyphicon glyphicon-pause disabled" /> :
+                  <i className={`glyphicon ${this.state.playing ? "glyphicon-pause" : "glyphicon-play"}`}
+                     onClick={this._togglePlay}></i>}
                 <i className="glyphicon glyphicon-step-forward"
                    onClick={this._nextTrack}></i>
               </div>
