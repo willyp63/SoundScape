@@ -3,14 +3,17 @@ const SessionActions = require('../actions/session_actions');
 const TrackActions = require('../actions/track_actions');
 const SessionStore = require('../stores/session_store');
 const TrackStore = require('../stores/track_store');
+const TrackIndex = require('./tracks/track_index');
+const randomQueries = require('../constants/random_queries');
 
 const INITIAL_REQUEST_SIZE = 40;
 const ADDITIONAL_REQUEST_SIZE = 20;
 
 const _listeners = [];
+let _randomQuery;
 
 /* LOOK HERE */
-const _trackKeys = ['MOST_LIKED', 'MOST_RECENT', 'RANDOM_ARTIST'];
+// const _trackKeys = ['MOST_LIKED', 'MOST_RECENT', 'RANDOM_ARTIST'];
 
 module.exports = React.createClass({
   getInitialState () {
@@ -19,15 +22,18 @@ module.exports = React.createClass({
   componentWillMount () {
     _listeners.push(SessionStore.addListener(this._sessionChange));
 
+    const i = Math.floor(Math.random() * randomQueries.length);
+    _randomQuery = randomQueries[i];
+
     /* AND HERE */
-    _listeners.push(TrackStore.addListener(this._trackChange));
-    TrackActions.fetchSplashTracks(_trackKeys);
+    // _listeners.push(TrackStore.addListener(this._trackChange));
+    // TrackActions.fetchSplashTracks(_trackKeys);
   },
   _trackChange () {
     /* AND HERE */
-    if (TrackStore.splashTracks()) {
-      console.log(TrackStore.splashTracks());
-    }
+    // if (TrackStore.splashTracks()) {
+    //   console.log(TrackStore.splashTracks());
+    // }
   },
   _sessionChange () {
     this.setState({loggedIn: SessionStore.loggedIn()});
@@ -56,6 +62,12 @@ module.exports = React.createClass({
           {this.state.loggedIn ? "" :
             <button className="btn btn-success try-it-button" onClick={this._demoLogin}>Try It Out!</button>}
         </div>
+        <div className="search-results-header">
+          <p>{`Tracks by: ${_randomQuery}`}</p>
+        </div>
+        <TrackIndex fetchInitialTracks={this._fetchInitialTracks}
+                    fetchMoreTracks={this._fetchMoreTracks}
+                    indexType="SPLASH" />
       </div>
     );
   }
