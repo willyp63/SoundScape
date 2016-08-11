@@ -30,6 +30,11 @@ class Api::TracksController < ApplicationController
     render json: @tracks
   end
 
+  def reported
+    @tracks = Track.reported(params[:limit], params[:offset])
+    render json: @tracks
+  end
+
   def liked
     if logged_in?
       @tracks = Track.liked_tracks(current_user)

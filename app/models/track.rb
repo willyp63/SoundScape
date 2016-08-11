@@ -16,6 +16,7 @@
 
 class Track < ActiveRecord::Base
   belongs_to :user
+  has_many :reports
   has_many :track_likes
   has_many :likers, through: :track_likes, source: :user
 
@@ -27,6 +28,10 @@ class Track < ActiveRecord::Base
 
   def self.posted_tracks(user)
     Track.where(user_id: user.id)
+  end
+
+  def self.reported(limit, offset)
+    Track.joins(:reports).group('tracks.id').order('COUNT(*)').limit(limit).offset(offset)
   end
 
   def self.liked_tracks(user)

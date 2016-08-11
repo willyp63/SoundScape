@@ -22,6 +22,10 @@ module.exports = React.createClass({
     ErrorActions.removeErrors();
     ModalActions.show("USER", "UPDATE");
   },
+  _viewReports (e) {
+    e.preventDefault();
+    hashHistory.push('/reports');
+  },
   render () {
     return (
       <div className="nav-bar-right">
@@ -37,6 +41,8 @@ module.exports = React.createClass({
               <li>{SessionStore.currentUser().username}</li>
               <li role="separator" className="divider"></li>
               <li onClick={this._editProfile}>Edit Profile</li>
+              {SessionStore.currentUser().admin ?
+                <li onClick={this._viewReports}>Reports</li> : ''}
               <li onClick={this._logout}>Log Out</li>
             </ul>
           </li>

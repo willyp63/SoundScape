@@ -4,6 +4,7 @@ const TrackActions = require('../../actions/track_actions');
 const SessionStore = require('../../stores/session_store');
 const ErrorActions = require('../../actions/error_actions');
 const ModalActions = require('../../actions/modal_actions');
+const ReportActions = require('../../actions/report_actions');
 
 module.exports = React.createClass({
   getInitialState () {
@@ -74,6 +75,9 @@ module.exports = React.createClass({
   _updateTrack () {
     this.props.updateTrack(this.props.track);
   },
+  _okTrack () {
+    ReportActions.clearTrackReports(this.props.track);
+  },
   _appendTrack () {
     this.setState({adding: true}, function () {
       setTimeout(function () {
@@ -109,6 +113,14 @@ module.exports = React.createClass({
                     onMouseEnter={this._highlightUpdate}
                     onMouseLeave={this._unhighlightUpdate}/>
                </div> : ""}
+               {this.props.indexType === "REPORTS" ?
+                <div>
+                  <span className="update-icon-bg"></span>
+                  <i className="glyphicon glyphicon-ok update-icon"
+                     onClick={this._okTrack}
+                     onMouseEnter={this._highlightUpdate}
+                     onMouseLeave={this._unhighlightUpdate}/>
+                </div> : ""}
               <div>
                 <span className="like-icon-bg"></span>
                 {this.state.loading ?

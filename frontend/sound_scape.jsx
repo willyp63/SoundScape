@@ -9,6 +9,7 @@ const Splash = require('./components/splash');
 const Home = require('./components/home');
 const Collection = require('./components/collection');
 const Results = require('./components/results');
+const Reports = require('./components/reports');
 
 const SessionActions = require('./actions/session_actions');
 const SessionStore = require('./stores/session_store');
@@ -18,13 +19,20 @@ const routes = (
     <IndexRoute component={Splash} />
     <Route path="/home" component={Home} />
     <Route path="/collection" component={Collection} onEnter={ _ensureLoggedIn } />
+    <Route path="/reports" component={Reports} onEnter={ _ensureAdmin } />
     <Route path="/results/:query" component={Results} />
   </Route>
 );
 
 function _ensureLoggedIn (nextState, replace) {
   if (!SessionStore.currentUser()) {
-    hashHistory.push('/');
+    replace('/');
+  }
+}
+
+function _ensureAdmin (nextState, replace) {
+  if (!SessionStore.currentUser() || !SessionStore.currentUser().admin) {
+    replace('/');
   }
 }
 

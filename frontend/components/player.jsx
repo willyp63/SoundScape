@@ -9,6 +9,7 @@ const ModalActions = require('../actions/modal_actions');
 const ErrorActions = require('../actions/error_actions');
 const TrackActions = require('../actions/track_actions');
 const SearchResult = require('./nav_bar/search_result');
+const ReportActions = require('../actions/report_actions');
 
 const _listeners = [];
 
@@ -194,6 +195,8 @@ module.exports = React.createClass({
     const playTrack = this.state.tracks[this.state.playIdx];
     const oldYtid = YtidStore.getId(playTrack);
     YtActions.blacklistId(playTrack, oldYtid);
+
+    ReportActions.reportTrack(playTrack);
 
     this.setState({playing: false, loadingTrack: true, playUrl: null, unableToLoadTrack: false}, function () {
       setupSpinner();

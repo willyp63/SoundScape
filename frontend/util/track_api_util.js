@@ -47,6 +47,17 @@ module.exports = {
       }
     });
   },
+  fetchReportedTracks (callBack, limit, offset) {
+    $.ajax({
+      url: '/api/tracks/reported',
+      method: 'GET',
+      dataType: 'JSON',
+      data: {limit: limit, offset: offset},
+      success (tracks) {
+        callBack(tracks);
+      }
+    });
+  },
   fetchMostLikedTracks (callBack, limit, offset) {
     $.ajax({
       url: '/api/tracks/most_liked',

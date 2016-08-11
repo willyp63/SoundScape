@@ -12,6 +12,10 @@ module.exports = {
     const cb = offset ? this.appendTracks : this.receiveTracks;
     TrackApiUtil.fetchAllTracks(cb, limit, offset);
   },
+  fetchReportedTracks (limit, offset) {
+    const cb = offset ? this.appendTracks : this.receiveTracks;
+    TrackApiUtil.fetchReportedTracks(cb, limit, offset);
+  },
   fetchMostLikedTracks (limit, offset) {
     const cb = offset ? this.appendTracks : this.receiveTracks;
     TrackApiUtil.fetchMostLikedTracks(cb, limit, offset);
