@@ -1,5 +1,4 @@
 const SpotifyApiUtil = require('./spotify_api_util');
-const randomQueries = require('../constants/random_queries');
 
 module.exports = {
   fetchSplashTracks (trackKeys, callBack) {
@@ -26,12 +25,11 @@ module.exports = {
             checkKeyCount();
           }, 20, 0);
           break;
-        case 'RANDOM_ARTIST':
-          const i = Math.floor(Math.random() * randomQueries.length);
+        default:
           SpotifyApiUtil.searchTracks(function (tracks) {
             trackHash[key] = tracks;
             checkKeyCount();
-          }, randomQueries[i], 20, 0);
+          }, key, 40, 0);
           break;
       }
     });
@@ -39,17 +37,6 @@ module.exports = {
   fetchAllTracks (callBack, limit, offset) {
     $.ajax({
       url: '/api/tracks',
-      method: 'GET',
-      dataType: 'JSON',
-      data: {limit: limit, offset: offset},
-      success (tracks) {
-        callBack(tracks);
-      }
-    });
-  },
-  fetchReportedTracks (callBack, limit, offset) {
-    $.ajax({
-      url: '/api/tracks/reported',
       method: 'GET',
       dataType: 'JSON',
       data: {limit: limit, offset: offset},
@@ -72,6 +59,17 @@ module.exports = {
   fetchMostRecentTracks (callBack, limit, offset) {
     $.ajax({
       url: '/api/tracks/most_recent',
+      method: 'GET',
+      dataType: 'JSON',
+      data: {limit: limit, offset: offset},
+      success (tracks) {
+        callBack(tracks);
+      }
+    });
+  },
+  fetchReportedTracks (callBack, limit, offset) {
+    $.ajax({
+      url: '/api/tracks/reported',
       method: 'GET',
       dataType: 'JSON',
       data: {limit: limit, offset: offset},

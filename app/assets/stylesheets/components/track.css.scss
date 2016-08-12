@@ -41,7 +41,10 @@ $update_button_x_offset: $plus_button_size / 3;
   width: 100%;
   text-align: center;
   font-size: $title_font_size;
+  height: 100%;
+  white-space: pre-wrap;
 }
+
 .track-image img {
   position: absolute;
 }

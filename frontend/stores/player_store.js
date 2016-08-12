@@ -82,8 +82,8 @@ function removeTrack (track) {
 }
 
 function appendTrack (track) {
-  if (_tracks.get(track.storeId)) { return; }
-  storeTrack(track.storeId, track);
+  if (_tracks.get(track.storeId || track.spotify_id)) { return; }
+  storeTrack(track.storeId || track.spotify_id, track);
 }
 
 function replaceTrack (oldTrack, newTrack) {

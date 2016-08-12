@@ -167,8 +167,6 @@ module.exports = React.createClass({
   },
   _likeTrack () {
     if (!SessionStore.loggedIn()) {
-      // show signup form
-
       ErrorActions.removeErrors();
       ModalActions.show("USER", "SIGNUP");
     } else {
@@ -216,8 +214,8 @@ module.exports = React.createClass({
             <div className="playing-image">
               <i className="glyphicon glyphicon-remove" onClick={this._closePlayer}/>
               {this.state.loadingTrack ?
-                <i className="glyphicon glyphicon-alert disabled" /> :
-                <i className="glyphicon glyphicon-alert" onClick={this._retrySearch}/>}
+                <i id="retry-icon" className="glyphicon glyphicon-ban-circle disabled" /> :
+                <i id="retry-icon" className="glyphicon glyphicon-ban-circle" onClick={this._retrySearch}/>}
               <div className="player-like-button" onClick={this._likeTrack}>
                 {this.state.loadingLike ?
                   <div className="sk-fading-circle">
@@ -236,7 +234,7 @@ module.exports = React.createClass({
                   </div> :
                   <div>
                     <i className={"glyphicon glyphicon-heart player-like-icon" + (track.liked ? " liked" : "")}/>
-                    <span className="player-like-count">{track.like_count}</span>
+                    <span className="player-like-count">{track.like_count || '0'}</span>
                   </div>}
                 </div>
             </div>
@@ -291,7 +289,7 @@ module.exports = React.createClass({
                 this.state.tracks.map(track => {
                   return <SearchResult key={track.storeId}
                   track={track}
-                  textWidth={210}
+                  textWidth={190}
                   onRemove={this._removeTrack}
                   onClick={this._playTrack}
                   type="queue" />;

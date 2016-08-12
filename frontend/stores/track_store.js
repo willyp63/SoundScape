@@ -18,8 +18,36 @@ TrackStore.hasMoreTracks = function () {
   return _indexType !== 'MY_TRACKS' && _indexType !== 'MY_LIKES' && _hasMoreTracks;
 };
 
+TrackStore.getSplashTrack = function (track) {
+  const keys = Object.keys(_splashTracks);
+  for (var i = 0; i < keys.length; i++) {
+    for (var j = 0; j < _splashTracks[keys[i]].length; j++) {
+      const t = _splashTracks[keys[i]][j];
+      if (track.spotify_id === t.spotify_id) {
+        return t;
+      }
+    }
+  }
+  return null;
+};
+
+TrackStore.getAllSplashTrack = function (track) {
+  if (!_splashTracks) { return []; }
+  const arr = [];
+  const keys = Object.keys(_splashTracks);
+  for (var i = 0; i < keys.length; i++) {
+    for (var j = 0; j < _splashTracks[keys[i]].length; j++) {
+      const t = _splashTracks[keys[i]][j];
+      if (track.spotify_id === t.spotify_id) {
+        arr.push(t);
+      }
+    }
+  }
+  return arr;
+};
+
 TrackStore.hasTrack = function (track) {
-  return !!(_tracks.get(track.storeId));
+  return !!_tracks.get(track.storeId) || !!TrackStore.getSplashTrack(track);
 };
 
 TrackStore.__onDispatch = function (payload) {
@@ -30,8 +58,7 @@ TrackStore.__onDispatch = function (payload) {
       this.__emitChange();
       break;
     case "RECEIVE_SPLASH_TRACK":
-      _cannotLoadTracks = false;
-      _splashTracks = payload.trackHash;
+      receiveSplashTracks(payload.trackHash);
       this.__emitChange();
       break;
     case "APPEND_TRACKS":
@@ -79,6 +106,18 @@ function setTracks (tracks) {
   });
 }
 
+function receiveSplashTracks (trackHash) {
+  _cannotLoadTracks = false;
+  _splashTracks = trackHash;
+  const keys = Object.keys(_splashTracks);
+  for (var i = 0; i < keys.length; i++) {
+    for (var j = 0; j < _splashTracks[keys[i]].length; j++) {
+      const t = _splashTracks[keys[i]][j];
+      t.storeId = t.spotify_id || t.id;
+    }
+  }
+}
+
 function appendTracks (tracks) {
   _hasMoreTracks = !!tracks.length;
 
@@ -88,6 +127,14 @@ function appendTracks (tracks) {
 }
 
 function replaceTrack (oldTrack, newTrack) {
+  const splashTracks = TrackStore.getAllSplashTrack(oldTrack);
+  if (splashTracks.length) {
+    // set id of for splash tracks
+    splashTracks.forEach(track => {
+      track.id = newTrack.id;
+    });
+  }
+  // replace track in _tracks
   newTrack.storeId = oldTrack.storeId;
   _tracks.set(oldTrack.storeId, newTrack);
 }
@@ -98,17 +145,24 @@ function storeTrack (id, track) {
 }
 
 function likeTrack (track) {
-  const t = _tracks.get(track.storeId);
-  if (!t) { return; }
-  t.liked = true;
-  t.like_count++;
+  const ts = _tracks.get(track.storeId) ? [_tracks.get(track.storeId)] : TrackStore.getAllSplashTrack(track);
+  ts.forEach(t => {
+    t.liked = true;
+    if (t.like_count) {
+      t.like_count++;
+    } else {
+      t.like_count = 1;
+    }
+  });
 }
 
 function unlikeTrack (track) {
-  const t = _tracks.get(track.storeId);
-  if (!t) { return; }
-  t.liked = false;
-  t.like_count--;
+  const ts = _tracks.get(track.storeId) ? [_tracks.get(track.storeId)] : TrackStore.getAllSplashTrack(track);
+  ts.forEach(t => {
+    if (!t) { return; }
+    t.liked = false;
+    t.like_count--;
+  });
 }
 
 module.exports = TrackStore;

@@ -5,7 +5,7 @@ const ModalActions = require('../../actions/modal_actions');
 
 module.exports = React.createClass({
   _linkHome () {
-    hashHistory.push('/home');
+    hashHistory.push('/');
   },
   _linkCollection () {
     if (!SessionStore.loggedIn()) {
@@ -17,7 +17,7 @@ module.exports = React.createClass({
     }
   },
   render () {
-    const homeActive = this.props.pathname === "/home";
+    const homeActive = this.props.pathname === "/";
     const collectionActive = this.props.pathname === "/collection";
     return (
       <div className="nav-bar-left">

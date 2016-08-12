@@ -34,6 +34,18 @@ $player-bg: $ss-gray;
   color: $ss-light-gray;
   cursor: pointer;
 }
+#retry-icon.disabled {
+  cursor: default;
+}
+#retry-icon.disabled:hover {
+  color: #a00;
+}
+#retry-icon:hover {
+  color: #f00;
+}
+#retry-icon {
+  color: #a00;
+}
 .playing-image i.disabled:hover {
   color: $ss-light-gray;
 }

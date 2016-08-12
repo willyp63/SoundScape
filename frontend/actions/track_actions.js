@@ -50,12 +50,20 @@ module.exports = {
     const that = this;
     TrackApiUtil.postAnonymousTrack(track, function (newTrack) {
       TrackApiUtil.likeTrack(newTrack, function () {
-        that.replaceTrack(track, newTrack);
-        dispatcher.dispatch({
-          actionType: 'LIKE_TRACK',
-          track: newTrack
-        });
-        PlayerActions.replaceTrack(track, newTrack);
+        if (TrackStore.getAllSplashTrack(track).length) {
+          that.replaceTrack(track, newTrack);
+          dispatcher.dispatch({
+            actionType: 'LIKE_TRACK',
+            track: newTrack
+          });
+        } else {
+          that.replaceTrack(track, newTrack);
+          dispatcher.dispatch({
+            actionType: 'LIKE_TRACK',
+            track: newTrack
+          });
+          PlayerActions.replaceTrack(track, newTrack);
+        }
       });
     }, ErrorActions.setErrors);
   },
