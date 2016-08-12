@@ -34,4 +34,7 @@ module.exports = ["Jay Z", "Eminem", "Destiny's Child", "Green Day",
 'simon and garfunkel', 'the grateful dead', 'the cardigans', 'jimi hendrix', 'lenny kravitz', 'pink floyd', 'arcade fire',
 'relient k', 'franz ferdinand', 'death cab for cutie', 'wheatus', 'alicia keys', 'bruce springsteen', 'vertical horizon',
 'kelly clarkson', 'carrie underwood', 'the gorillaz', 'cream', 'keak da sneak', 'chingy', 'fabolous', 'juvenile',
-'immortal technique', 'maroon 5', 'elvis'];
+'immortal technique', 'maroon 5', 'elvis', 'the black keys', 'tool', 'the cheaters', 'fish',
+'chevelle', 'talking heads', 'huey lewis and the news', 'rick astley', 'breaking benjamin', 'the monkeys',
+'circa survive', 'anthony green', 'flume', 'hank williams jr.', 'journey', 'switchfoot', 'rush', 'pod', 'skillet',
+'skrillex', 'the ramones', 'placebo', 'eric clapton', 'bone thugz n harmony', 'shakira', 'ozzy osbourne', 'morgan james'];
