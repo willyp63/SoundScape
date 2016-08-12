@@ -32,7 +32,7 @@ class Api::TracksController < ApplicationController
 
   def reported
     @tracks = Track.reported(params[:limit], params[:offset])
-    render json: @tracks
+    render json: @tracks.map {|t| reported_track_hash(t) }
   end
 
   def liked
@@ -131,6 +131,12 @@ class Api::TracksController < ApplicationController
     {id: t.id, title: t.title, artists: t.artists, audio_url: t.audio_url, liked: false,
       like_count: t.like_count, image_url: t.image_url, user_id: t.user_id,
       spotify_id: t.spotify_id}
+  end
+
+  def reported_track_hash(t)
+    th = track_hash(t)
+    th[:reported] = true
+    th
   end
 
   def build_liked_spotify_tracks(tracks)

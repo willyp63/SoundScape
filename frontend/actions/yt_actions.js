@@ -2,7 +2,7 @@ const dispatcher = require('../dispatcher');
 const YtApiUtil = require('../util/yt_api_util');
 
 module.exports = {
-  searchYoutube (track, options = {'blacklistIds': []}) {
+  searchYoutube (track, options = {'blacklistIds': [], 'logs': false}) {
     YtApiUtil.searchYoutube(track, options, function (ytid) {
       dispatcher.dispatch({
         actionType: 'RECIEVE_YTID',

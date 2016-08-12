@@ -56,7 +56,11 @@ module.exports = React.createClass({
       if (nextIdx >= this.state.tracks.length) { nextIdx = 0; }
       const nextTrack = this.state.tracks[nextIdx];
       if (!nextTrack.audio_url && !YtidStore.hasId(nextTrack)) {
-        YtActions.searchYoutube(nextTrack);
+        if (nextTrack.reported) {
+          YtActions.searchYoutube(nextTrack, {'blacklistIds': [], 'logs': true});
+        } else {
+          YtActions.searchYoutube(nextTrack);
+        }
       }
     } else {
       this.setState({playing: false, loadingTrack: true, playUrl: null, unableToLoadTrack: false}, this._fetchAudio);
@@ -65,7 +69,11 @@ module.exports = React.createClass({
   _fetchAudio () {
     setupSpinner();
     const playTrack = this.state.tracks[this.state.playIdx];
-    YtActions.searchYoutube(playTrack);
+    if (playTrack.reported) {
+      YtActions.searchYoutube(playTrack, {'blacklistIds': [], 'logs': true});
+    } else {
+      YtActions.searchYoutube(playTrack);
+    }
   },
   _beginPlaying () {
     initVolume();
@@ -198,7 +206,11 @@ module.exports = React.createClass({
 
     this.setState({playing: false, loadingTrack: true, playUrl: null, unableToLoadTrack: false}, function () {
       setupSpinner();
-      YtActions.searchYoutube(playTrack, {'blacklistIds': YtidStore.getBlacklist(playTrack)});
+      if (playTrack.reported) {
+        YtActions.searchYoutube(playTrack, {'blacklistIds': YtidStore.getBlacklist(playTrack), 'logs': true});
+      } else {
+        YtActions.searchYoutube(playTrack, {'blacklistIds': YtidStore.getBlacklist(playTrack)});
+      }
     });
   },
   render () {

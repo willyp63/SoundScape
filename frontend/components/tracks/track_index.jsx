@@ -1,4 +1,5 @@
 const TrackIndexItem = require('./track_index_item');
+const ReportIndexItem = require('./report_index_item');
 const TrackStore = require('../../stores/track_store');
 const TrackActions = require('../../actions/track_actions');
 const ErrorActions = require('../../actions/error_actions');
@@ -70,10 +71,15 @@ module.exports = React.createClass({
             return (
               <div key={row[0].storeId} className="track-index-row">{
                 row.map(track => {
-                  return <TrackIndexItem key={track.storeId}
-                                         track={track}
-                                         indexType={this.props.indexType}
-                                         updateTrack={this._updateTrack}/>;
+                  return (this.props.indexType === "REPORTS" ?
+                          <ReportIndexItem key={track.storeId}
+                                          track={track}
+                                          indexType={this.props.indexType}
+                                          updateTrack={this._updateTrack}/> :
+                          <TrackIndexItem key={track.storeId}
+                                          track={track}
+                                          indexType={this.props.indexType}
+                                          updateTrack={this._updateTrack}/>);
                 })
               }</div>
             );

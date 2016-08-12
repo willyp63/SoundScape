@@ -45,31 +45,35 @@ module.exports = {
 
 function processRequest (track, options, cb) {
   // check if server has ytid
-  $.ajax({
-    url: `http://${STREAMING_URL}/ytid/${track.spotify_id}`,
-    method: 'GET',
-    dataType: 'JSON',
-    success (response) {
-      if (response.ytid && !options['blacklistIds'].includes(response.ytid)) {
-        cb(response.ytid);
-      } else {
-        searchTrack(track, options, cb);
+  if (options.logs) {
+    searchTrack(track, options, cb);
+  } else {
+    $.ajax({
+      url: `http://${STREAMING_URL}/ytid/${track.spotify_id}`,
+      method: 'GET',
+      dataType: 'JSON',
+      success (response) {
+        if (response.ytid && !options['blacklistIds'].includes(response.ytid)) {
+          cb(response.ytid);
+        } else {
+          searchTrack(track, options, cb);
+        }
       }
-    }
-  });
+    });
+  }
 }
 
 function searchTrack (track, options, cb) {
   const cleanTitle = SearchStringUtil.cleanSpotifyTitle(track.title);
   let query = `${SearchStringUtil.replaceAnds(track.artists[0])} ${SearchStringUtil.dropStars(cleanTitle)}`;
-  console.log(`???Searching YT for: ${query}???`);
+  if (options.logs) { console.log(`???Searching YT for: ${query}???`); }
   gapi.client.youtube.search.list({
     part: 'snippet', q: query, maxResults: 50
   }).execute(function (response) {
     checkResults(response.items, options, 0, track.artists, cleanTitle, track.duration_sec, function (validResult) {
       if (validResult) {
         const ytid = validResult.id.videoId;
-        console.log(`???Found Valid Result:${validResult.snippet.title}???`);
+        if (options.logs) { console.log(`???Found Valid Result:${validResult.snippet.title}???`); }
         cb(ytid);
 
         // cache ytid in server
@@ -78,7 +82,7 @@ function searchTrack (track, options, cb) {
           method: 'GET'
         });
       } else {
-        console.log(`!!!No Valid Results!!!`);
+        if (options.logs) { console.log(`!!!No Valid Results!!!`); }
         cb(null);
       }
     });
@@ -91,7 +95,7 @@ function checkResults (results, options, i, artists, trackTitle, trackDuration, 
     cb(null);
     return;
   } else {
-    console.log(`?Checking Result:${results[i].snippet.title}?`);
+    if (options.logs) { console.log(`?Checking Result:${results[i].snippet.title}?`); }
     validResult(results[i], options, artists, trackTitle, trackDuration, function (valid) {
       if (valid) {
         cb(results[i]);
@@ -105,14 +109,14 @@ function checkResults (results, options, i, artists, trackTitle, trackDuration, 
 function validResult (result, options, artists, trackTitle, trackDuration, cb) {
   // check for videoId
   if (!result.id.videoId || options['blacklistIds'].includes(result.id.videoId)) {
-    console.log(`!Result:${result.snippet.title} Invalid b/c Invalid YTID!`);
+    if (options.logs) { console.log(`!Result:${result.snippet.title} Invalid b/c Invalid YTID!`); }
     cb(false);
     return;
   }
 
   // check for blacklisted channels
   if (REJECTED_CHANNELS.includes(result.snippet.channelTitle.toLowerCase())) {
-    console.log(`!Result:${result.snippet.title} Invalid b/c Rejected Channel!`);
+    if (options.logs) { console.log(`!Result:${result.snippet.title} Invalid b/c Rejected Channel!`); }
     cb(false);
     return;
   }
@@ -130,7 +134,7 @@ function validResult (result, options, artists, trackTitle, trackDuration, cb) {
   }
   const trackTitleRegExp = new RegExp(SearchStringUtil.wildCardSpacesAndStars(trackTitle), 'i');
   if (!artistMatch || !resultTitle.match(trackTitleRegExp)) {
-    console.log(`!Result:${result.snippet.title} Invalid b/c Title/Artist Match!`);
+    if (options.logs) { console.log(`!Result:${result.snippet.title} Invalid b/c Title/Artist Match!`); }
     cb(false);
     return;
   }
@@ -139,7 +143,7 @@ function validResult (result, options, artists, trackTitle, trackDuration, cb) {
   for (let i = 0; i < FILTER_WORDS.length; i++) {
     const filterRegExp = new RegExp(FILTER_WORDS[i], 'i');
     if (!trackTitle.match(filterRegExp) && resultTitle.match(filterRegExp)) {
-      console.log(`!Result:${result.snippet.title} Invalid b/c Filter Words (${FILTER_WORDS[i]})!`);
+      if (options.logs) { console.log(`!Result:${result.snippet.title} Invalid b/c Filter Words (${FILTER_WORDS[i]})!`); }
       cb(false);
       return;
     }
@@ -148,14 +152,14 @@ function validResult (result, options, artists, trackTitle, trackDuration, cb) {
   getYtInfo(result.id.videoId, function (duration, restricted) {
     // valid if not restricted
     if (restricted) {
-      console.log(`!Result:${result.snippet.title} Invalid b/c Age Restriction!`);
+      if (options.logs) { console.log(`!Result:${result.snippet.title} Invalid b/c Age Restriction!`); }
       cb(false);
       return;
     }
 
     // valid if within time deviation
     if (trackDuration < duration - TIME_DEVIATION || trackDuration > duration + TIME_DEVIATION) {
-      console.log(`!Result:${result.snippet.title} Invalid b/c Time Deviation!`);
+      if (options.logs) { console.log(`!Result:${result.snippet.title} Invalid b/c Time Deviation!`); }
       cb(false);
       return;
     }
@@ -163,7 +167,7 @@ function validResult (result, options, artists, trackTitle, trackDuration, cb) {
     // audio format must be 'opus'
     validAudioFormat(result.id.videoId, function (validFormat) {
       if (!validFormat) {
-        console.log(`!Result:${result.snippet.title} Invalid b/c Audio Format!`);
+        if (options.logs) { console.log(`!Result:${result.snippet.title} Invalid b/c Audio Format!`); }
       }
       cb(validFormat);
     });
