@@ -11,7 +11,7 @@ const INITIAL_REQUEST_SIZE = 40;
 const ADDITIONAL_REQUEST_SIZE = 20;
 
 const _listeners = [];
-
+let _trackKeys;
 
 module.exports = React.createClass({
   getInitialState () {
@@ -23,7 +23,7 @@ module.exports = React.createClass({
   componentWillMount () {
     _listeners.push(SessionStore.addListener(this._sessionChange));
     let artists = this._fetchRandomArtists();
-    let _trackKeys = ['MOST_LIKED', "MOST_RECENT"];
+    _trackKeys = ["MOST_RECENT", 'MOST_LIKED'];
     _trackKeys = _trackKeys.concat(artists);
     _listeners.push(TrackStore.addListener(this._trackChange));
     TrackActions.fetchSplashTracks(_trackKeys);
@@ -54,7 +54,7 @@ module.exports = React.createClass({
   _buildCarousels(tracks) {
     let carousels = [];
     let key = 0;
-    Object.keys(tracks).forEach((category) => {
+    _trackKeys.forEach((category) => {
       let categoryTracks = tracks[category];
       if (categoryTracks.length >= 20) {
         categoryTracks = categoryTracks.slice(0, 20);

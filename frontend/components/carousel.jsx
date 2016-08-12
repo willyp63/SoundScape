@@ -168,9 +168,14 @@ const Carousel = React.createClass({
 },
 
   render () {
-    let title = this.props.category === "MOST_LIKED" ?
-      "Trending" :
-      this.props.category.toLowerCase().split(new RegExp("_| ")).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+    let title;
+    if (this.props.category === "MOST_LIKED") {
+      title = "Trending";
+    } else if (this.props.category === "MOST_RECENT") {
+      title = "Recent";
+    } else {
+      title = this.props.category.toLowerCase().split(new RegExp("_| ")).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+    }
     let tracks = this.tracks();
     let filteredTracks = this.fillCarousel(tracks);
     return (
