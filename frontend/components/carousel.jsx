@@ -7,7 +7,7 @@ const OFFSET = 0.9;
 const Carousel = React.createClass({
   getInitialState() {
     let category = this.props.category.split(" ").join("-");
-    category = category.replace(new RegExp("(\\.|')", "g"), "");
+    category = category.replace(new RegExp("(\\.|'|!)", "g"), "");
     return ({startIndex: 0, animationState: 'STILL', category: category});
   },
 

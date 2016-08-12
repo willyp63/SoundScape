@@ -1,4 +1,5 @@
-module.exports = ["Jay Z", "Eminem", "Destiny's Child", "Green Day",
+module.exports = ["The Notorious B.I.G.", "magic!", "Jay Z", "Eminem", "Destiny's Child", "Green Day", "lil wayne"];
+["Jay Z", "Eminem", "Destiny's Child", "Green Day",
  "Michael Jackson", "Radiohead", "Red Hot Chili Peppers",
   "Prince", "Whitney Houston", "Christina Aguilera", "Snoop Dogg", "Justin Timberlake",
    "Janet Jackson", "Weezer", "U2", "Smashing Pumpkins", "Oasis", "Kenny Chesney", "Metallica",

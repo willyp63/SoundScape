@@ -6,11 +6,15 @@ const PlayerActions = require('./player_actions');
 
 module.exports = {
   reportTrack (track) {
-    TrackApiUtil.postAnonymousTrack(track, function (newTrack) {
-      PlayerActions.replaceTrack(track, newTrack);
-      TrackActions.replaceTrack(track, newTrack);
-      ReportApiUtil.reportTrack(newTrack);
-    }, ErrorActions.setErrors);
+    if (typeof track.id === 'string') {
+      TrackApiUtil.postAnonymousTrack(track, function (newTrack) {
+        PlayerActions.replaceTrack(track, newTrack);
+        TrackActions.replaceTrack(track, newTrack);
+        ReportApiUtil.reportTrack(newTrack);
+      }, ErrorActions.setErrors);
+    } else {
+      ReportApiUtil.reportTrack(track);
+    }
   },
   clearTrackReports (track) {
     ReportApiUtil.clearTrackReports(track);

@@ -2,7 +2,7 @@ const SearchStringUtil = require('./search_string_util');
 
 const STREAMING_URL = 'thawing-bastion-97540.herokuapp.com';
 
-const FILTER_WORDS = ["live", "cover", "parody", "parodie", "karaoke",
+const FILTER_WORDS = ["live", "cover", "parody", "parodie", "karaoke", "remix",
                   "full album", "español", "concert", "tutorial", "mashup",
                   "acoustic", "instrumental", "karaote", "guitar lesson",
                   "ukulele lesson", "drum lesson", "piano lesson", "tablature",
