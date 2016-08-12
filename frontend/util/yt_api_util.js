@@ -76,11 +76,13 @@ function searchTrack (track, options, cb) {
         if (options.logs) { console.log(`???Found Valid Result:${validResult.snippet.title}???`); }
         cb(ytid);
 
-        // cache ytid in server
-        $.ajax({
-          url: `http://${STREAMING_URL}/cache?ytid=${ytid}&spotifyId=${track.spotify_id}`,
-          method: 'GET'
-        });
+        // cache ytid in server if first try
+        if (!options['blacklistIds'].length) {
+          $.ajax({
+            url: `http://${STREAMING_URL}/cache?ytid=${ytid}&spotifyId=${track.spotify_id}`,
+            method: 'GET'
+          });
+        }
       } else {
         if (options.logs) { console.log(`!!!No Valid Results!!!`); }
         cb(null);
