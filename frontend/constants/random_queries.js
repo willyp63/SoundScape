@@ -1,7 +1,4 @@
 module.exports = ["Britney Spears", "Jay Z", "Eminem", "Destiny's Child", "Green Day",
- "Micheal Jackson", "Spice Girls"];
-
-["Britney Spears", "Jay Z", "Eminem", "Destiny's Child", "Green Day",
  "Micheal Jackson", "Spice Girls", "Radio Head", "Backstreet Boys", "Red Hot Chili Peppers",
   "Prince", "Whitney Houston", "Christina Aguilera", "Snoop Dogg", "Justin Timberlake",
    "Janet Jackson", "Weezer", "U2", "Smashing Pumpkins", "Oasis", "Kenny Chesney", "Metallica",
