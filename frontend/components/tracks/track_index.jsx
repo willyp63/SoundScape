@@ -95,7 +95,7 @@ module.exports = React.createClass({
           </div> : ""}
         { !this.state.loading && !this.state.tracks.length ? (
             this.state.cannotLoad ?
-              <div className='no-results-text'>Unable to connect to Spotify API...</div> :
+              <div className='no-results-text'>Unable to Connect...</div> :
               <div className='no-results-text'>No Tracks Found...</div>) : ''}
       </div>
     );

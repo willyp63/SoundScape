@@ -7,6 +7,7 @@ const RightNavLoggedOut = require('./right_nav_logged_out');
 const SearchBar = require('./search_bar');
 const UserForm = require('../user_form');
 const TrackForm = require('../tracks/track_form');
+const CannotConnectAlert = require('../cannot_connect_alert');
 
 const _listeners = [];
 
@@ -39,13 +40,23 @@ module.exports = React.createClass({
     }
   },
   render () {
+    let modal = '';
+    if (this.state.modal) {
+      switch (this.state.modal.type) {
+        case 'TRACK':
+          modal = <TrackForm action={this.state.modal.action} data={this.state.modal.data} />;
+          break;
+        case 'USER':
+          modal = <UserForm action={this.state.modal.action} />;
+          break;
+        case 'CANNOT_CONNECT':
+          modal = <CannotConnectAlert />;
+          break;
+      }
+    }
     return (
       <div>
-        {this.state.modal ? (
-          this.state.modal.type === 'TRACK' ?
-          <TrackForm action={this.state.modal.action} data={this.state.modal.data}/> :
-          <UserForm action={this.state.modal.action} />
-          ) : '' }
+        {modal}
         <nav className="nav-bar">
           <LeftNav pathname={this.props.pathname} />
           <SearchBar />

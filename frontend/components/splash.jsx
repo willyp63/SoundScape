@@ -93,7 +93,7 @@ module.exports = React.createClass({
           </div> : "" }
           { this.state.trackHash ? this._buildCarousels(this.state.trackHash) : ""}
         { !this.state.loading && this.state.cannotLoad ?
-          <div className='no-results-text'>Unable to connect to Spotify API...</div> : ""}
+          <div className='no-results-text'>Unable to Connect...</div> : ""}
       </div>
     );
   }
