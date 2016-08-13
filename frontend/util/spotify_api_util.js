@@ -8,10 +8,6 @@ module.exports = {
       url: 'https://api.spotify.com/v1/search',
       data: {q: query, type: 'track', limit: limit, offset: offset},
       success: function (response) {
-        dispatcher.dispatch({
-          actionType: "SHOW_MODAL",
-          modal: {type: 'CANNOT_CONNECT', action: 'INFO', data: null}
-        });
         let tracks = response.tracks.items.map(extractTrack);
         tracks = uniqueTracks(tracks);
         if (SessionStore.loggedIn()) {
