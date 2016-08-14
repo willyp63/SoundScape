@@ -226,8 +226,14 @@ module.exports = React.createClass({
             <div className="playing-image">
               <i className="glyphicon glyphicon-remove" onClick={this._closePlayer}/>
               {this.state.loadingTrack ?
-                <i id="retry-icon" className="glyphicon glyphicon-ban-circle disabled" /> :
-                <i id="retry-icon" className="glyphicon glyphicon-ban-circle" onClick={this._retrySearch}/>}
+                <div className="retry-button disabled">
+                  <i id="retry-icon" className="glyphicon glyphicon-ban-circle" />
+                  retry!
+                </div> :
+                <div className="retry-button" onClick={this._retrySearch}>
+                  <i id="retry-icon" className="glyphicon glyphicon-ban-circle"/>
+                  retry!
+                </div>}
               <div className="player-like-button" onClick={this._likeTrack}>
                 {this.state.loadingLike ?
                   <div className="sk-fading-circle">
@@ -265,7 +271,7 @@ module.exports = React.createClass({
                 this.state.unableToLoadTrack ?
                   <div className="unable-to-load-track">
                     <i className="glyphicon glyphicon-remove"></i>
-                    <p>Sorry. We couldn't locate audio for this track.</p>
+                    <p>Could not locate audio for this track...</p>
                   </div> :
                   <div className="audio-player-spinner"></div>
                 ) :

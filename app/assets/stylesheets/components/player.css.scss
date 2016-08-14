@@ -27,33 +27,42 @@ $player-bg: $ss-gray;
   align-items: center;
   justify-content: space-around;
 }
-.playing-image i {
+.playing-image > i {
   float: left;
   font-size: 32px;
   line-height: $player-height;
   color: $ss-light-gray;
   cursor: pointer;
 }
-#retry-icon.disabled {
-  cursor: default;
-}
-#retry-icon.disabled:hover {
-  color: #a00;
-}
-#retry-icon:hover {
-  color: #f00;
-}
-#retry-icon {
-  color: #a00;
-}
-.playing-image i.disabled:hover {
+.playing-image > i.disabled:hover {
   color: $ss-light-gray;
 }
-.playing-image i.disabled {
+.playing-image > i.disabled {
   cursor: default;
 }
-.playing-image i:hover {
+.playing-image > i:hover {
   color: #fff;
+}
+.retry-button.disabled {
+  cursor: default;
+}
+.retry-button.disabled:hover {
+  color: #a00;
+}
+.retry-button:hover {
+  color: #f00;
+}
+.retry-button {
+  float: left;
+  font-size: 36px;
+  line-height: $player-height;
+  color: #a00;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+.retry-button > i {
+  margin-right: 8px;
 }
 .player-like-button {
   float: left;
@@ -266,19 +275,15 @@ $player-bg: $ss-gray;
   float: left;
   height: $player-height;
   text-align: center;
-  font-size: 16px;
-  color: red;
+  font-size: 20px;
+  color: #a00;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
 }
 .unable-to-load-track i {
-  flex-basis: 50px;
   font-size: 32px;
-}
-.unable-to-load-track p {
-  flex-grow: 1;
 }
 /* SQUARE SPINNER */
 .audio-player-spinner {
