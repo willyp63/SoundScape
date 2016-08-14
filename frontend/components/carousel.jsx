@@ -1,5 +1,6 @@
 const React = require('react');
 const TrackIndexItem = require('./tracks/track_index_item');
+const PlayerActions = require('../actions/player_actions');
 const MINWIDTH = 990;
 const ALBUMWIDTH = 225;
 const OFFSET = 0.9;
@@ -19,6 +20,13 @@ const Carousel = React.createClass({
                                 indexType="SEARCH"/>);
     });
     return seen;
+  },
+
+  _playAll () {
+    PlayerActions.playTracks(this.props.tracks);
+  },
+  _shuffleAll () {
+    PlayerActions.playShuffledTracks(this.props.tracks);
   },
 
   setStillState(direction) {
@@ -182,6 +190,12 @@ const Carousel = React.createClass({
       <div className="carousel-header" onMouseEnter={this._highlightArrows} onMouseLeave={this._unhighlightArrows} id={this.props.rowIndex}>
         <div className="search-results-header">
           <p>{title}</p>
+        </div>
+        <div className="play-buttons">
+          <button className="btn btn-primary btn-lg"
+                  onClick={this._playAll}>Play all</button>
+          <button className="btn btn-primary btn-lg"
+                  onClick={this._shuffleAll}>Shuffle all</button>
         </div>
         {filteredTracks}
       </div>

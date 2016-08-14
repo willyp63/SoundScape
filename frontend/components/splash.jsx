@@ -23,7 +23,7 @@ module.exports = React.createClass({
   componentWillMount () {
     _listeners.push(SessionStore.addListener(this._sessionChange));
     let artists = this._fetchRandomArtists();
-    _trackKeys = ["MOST_RECENT", 'MOST_LIKED'];
+    _trackKeys = ['MOST_LIKED'];
     _trackKeys = _trackKeys.concat(artists);
     _listeners.push(TrackStore.addListener(this._trackChange));
     TrackActions.fetchSplashTracks(_trackKeys);
