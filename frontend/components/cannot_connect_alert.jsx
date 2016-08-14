@@ -13,24 +13,31 @@ module.exports = React.createClass({
               <button className="close" onClick={this._closeModal}>&times;</button>
               <p className="modal-title">Unable to Connect</p>
             </div>
-            <form className="cannot-connect-form">
-              <div className="cannot-connect-upper">
+            <form className="cannot-connect-form cf">
+              <div className="alert-col-2 cf">
                 <p className="cannot-connect-body">It looks like something is interfering with our streaming service. VPN services, availible in the Chrome extension store, tend to solve this issue.</p>
-                <i className="glyphicon glyphicon-fire cannot-connect-icon"></i>
+                <ul>
+                  <li>
+                    <a href="https://chrome.google.com/webstore/detail/zenmate-vpn-best-cyber-se/fdcgdnkidjaadafnichfpabhfomcebme?hl=en">
+                      <img src="http://res.cloudinary.com/dcwxxqs4l/image/upload/v1471202747/zenmate_uz5psp.jpg" alt="ZenMate"></img>
+                      ZenMate
+                      <img></img>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://chrome.google.com/webstore/detail/hotspot-shield-free-vpn-p/nlbejmccbhkncgokjcmghpfloaajcffj?hl=en">
+                      <img src="http://res.cloudinary.com/dcwxxqs4l/image/upload/v1471202747/hotspot_shield_pbdtyg.jpg" alt="Hotspot Shield"></img>
+                      Hotspot Shield
+                    </a>
+                  </li>
+                </ul>
               </div>
-              <ul>
-                <li>
-                  <a href="https://chrome.google.com/webstore/detail/zenmate-vpn-best-cyber-se/fdcgdnkidjaadafnichfpabhfomcebme?hl=en">
-                    ZenMate
-                    <img></img>
-                  </a>
-                </li>
-                <li>
-                  <a href="https://chrome.google.com/webstore/detail/hotspot-shield-free-vpn-p/nlbejmccbhkncgokjcmghpfloaajcffj?hl=en">
-                    Hotspot Shield
-                  </a>
-                </li>
-              </ul>
+              <div className="alert-col-1 cf">
+                <i className="glyphicon glyphicon-alert"></i>
+              </div>
+              <div className="alert-col-3 cf">
+                <button onClick={this._closeModal} className="btn btn-success">Ok</button>
+              </div>
             </form>
           </div>
         </div>

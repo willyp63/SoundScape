@@ -132,39 +132,71 @@ $form-field-font-size: 20px;
 /* CANNOT CONNECT */
 .cannot-connect-form {
   margin-top: 20px;
-}
-
-.cannot-connect-upper {
   display: flex;
   flex-direction: row;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.cannot-connect-form .alert-col-3 {
+  flex-basis: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.cannot-connect-form .alert-col-2 {
+  flex-basis: 66.66%;
+  display: flex;
+  flex-direction: column;
+}
+
+.cannot-connect-form .alert-col-1 {
+  flex-basis: 33.33%;
+  display: flex;
+  flex-direction: column;
   justify-content: space-around;
-  margin-left: 5%;
-  width: 90%;
 }
 
 .cannot-connect-form p {
+  margin-left: 20px;
+  text-align: left;
   font-size: 24px;
 }
 
 .cannot-connect-form i {
-  height: 100%;
-  line-height: 100%;
-  text-align: center;
   font-size: 128px;
+  text-align: center;
+  color: #FF8D0A;
+}
+
+.cannot-connect-form button {
+  align-self: flex-end;
+  width: 90px;
 }
 
 .cannot-connect-form ul {
-  padding: 20px 60px;
+  list-style: none;
   float: left;
-  margin-left: 5%;
+  margin-top: 20px;
+  margin-left: 40px;
 }
 .cannot-connect-form ul li {
-  font-size: 28px;
-  line-height: 40px;
+  height: 80px;
 }
 
 .cannot-connect-form ul li a {
+  display: flex;
+  flex-direction: row;
   color: blue;
+  height: 80px;
+  line-height: 80px;
+  font-size: 28px;
+}
+
+.cannot-connect-form ul li a img {
+  height: 60px;
+  margin-top: 10px;
+  margin-right: 20px;
 }
 
 .cannot-connect-form ul li a:hover {
