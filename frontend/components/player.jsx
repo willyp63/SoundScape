@@ -226,13 +226,15 @@ module.exports = React.createClass({
             <div className="playing-image">
               <i className="glyphicon glyphicon-remove" onClick={this._closePlayer}/>
               {this.state.loadingTrack ?
-                <div className="retry-button disabled">
-                  <i id="retry-icon" className="glyphicon glyphicon-ban-circle" />
-                  retry!
-                </div> :
-                <div className="retry-button" onClick={this._retrySearch}>
-                  <i id="retry-icon" className="glyphicon glyphicon-ban-circle"/>
-                  retry!
+                <div className="retry-button-container">
+                  <div className="retry-button disabled">
+                    RETRY
+                  </div>
+                </div>:
+                <div className="retry-button-container">
+                  <div className="retry-button" onClick={this._retrySearch}>
+                    RETRY
+                  </div>
                 </div>}
               <div className="player-like-button" onClick={this._likeTrack}>
                 {this.state.loadingLike ?
