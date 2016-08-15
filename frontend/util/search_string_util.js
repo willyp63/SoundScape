@@ -31,24 +31,26 @@ module.exports = {
   replaceAnds (str) {
      return str.replace(new RegExp(" & ", "g"), " and ");
    },
-  wildCardSpacesAndStars (title) {
-    let str = "";
+   dropLeadingWords (str) {
+     return str.replace(new RegExp("^the |^an |^a ", "ig"), "");
+   },
+  formatForRegExp (str) {
+    let returnStr = "";
     let spaceOrStar = false;
-    title = title.replace(new RegExp("^the |^an |^a ", "ig"), "");
-    for (var i = 0; i < title.length; i++) {
-      if (title[i] === " " || title[i] === "*" || title[i] === "#" || title[i] === "$") {
+    for (var i = 0; i < str.length; i++) {
+      if (str[i] === " " || str[i] === "*" || str[i] === "#" || str[i] === "$" || str[i] === "&") {
         if (spaceOrStar) {
           continue;
         } else {
-          str += ".*";
+          returnStr += ".*";
           spaceOrStar = true;
         }
       } else {
-        str += title[i];
+        returnStr += str[i];
         spaceOrStar = false;
       }
     }
-    return str;
+    return returnStr;
   },
   extractDuration (str) {
     const minutesMatch = str.match(new RegExp('PT(.*)M.*'));

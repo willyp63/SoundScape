@@ -1,6 +1,7 @@
 const SearchStringUtil = require('./search_string_util');
+const Searcher = require('./searcher');
 
-const STREAMING_URL = 'thawing-bastion-97540.herokuapp.com';
+const NODE_SERVER_URL = 'thawing-bastion-97540.herokuapp.com';
 
 const FILTER_WORDS = ["live", "cover", "parody", "parodie", "karaoke", "remix",
                   "full album", "español", "concert", "tutorial", "mashup",
@@ -15,188 +16,91 @@ const REJECTED_CHANNELS = ["gabriella9797", "guitarlessons365song",
 
 const TIME_DEVIATION = 40;
 
-// setup gapi
+// store requests until gapi has loaded
 let _gapiLoaded = false;
 let _unprocessedRequests = [];
 window.onClientLoad = function () {
-  // setup yt api
   gapi.client.load('youtube', 'v3', function () {
     gapi.client.setApiKey('AIzaSyD8hbRI2KVPzef84BQPtkwcqXD9XcTLgbE');
     _gapiLoaded = true;
-    // process requests
-    _unprocessedRequests.forEach(request => {
-      processRequest(request[0], request[1], request[2]);
-    });
-    _unprocessedRequests = [];
+    processUnprocessedRequests();
   });
 };
+
+function processUnprocessedRequests () {
+  _unprocessedRequests.forEach(request => {
+    processRequest(request[0], request[1], request[2]);
+  });
+  _unprocessedRequests = [];
+}
 
 // EXPORTS
 module.exports = {
   searchYoutube (track, options, cb) {
-    if (!_gapiLoaded) {
-      // store request
-      _unprocessedRequests.push([track, options, cb]);
-    } else {
+    if (_gapiLoaded) {
       processRequest(track, options, cb);
+    } else {
+      // store request to process later
+      _unprocessedRequests.push([track, options, cb]);
     }
   }
 };
 
 function processRequest (track, options, cb) {
-  // check if server has ytid
+  // ignore cache if logging
   if (options.logs) {
     searchTrack(track, options, cb);
   } else {
-    $.ajax({
-      url: `http://${STREAMING_URL}/ytid/${track.spotify_id}`,
-      method: 'GET',
-      dataType: 'JSON',
-      success (response) {
-        if (response.ytid && !options['blacklistIds'].includes(response.ytid)) {
-          cb(response.ytid);
-        } else {
-          searchTrack(track, options, cb);
-        }
-      }
-    });
+    checkCache(track, options, cb);
   }
 }
 
+function checkCache (track, options, cb) {
+  $.ajax({
+    url: `http://${NODE_SERVER_URL}/ytid/${track.spotify_id}`,
+    method: 'GET',
+    dataType: 'JSON',
+    success (response) {
+      // return ytid from cache or do search
+      if (response.ytid && !options['blacklistIds'].includes(response.ytid)) {
+        cb(response.ytid);
+      } else {
+        searchTrack(track, options, cb);
+      }
+    }
+  });
+}
+
 function searchTrack (track, options, cb) {
+  // format query
   const cleanTitle = SearchStringUtil.cleanSpotifyTitle(track.title);
-  let query = `${SearchStringUtil.replaceAnds(track.artists[0])} ${SearchStringUtil.dropStars(cleanTitle)}`;
+  let query = `${track.artists[0]} ${cleanTitle}`;
   if (options.logs) { console.log(`???Searching YT for: ${query}???`); }
+
   gapi.client.youtube.search.list({
-    part: 'snippet', q: query, maxResults: 50
+    part: 'snippet', q: query, maxResults: 30
   }).execute(function (response) {
-    checkResults(response.items, options, 0, track.artists, cleanTitle, track.duration_sec, function (validResult) {
-      if (validResult) {
-        const ytid = validResult.id.videoId;
-        if (options.logs) { console.log(`???Found Valid Result:${validResult.snippet.title}???`); }
+    const searcher = new Searcher(response.items, track, options);
+    searcher.search(function (bestItem) {
+      if (bestItem) {
+        // return ytid
+        const ytid = bestItem.id.videoId;
+        if (options.logs) { console.log(`???Found Valid Result:${bestItem.snippet.title}???`); }
         cb(ytid);
 
-        // cache ytid in server if first try
+        // cache ytid in server only if first search attempt
         if (!options['blacklistIds'].length) {
-          $.ajax({
-            url: `http://${STREAMING_URL}/cache?ytid=${ytid}&spotifyId=${track.spotify_id}`,
-            method: 'GET'
-          });
+          // DONT CAHCEH RIGHT NOW
+          // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+          // $.ajax({
+          //   url: `http://${NODE_SERVER_URL}/cache?ytid=${ytid}&spotifyId=${track.spotify_id}`,
+          //   method: 'GET'
+          // });
         }
       } else {
         if (options.logs) { console.log(`!!!No Valid Results!!!`); }
         cb(null);
       }
     });
-  });
-}
-
-function checkResults (results, options, i, artists, trackTitle, trackDuration, cb) {
-  // check each result sequentially
-  if (!results[i]) {
-    cb(null);
-    return;
-  } else {
-    if (options.logs) { console.log(`?Checking Result:${results[i].snippet.title}?`); }
-    validResult(results[i], options, artists, trackTitle, trackDuration, function (valid) {
-      if (valid) {
-        cb(results[i]);
-      } else {
-        checkResults(results, options, i + 1, artists, trackTitle, trackDuration, cb);
-      }
-    });
-  }
-}
-
-function validResult (result, options, artists, trackTitle, trackDuration, cb) {
-  // check for videoId
-  if (!result.id.videoId || options['blacklistIds'].includes(result.id.videoId)) {
-    if (options.logs) { console.log(`!Result:${result.snippet.title} Invalid b/c Invalid YTID!`); }
-    cb(false);
-    return;
-  }
-
-  // check for blacklisted channels
-  if (REJECTED_CHANNELS.includes(result.snippet.channelTitle.toLowerCase())) {
-    if (options.logs) { console.log(`!Result:${result.snippet.title} Invalid b/c Rejected Channel!`); }
-    cb(false);
-    return;
-  }
-
-  // title OR channel must match artist AND title must match trackTitle
-  const resultTitle = result.snippet.title;
-  const channelTitle = result.snippet.channelTitle;
-  let artistMatch = false;
-  for (var i = 0; i < artists.length; i++) {
-    const artistRegExp = new RegExp(SearchStringUtil.wildCardSpacesAndStars(SearchStringUtil.replaceAnds(artists[i])), 'i');
-    if (resultTitle.match(artistRegExp) || channelTitle.match(artistRegExp)) {
-      artistMatch = true;
-      break;
-    }
-  }
-  const trackTitleRegExp = new RegExp(SearchStringUtil.wildCardSpacesAndStars(trackTitle), 'i');
-  if (!artistMatch || !resultTitle.match(trackTitleRegExp)) {
-    if (options.logs) { console.log(`!Result:${result.snippet.title} Invalid b/c Title/Artist Match!`); }
-    cb(false);
-    return;
-  }
-
-  // can not match any filter words
-  for (let i = 0; i < FILTER_WORDS.length; i++) {
-    const filterRegExp = new RegExp(FILTER_WORDS[i], 'i');
-    if (!trackTitle.match(filterRegExp) && resultTitle.match(filterRegExp)) {
-      if (options.logs) { console.log(`!Result:${result.snippet.title} Invalid b/c Filter Words (${FILTER_WORDS[i]})!`); }
-      cb(false);
-      return;
-    }
-  }
-
-  getYtInfo(result.id.videoId, function (duration, restricted) {
-    // valid if not restricted
-    if (restricted) {
-      if (options.logs) { console.log(`!Result:${result.snippet.title} Invalid b/c Age Restriction!`); }
-      cb(false);
-      return;
-    }
-
-    // valid if within time deviation
-    if (trackDuration < duration - TIME_DEVIATION || trackDuration > duration + TIME_DEVIATION) {
-      if (options.logs) { console.log(`!Result:${result.snippet.title} Invalid b/c Time Deviation!`); }
-      cb(false);
-      return;
-    }
-
-    // audio format must be 'opus'
-    validAudioFormat(result.id.videoId, function (validFormat) {
-      if (!validFormat) {
-        if (options.logs) { console.log(`!Result:${result.snippet.title} Invalid b/c Audio Format!`); }
-      }
-      cb(validFormat);
-    });
-  });
-}
-
-function getYtInfo (ytid, cb) {
-  gapi.client.youtube.videos.list({
-    part: 'contentDetails', id: ytid
-  }).execute(function (response) {
-    const details = response.items[0].contentDetails;
-    const duration = SearchStringUtil.extractDuration(details.duration);
-    const restricted = (details.contentRating && details.contentRating.ytRating === "ytAgeRestricted");
-    cb(duration, restricted);
-  });
-}
-
-function validAudioFormat (ytid, cb) {
-  $.ajax({
-    url: `http://${STREAMING_URL}/audioEncoding/${ytid}`,
-    method: 'GET',
-    dataType: 'JSON',
-    success (response) {
-      cb(response.validFormat);
-    },
-    error (err) {
-      cb(false);
-    }
   });
 }
