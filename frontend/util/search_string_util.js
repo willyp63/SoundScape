@@ -38,7 +38,7 @@ module.exports = {
     let returnStr = "";
     let spaceOrStar = false;
     for (var i = 0; i < str.length; i++) {
-      if (str[i] === " " || str[i] === "*" || str[i] === "#" || str[i] === "$" || str[i] === "&") {
+      if (str[i] === " " || str[i] === "*" || str[i] === "+" || str[i] === "#" || str[i] === "$" || str[i] === "&") {
         if (spaceOrStar) {
           continue;
         } else {

@@ -5,7 +5,7 @@ const ACCEPTABLE_SCORE = 1.35;
 
 const MAX_DURATION_OFFSET = 90;
 
-const MAX_REQUESTS_OUT = 3;
+const MAX_REQUESTS_OUT = 5;
 
 const NODE_SERVER_URL = 'thawing-bastion-97540.herokuapp.com';
 

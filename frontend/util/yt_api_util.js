@@ -3,19 +3,6 @@ const Searcher = require('./searcher');
 
 const NODE_SERVER_URL = 'thawing-bastion-97540.herokuapp.com';
 
-const FILTER_WORDS = ["live", "cover", "parody", "parodie", "karaoke", "remix",
-                  "full album", "español", "concert", "tutorial", "mashup",
-                  "acoustic", "instrumental", "karaote", "guitar lesson",
-                  "ukulele lesson", "drum lesson", "piano lesson", "tablature",
-                  "how to really play", "how to play", "busking", "tutorial", "rehearsal"];
-
-const REJECTED_CHANNELS = ["gabriella9797", "guitarlessons365song",
-                        "mathieu terrade", "rock class 101", "ole's music",
-                        "cifra club", "justinguitar songs", "the beatles", "bbc radio 1",
-                      "hollywiretv"];
-
-const TIME_DEVIATION = 40;
-
 // store requests until gapi has loaded
 let _gapiLoaded = false;
 let _unprocessedRequests = [];
