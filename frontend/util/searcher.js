@@ -40,7 +40,7 @@ Searcher.prototype.search = function (foundResult) {
     for (let i = 0; i < MAX_REQUESTS_OUT; i++) {
       this.nextItem();
     }
-  });
+  }.bind(this));
 };
 
 Searcher.prototype.getItems = function (hasItems) {
@@ -50,7 +50,7 @@ Searcher.prototype.getItems = function (hasItems) {
   }).execute(function (response) {
     this.items = response.items;
     hasItems();
-  });
+  }.bind(this));
 };
 
 Searcher.prototype.nextItem = function () {
