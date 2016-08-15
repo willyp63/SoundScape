@@ -45,17 +45,36 @@ $player-bg: $ss-gray;
 }
 .retry-button.disabled {
   cursor: default;
+  color: #a00;
+  background-color: #fff;
 }
 .retry-button.disabled:hover {
   color: #a00;
+  background-color: #fff;
 }
 .retry-button:hover {
-  color: #f00;
+  color: #ff0000;
+  background-color: $ss-light-gray;
 }
+
+.retry-button-container {
+  padding-top: 10px;
+  height: 100%;
+  width: 70;
+  position: relative;
+}
+
 .retry-button {
-  float: left;
-  font-size: 36px;
+  border-radius: 10px;
+  padding-left: 5px;
+  padding-right: 5px;
+  height: 80%;
+  top: 10%;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: serif;
   line-height: $player-height;
+  background-color: #fff;
   color: #a00;
   cursor: pointer;
   display: flex;
