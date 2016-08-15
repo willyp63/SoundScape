@@ -65,6 +65,7 @@ Searcher.prototype.nextItem = function () {
 };
 
 Searcher.prototype.scoreItem = function () {
+  const i = this.idx;
   const item = this.items[this.idx++];
 
   // stop search if out of items
@@ -76,15 +77,15 @@ Searcher.prototype.scoreItem = function () {
 
   // return -1.0 if any black/white check fails
   if (this.badYtid(item)){
-    if (this.options.logs) { console.log(`(${item.snippet.title}) FAILED B/C:: badYtid`); }
+    if (this.options.logs) { console.log(`Item#${i} (${item.snippet.title}) FAILED B/C:: badYtid`); }
     this.scores[item.id.videoId] = -1.0;
     this.nextItem();
   } else if (this.rejectedChannel(item)) {
-    if (this.options.logs) { console.log(`(${item.snippet.title}) FAILED B/C: rejectedChannel`); }
+    if (this.options.logs) { console.log(`Item#${i} (${item.snippet.title}) FAILED B/C: rejectedChannel`); }
     this.scores[item.id.videoId] = -1.0;
     this.nextItem();
   } else if (this.hasFilterWord(item)) {
-    if (this.options.logs) { console.log(`(${item.snippet.title}) FAILED B/C:: hasFilterWord`); }
+    if (this.options.logs) { console.log(`Item#${i} (${item.snippet.title}) FAILED B/C:: hasFilterWord`); }
     this.scores[item.id.videoId] = -1.0;
     this.nextItem();
   } else {
@@ -94,8 +95,6 @@ Searcher.prototype.scoreItem = function () {
     const artistsScore = this.scoreArtists(item);
     score += titleScore;
     score += artistsScore;
-    if (this.options.logs) { console.log(`(${item.snippet.title}) TITLE_SCORE: ${titleScore}`); }
-    if (this.options.logs) { console.log(`(${item.snippet.title}) ARTISTS_SCORE: ${artistsScore}`); }
 
     // make API requests and increment/decrement counter
     this.callBacksWaiting++;
@@ -104,15 +103,19 @@ Searcher.prototype.scoreItem = function () {
 
       // return -1.0 if any black/white check fails
       if (restricted) {
-        if (this.options.logs) { console.log(`(${item.snippet.title}) FAILED B/C:: restricted`); }
+        if (this.options.logs) { console.log(`Item#${i} (${item.snippet.title}) FAILED B/C:: restricted`); }
         this.scores[item.id.videoId] = -1.0;
       } else if (!validFormat) {
-        if (this.options.logs) { console.log(`(${item.snippet.title}) FAILED B/C:: invalidFormat`); }
+        if (this.options.logs) { console.log(`Item#${i} (${item.snippet.title}) FAILED B/C:: invalidFormat`); }
         this.scores[item.id.videoId] = -1.0;
       } else {
         // score duration and then save score
         const durationScore = this.scoreDuration(duration);
-        if (this.options.logs) { console.log(`(${item.snippet.title}) DURATION_SCORE: ${durationScore}`); }
+        if (this.options.logs) { console.log('##################################'); }
+        if (this.options.logs) { console.log(`Item#${i} (${item.snippet.title}) TITLE_SCORE: ${titleScore}`); }
+        if (this.options.logs) { console.log(`Item#${i} (${item.snippet.title}) ARTISTS_SCORE: ${artistsScore}`); }
+        if (this.options.logs) { console.log(`Item#${i} (${item.snippet.title}) DURATION_SCORE: ${durationScore}`); }
+        if (this.options.logs) { console.log('##################################'); }
         score += durationScore;
         this.scores[item.id.videoId] = score;
 
@@ -129,7 +132,8 @@ Searcher.prototype.scoreItem = function () {
 
 Searcher.prototype.returnBestItem = function () {
   // get best scored item
-  let bestItem, bestScore;
+  if (this.options.logs) { console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$'); }
+  let bestItem, bestScore, bestI;
   for (let i = 0; i < this.idx; i++) {
     const item = this.items[i];
     const score = this.scores[item.id.videoId];
@@ -137,10 +141,13 @@ Searcher.prototype.returnBestItem = function () {
     if (!bestScore || score > bestScore) {
       bestItem = item;
       bestScore = score;
+      bestI = i;
     }
   }
+  if (this.options.logs) { console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$'); }
   // return item if acceptable
   if (bestScore >= ACCEPTABLE_SCORE) {
+    if (this.options.logs) { console.log(`???Found Valid Result: Item#${bestI} (${bestItem.snippet.title})???`); }
     this.foundResult(bestItem);
   } else {
     this.foundResult(null);

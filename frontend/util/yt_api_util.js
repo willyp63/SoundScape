@@ -62,7 +62,6 @@ function searchTrack (track, options, cb) {
     if (bestItem) {
       // return ytid
       const ytid = bestItem.id.videoId;
-      if (options.logs) { console.log(`???Found Valid Result:${bestItem.snippet.title}???`); }
       cb(ytid);
 
       // cache ytid in server only if first search attempt
