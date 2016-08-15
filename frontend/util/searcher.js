@@ -191,11 +191,13 @@ Searcher.prototype.scoreArtists = function (item) {
   const itemTitle = item.snippet.title;
   const channelTitle = item.snippet.channelTitle;
   let score = 0.0;
-  this.trackArtistRegExps.forEach(artistRegExp => {
+  for (let i = 0; i < this.trackArtistRegExps.length; i++) {
+    const artistRegExp = this.trackArtistRegExps[i];
     if (itemTitle.match(artistRegExp) || channelTitle.match(artistRegExp)) {
-      score += 1.0 / this.trackArtistRegExps.length;
+      score += 1.0 / (i + 1);
+      break;
     }
-  });
+  }
   return score;
 };
 
