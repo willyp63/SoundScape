@@ -1,6 +1,4 @@
-const SearchStringUtil = require('./search_string_util');
 const Searcher = require('./searcher');
-
 const NODE_SERVER_URL = 'thawing-bastion-97540.herokuapp.com';
 
 // store requests until gapi has loaded
@@ -59,35 +57,29 @@ function checkCache (track, options, cb) {
 }
 
 function searchTrack (track, options, cb) {
-  // format query
-  const cleanTitle = SearchStringUtil.cleanSpotifyTitle(track.title);
-  let query = `${track.artists[0]} ${cleanTitle}`;
-  if (options.logs) { console.log(`???Searching YT for: ${query}???`); }
+  const searcher = new Searcher(track, options);
+  searcher.search(function (bestItem) {
+    if (bestItem) {
+      // return ytid
+      const ytid = bestItem.id.videoId;
+      if (options.logs) { console.log(`???Found Valid Result:${bestItem.snippet.title}???`); }
+      cb(ytid);
 
-  gapi.client.youtube.search.list({
-    part: 'snippet', q: query, maxResults: 30
-  }).execute(function (response) {
-    const searcher = new Searcher(response.items, track, options);
-    searcher.search(function (bestItem) {
-      if (bestItem) {
-        // return ytid
-        const ytid = bestItem.id.videoId;
-        if (options.logs) { console.log(`???Found Valid Result:${bestItem.snippet.title}???`); }
-        cb(ytid);
-
-        // cache ytid in server only if first search attempt
-        if (!options['blacklistIds'].length) {
-          // DONT CAHCEH RIGHT NOW
-          // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-          // $.ajax({
-          //   url: `http://${NODE_SERVER_URL}/cache?ytid=${ytid}&spotifyId=${track.spotify_id}`,
-          //   method: 'GET'
-          // });
-        }
-      } else {
-        if (options.logs) { console.log(`!!!No Valid Results!!!`); }
-        cb(null);
+      // cache ytid in server only if first search attempt
+      if (!options['blacklistIds'].length) {
+        // DONT CAHCEH RIGHT NOW
+        // cacheYtid(track, ytid);
       }
-    });
+    } else {
+      if (options.logs) { console.log(`!!!No Valid Results!!!`); }
+      cb(null);
+    }
+  });
+}
+
+function cacheYtid (track, ytid) {
+  $.ajax({
+    url: `http://${NODE_SERVER_URL}/cache?ytid=${ytid}&spotifyId=${track.spotify_id}`,
+    method: 'GET'
   });
 }

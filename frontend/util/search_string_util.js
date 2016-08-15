@@ -1,12 +1,14 @@
+const DROP_FROM_REG_EXP = [" ", "+", "^", "$", "&", "*", "#"];
+
 module.exports = {
   cleanSpotifyTitle (title) {
-   // only take what is before ' - ' and not in parens '(...)'
-   let cleanedTitle = "";
-   let betweenParens = false;
-   let dashPoint = title.indexOf("-") + 1 || title.length + 1;
-   let semipoint = title.indexOf(":") + 1 || title.length + 1;
-   let endPoint = Math.min(dashPoint, semipoint) - 1;
-   for (let i = 0; i < endPoint; i++) {
+    // only take what is before ' - ' and not in parens '(...)'
+    let cleanedTitle = "";
+    let betweenParens = false;
+    let dashPoint = title.indexOf("-") + 1 || title.length + 1;
+    let semipoint = title.indexOf(":") + 1 || title.length + 1;
+    let endPoint = Math.min(dashPoint, semipoint) - 1;
+    for (let i = 0; i < endPoint; i++) {
      if (betweenParens) {
        continue;
      } else if (title[i] === "(") {
@@ -16,29 +18,17 @@ module.exports = {
      } else {
        cleanedTitle += title[i];
      }
-   }
-   return cleanedTitle;
- },
- dropStars (title) {
-    let str = "";
-    for (var i = 0; i < title.length; i++) {
-      if (title[i] !== "*" && title[i] !== "#") {
-        str += title[i];
-      }
     }
-    return str;
+    return cleanedTitle;
   },
-  replaceAnds (str) {
-     return str.replace(new RegExp(" & ", "g"), " and ");
-   },
-   dropLeadingWords (str) {
-     return str.replace(new RegExp("^the |^an |^a ", "ig"), "");
-   },
+  dropLeadingWords (str) {
+    return str.replace(new RegExp("^the |^an |^a ", "ig"), "");
+  },
   formatForRegExp (str) {
     let returnStr = "";
     let spaceOrStar = false;
     for (var i = 0; i < str.length; i++) {
-      if (str[i] === " " || str[i] === "*" || str[i] === "+" || str[i] === "#" || str[i] === "$" || str[i] === "&") {
+      if (DROP_FROM_REG_EXP.includes(str[i])) {
         if (spaceOrStar) {
           continue;
         } else {
@@ -64,8 +54,20 @@ module.exports = {
       return (minutes * 60) + seconds;
     }
   },
-  queryString (track) {
-    const cleanTitle = this.cleanSpotifyTitle(track.title);
-    return `${track.artists[0]} ${this.dropStars(cleanTitle)}`;
+  formatQuery (track) {
+    return `${track.artists[0]} ${this.cleanSpotifyTitle(track.title)}`;
+  },
+  titleRegExp (trackTitle) {
+    let str = this.cleanSpotifyTitle(trackTitle);
+    str = this.dropLeadingWords(str);
+    str = this.formatForRegExp(str);
+    return new RegExp(str, 'i');
+  },
+  artistRegExps (artists) {
+    return artists.map(artist => {
+      let str = this.dropLeadingWords(artist);
+      str = this.formatForRegExp(str);
+      return new RegExp(str, 'i');
+    });
   }
 };
