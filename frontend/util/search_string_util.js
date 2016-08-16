@@ -1,4 +1,4 @@
-const DROP_FROM_REG_EXP = [" ", "+", "^", "$", "&", "*", "#"];
+const DROP_FROM_REG_EXP = [" ", "+", "^", "$", "*", "&", "#"];
 
 module.exports = {
   cleanSpotifyTitle (title) {
@@ -57,17 +57,17 @@ module.exports = {
   formatQuery (track) {
     return `${track.artists[0]} ${this.cleanSpotifyTitle(track.title)}`;
   },
-  titleRegExp (trackTitle) {
-    let str = this.cleanSpotifyTitle(trackTitle);
-    str = this.dropLeadingWords(str);
-    str = this.formatForRegExp(str);
-    return new RegExp(str, 'i');
+  titleWordRegExps (trackTitle) {
+    const cleanTitle = this.cleanSpotifyTitle(trackTitle);
+    return cleanTitle.split(' ').map(word => {
+      return new RegExp(this.formatForRegExp(word), 'i');
+    });
   },
   artistRegExps (artists) {
     return artists.map(artist => {
-      let str = this.dropLeadingWords(artist);
-      str = this.formatForRegExp(str);
-      return new RegExp(str, 'i');
+      return this.dropLeadingWords(artist).split(' ').map(word => {
+        return new RegExp(this.formatForRegExp(word), 'i');
+      });
     });
   }
 };

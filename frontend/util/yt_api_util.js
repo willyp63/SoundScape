@@ -70,7 +70,6 @@ function searchTrack (track, options, cb) {
         // cacheYtid(track, ytid);
       }
     } else {
-      if (options.logs) { console.log(`!!!No Valid Results!!!`); }
       cb(null);
     }
   });
