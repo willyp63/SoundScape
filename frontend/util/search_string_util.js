@@ -1,4 +1,4 @@
-const DROP_FROM_REG_EXP = [" ", "+", "^", "$", "*", "&", "#"];
+const DROP_FROM_REG_EXP = [" ", "+", "^", "$", "*", "&", "#", "'"];
 
 module.exports = {
   cleanSpotifyTitle (title) {

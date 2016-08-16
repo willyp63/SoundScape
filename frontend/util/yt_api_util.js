@@ -59,19 +59,11 @@ function checkCache (track, options, cb) {
 function searchTrack (track, options, cb) {
   const searcher = new Searcher(track, options);
   searcher.search(function (bestItem) {
-    if (bestItem) {
-      // return ytid
-      const ytid = bestItem.id.videoId;
-      cb(ytid);
-
-      // cache ytid in server only if first search attempt
-      if (!options['blacklistIds'].length) {
-        // DONT CAHCEH RIGHT NOW
-        // cacheYtid(track, ytid);
-      }
-    } else {
-      cb(null);
+    // cache ytid in server only if first search attempt
+    if (bestItem && !options['blacklistIds'].length) {
+      cacheYtid(track, bestItem.id.videoId);
     }
+    cb(bestItem ? bestItem.id.videoId : null);
   });
 }
 

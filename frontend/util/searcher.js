@@ -9,7 +9,7 @@ const AUTO_PASS_SCORE = 2.65;
 const ACCEPTABLE_SCORE = 1.35;
 
 // ANY DURATION OFFSET LESS WILL SCORE 0.0
-const MAX_DURATION_OFFSET = 45;
+const MAX_DURATION_OFFSET = 60;
 
 const REJECTED_CHANNELS = ["gabriella9797", "guitarlessons365song",
                         "mathieu terrade", "rock class 101", "ole's music",
@@ -18,7 +18,7 @@ const REJECTED_CHANNELS = ["gabriella9797", "guitarlessons365song",
 
 const FILTER_WORDS = ["live", "cover", "parody", "parodie", "karaoke", "remix",
                   "full album", "español", "concert", "tutorial", "mashup",
-                  "acoustic", "instrumental", "karaote", "guitar", "mix",
+                  "acoustic", "instrumental", "karaote", "guitar", "mix", "fitness routine",
                   "ukulele", "drum", "piano", "tablature", "lesson", "version",
                   "how to really play", "how to play", "busking", "tutorial", "rehearsal"];
 
@@ -98,8 +98,10 @@ Searcher.prototype.scoreItem = function () {
       // black/white checks
       if (restricted) {
         score.failMessage = 'RESTRICTED';
+        score.titleScore = score.artistScore = 0.0;
       } else if (!validFormat) {
         score.failMessage = 'INVALID FORMAT';
+        score.titleScore = score.artistScore = 0.0;
       } else {
         // score duration
         score.durationScore = this.scoreDuration(duration);
@@ -224,9 +226,7 @@ Searcher.prototype.scoreArtist = function (itemTitle, channelTitle, artistRegExp
 Searcher.prototype.scoreDuration = function (duration) {
   // 0.0 to 1.0 scale (anything off by more than MAX_DURATION_OFFSET is 0.0)
   const diff = Math.abs(this.track.duration_sec - duration);
-  let score = (MAX_DURATION_OFFSET - diff) / MAX_DURATION_OFFSET;
-  if (score < 0) { score = 0; }
-  return score;
+  return (MAX_DURATION_OFFSET - diff) / MAX_DURATION_OFFSET;
 };
 
 // EXPORTS
