@@ -6,10 +6,12 @@ const MAX_ITEMS = 40;
 
 // SCORES CONSTS
 const AUTO_PASS_SCORE = 2.65;
+const GROUP_AUTO_PASS_SCORE = 2.0;
+const AUTO_PASS_GROUP_SIZE = 3;
 const ACCEPTABLE_SCORE = 1.35;
 
 // ANY DURATION OFFSET LESS WILL SCORE 0.0
-const MAX_DURATION_OFFSET = 60;
+const MAX_DURATION_OFFSET = 90;
 
 const REJECTED_CHANNELS = ["gabriella9797", "guitarlessons365song",
                         "mathieu terrade", "rock class 101", "ole's music",
@@ -31,14 +33,20 @@ const Searcher = function (track, options) {
 
 Searcher.prototype.search = function (foundResult) {
   this.foundResult = foundResult;
+  this.startTime = new Date().getTime() / 1000;
   this.getItems(function () {
     // fire off initial round of scoring requests
     this.callBacksWaiting = 0;
     this.doneSearching = false;
+    this.returnedItem = false;
     for (let i = 0; i < MAX_REQUESTS_OUT; i++) {
       this.nextItem();
     }
   }.bind(this));
+};
+
+Searcher.prototype.timeDiff = function () {
+  return (new Date().getTime() / 1000) - this.startTime;
 };
 
 Searcher.prototype.getItems = function (hasItems) {
@@ -46,15 +54,21 @@ Searcher.prototype.getItems = function (hasItems) {
   const query = SearchStringUtil.formatQuery(this.track);
   if (this.options.logs) {
     console.log('#############');
-    console.log(`???Starting Search for Query: (${query})`);
+    console.log(`???Getting Items for Query: (${query}) @${this.timeDiff()}s`);
     console.log('#############');
   }
   gapi.client.youtube.search.list({
     part: 'snippet', q: query, maxResults: MAX_ITEMS
   }).execute(function (response) {
     this.items = response.items;
+    this.groupAutoPasses = 0;
     this.idx = 0;
     this.scores = {};
+    if (this.options.logs) {
+      console.log('#############');
+      console.log(`???Received Items @${this.timeDiff()}s`);
+      console.log('#############');
+    }
     hasItems();
   }.bind(this));
 };
@@ -62,7 +76,8 @@ Searcher.prototype.getItems = function (hasItems) {
 Searcher.prototype.nextItem = function () {
   if (this.doneSearching) {
     // return best video if all API calls are back
-    if (!this.callBacksWaiting) {
+    if (!this.returnedItem && !this.callBacksWaiting) {
+      this.returnedItem = true;
       this.returnBestItem();
     }
   } else {
@@ -71,19 +86,26 @@ Searcher.prototype.nextItem = function () {
 };
 
 Searcher.prototype.scoreItem = function () {
+  const i = this.idx;
   const item = this.items[this.idx++];
   // stop search if out of items
-  if (!item) { this.doneSearching = true; return; }
+  if (!item) {
+    if (this.options.logs) { console.log(`!!!Stopping Search b/c: Out of Items @${this.timeDiff()}s!!!`); }
+    this.doneSearching = true;
+    return;
+  }
 
   // init score object
-  const score = {failMessage: null, titleScore: 0.0, artistScore: 0.0, durationScore: 0.0};
+  const score = {failMessage: null, titleScore: 0.0,
+                artistScore: 0.0, durationScore: 0.0, totalScore: 0.0};
   this.scores[item.id.videoId] = score;
 
-  // black/white checks
+  // black/white checks (pass score so check can set failMessage)
   if (this.badYtid(item, score) ||
       this.rejectedChannel(item, score) ||
       this.hasFilterWord(item, score)) {
         // fire next scoring request right away
+        if (this.options.logs) { console.log(`***Item #${i} Failed b/c: ${score.failMessage} @${this.timeDiff()}s***`); }
         this.nextItem();
   } else {
     // score title and artists
@@ -91,11 +113,13 @@ Searcher.prototype.scoreItem = function () {
     score.artistScore = this.scoreArtists(item);
 
     // make API calls and increment/decrement counter
+    if (this.options.logs) { console.log(`***Making Remote Calls for Item #${i} @${this.timeDiff()}s***`); }
     this.callBacksWaiting++;
     makeRemoteCalls(item, function (duration, restricted, validFormat) {
+      if (this.options.logs) { console.log(`***Received Remote Response for Item #${i} @${this.timeDiff()}s***`); }
       this.callBacksWaiting--;
 
-      // black/white checks
+      // black/white checks (set failMessage and reset artist/title score)
       if (restricted) {
         score.failMessage = 'RESTRICTED';
         score.titleScore = score.artistScore = 0.0;
@@ -103,12 +127,22 @@ Searcher.prototype.scoreItem = function () {
         score.failMessage = 'INVALID FORMAT';
         score.titleScore = score.artistScore = 0.0;
       } else {
-        // score duration
+        // score duration and total score
         score.durationScore = this.scoreDuration(duration);
+        score.totalScore = score.titleScore + score.artistScore + score.durationScore;
 
         // stop search if auto pass
-        if (score.titleScore + score.artistScore + score.durationScore >= AUTO_PASS_SCORE) {
-          this.doneSearching = true;
+        if (!this.doneSearching) {
+          if (score.totalScore >= AUTO_PASS_SCORE) {
+            if (this.options.logs) { console.log(`!!!Stopping Search b/c: Auto Pass Score @${this.timeDiff()}s!!!`); }
+            this.doneSearching = true;
+          } else if (score.totalScore >= GROUP_AUTO_PASS_SCORE) {
+            this.groupAutoPasses++;
+            if (this.groupAutoPasses >= AUTO_PASS_GROUP_SIZE) {
+              if (this.options.logs) { console.log(`!!!Stopping Search b/c: Group Auto Pass @${this.timeDiff()}s!!!`); }
+              this.doneSearching = true;
+            }
+          }
         }
       }
       // fire next scoring request after API calls
@@ -124,10 +158,9 @@ Searcher.prototype.returnBestItem = function () {
     const item = this.items[i];
     const score = this.scores[item.id.videoId];
     if (!score) { break; }
-    const totalScore = score.titleScore + score.artistScore + score.durationScore;
-    if (!bestScore || totalScore > bestScore) {
+    if (!bestScore || score.totalScore > bestScore) {
       bestItem = item;
-      bestScore = totalScore;
+      bestScore = score.totalScore;
       bestI = i;
     }
     if (this.options.logs) { this.logScore(i); }
@@ -152,7 +185,7 @@ Searcher.prototype.logScore = function (i) {
     console.log(`TitleScore: ${score.titleScore}`);
     console.log(`ArtistScore: ${score.artistScore}`);
     console.log(`DurationScore: ${score.durationScore}`);
-    console.log(`TotalScore: ${score.titleScore + score.artistScore + score.durationScore}`);
+    console.log(`TotalScore: ${score.totalScore}`);
   }
   console.log('#############');
 };
