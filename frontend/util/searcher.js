@@ -13,7 +13,7 @@ const ACCEPTABLE_SCORE = 1.35;
 // ANY DURATION OFFSET LESS WILL SCORE 0.0
 const MAX_DURATION_OFFSET = 90;
 
-const REJECTED_CHANNELS = ["gabriella9797", "guitarlessons365song",
+const REJECTED_CHANNELS = ["gabriella9797", "guitarlessons365song", "thedaily411",
                         "mathieu terrade", "rock class 101", "ole's music",
                         "cifra club", "justinguitar songs", "the beatles", "bbc radio 1",
                       "hollywiretv", "anderxv nightcore"];
