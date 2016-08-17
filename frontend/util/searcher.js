@@ -1,23 +1,24 @@
 const SearchStringUtil = require('./search_string_util');
 const NODE_SERVER_URL = 'thawing-bastion-97540.herokuapp.com';
 
-const MAX_REQUESTS_OUT = 5;
+// REQUEST CONSTS
+const MAX_REQUESTS_OUT = 8;
 const MAX_ITEMS = 40;
 
 // SCORES CONSTS
 const AUTO_PASS_SCORE = 2.85;
-const GROUP_AUTO_PASS_SCORE = 2.0;
+const GROUP_AUTO_PASS_SCORE = 2.05;
 const AUTO_PASS_GROUP_SIZE = 4;
 const ACCEPTABLE_SCORE = 1.35;
 
 // ANY DURATION OFFSET LESS WILL SCORE 0.0
 const MAX_DURATION_OFFSET = 90;
 
+// FILTER LISTS
 const REJECTED_CHANNELS = ["gabriella9797", "guitarlessons365song", "thedaily411",
                         "mathieu terrade", "rock class 101", "ole's music",
                         "cifra club", "justinguitar songs", "the beatles", "bbc radio 1",
                       "hollywiretv", "anderxv nightcore"];
-
 const FILTER_WORDS = ["live", "cover", "parody", "parodie", "karaoke", "remix",
                   "full album", "español", "concert", "tutorial", "mashup",
                   "acoustic", "instrumental", "karaote", "guitar", "mix", "fitness routine",
@@ -33,7 +34,8 @@ const Searcher = function (track, options) {
 
 Searcher.prototype.search = function (foundResult) {
   this.foundResult = foundResult;
-  this.startTime = new Date().getTime() / 1000;
+
+  this.startTimer();
   this.getItems(function () {
     // fire off initial round of scoring requests
     this.doneSearching = this.outOfItems = this.returnedItem = false;
@@ -41,10 +43,6 @@ Searcher.prototype.search = function (foundResult) {
       this.nextItem();
     }
   }.bind(this));
-};
-
-Searcher.prototype.timeDiff = function () {
-  return (new Date().getTime() / 1000) - this.startTime;
 };
 
 Searcher.prototype.getItems = function (hasItems) {
@@ -74,13 +72,13 @@ Searcher.prototype.getItems = function (hasItems) {
 
 Searcher.prototype.nextItem = function () {
   if (this.doneSearching) {
+    // return imediately
     if (!this.returnedItem) {
-      this.returnedItem = true;
       this.returnBestItem();
     }
   } else if (this.outOfItems) {
+    // return only after all calls have returned
     if (!this.returnedItem && !this.callBacksWaiting) {
-      this.returnedItem = true;
       this.returnBestItem();
     }
   } else {
@@ -91,6 +89,7 @@ Searcher.prototype.nextItem = function () {
 Searcher.prototype.scoreItem = function () {
   const i = this.idx;
   const item = this.items[this.idx++];
+
   // stop search if out of items
   if (!item) {
     if (this.options.logs) { console.log(`!!!Stopping Search b/c: Out of Items @${this.timeDiff()}s!!!`); }
@@ -107,9 +106,9 @@ Searcher.prototype.scoreItem = function () {
   if (this.badYtid(item, score) ||
       this.rejectedChannel(item, score) ||
       this.hasFilterWord(item, score)) {
-        // fire next scoring request right away
         if (this.options.logs) { console.log(`***Item #${i} Failed b/c: ${score.failMessage} @${this.timeDiff()}s***`); }
         this.scores[item.id.videoId] = score;
+        // fire next scoring request right away
         this.nextItem();
   } else {
     // score title and artists
@@ -119,18 +118,16 @@ Searcher.prototype.scoreItem = function () {
     // make API calls and increment/decrement counter
     if (this.options.logs) { console.log(`***Making Remote Calls for Item #${i} @${this.timeDiff()}s***`); }
     this.callBacksWaiting++;
-    makeRemoteCalls(item, function (duration, restricted, validFormat) {
+    makeApiRequests(item, function (duration, restricted, validFormat) {
       if (this.options.logs) { console.log(`***Received Remote Response for Item #${i} @${this.timeDiff()}s***`); }
       this.callBacksWaiting--;
+
+      // dont bother calculating score if done searching
       if (this.doneSearching) { return; }
 
       // black/white checks (set failMessage and reset artist/title score)
-      if (restricted) {
-        score.failMessage = 'RESTRICTED';
-        score.titleScore = score.artistScore = 0.0;
-        this.scores[item.id.videoId] = score;
-      } else if (!validFormat) {
-        score.failMessage = 'INVALID FORMAT';
+      if (restricted || !validFormat) {
+        score.failMessage = (restricted ? 'RESTRICTED' : 'INVALID FORMAT');
         score.titleScore = score.artistScore = 0.0;
         this.scores[item.id.videoId] = score;
       } else {
@@ -153,6 +150,7 @@ Searcher.prototype.scoreItem = function () {
           }
         }
       }
+
       // fire next scoring request after API calls
       this.nextItem();
     }.bind(this));
@@ -160,6 +158,8 @@ Searcher.prototype.scoreItem = function () {
 };
 
 Searcher.prototype.returnBestItem = function () {
+  this.returnedItem = true;
+
   // get best scored item
   let bestItem, bestScore, bestI;
   for (let i = 0; i < Math.min(this.items.length, this.idx); i++) {
@@ -173,6 +173,7 @@ Searcher.prototype.returnBestItem = function () {
     }
     if (this.options.logs) { this.logScore(i); }
   }
+
   // return item if acceptable
   if (bestScore >= ACCEPTABLE_SCORE) {
     if (this.options.logs) { console.log(`???Returned Result #${bestI} @${this.timeDiff()}s???`); }
@@ -270,28 +271,35 @@ Searcher.prototype.scoreDuration = function (duration) {
   return (MAX_DURATION_OFFSET - diff) / MAX_DURATION_OFFSET;
 };
 
+// TIMER
+Searcher.prototype.startTimer = function () {
+  this.startTime = new Date().getTime() / 1000;
+};
+
+Searcher.prototype.timeDiff = function () {
+  return (new Date().getTime() / 1000) - this.startTime;
+};
+
 // EXPORTS
 module.exports = Searcher;
 
 // API CALLS
-function makeRemoteCalls (item, cb) {
+function makeApiRequests (item, cb) {
   // make both API calls and then callback after both have returned
-  let callsReturned = 0;
+  let _callsReturned = 0;
   let _duration, _restricted, _validFormat;
-  getYtInfo(item, function (duration, restricted) {
-    callsReturned++;
-    _duration = duration;
-    _restricted = restricted;
-    if (callsReturned >= 2) {
+  const callReturned = function () {
+    if (++_callsReturned >= 2) {
       cb(_duration, _restricted, _validFormat);
     }
+  };
+  getYtInfo(item, function (duration, restricted) {
+    _duration = duration; _restricted = restricted;
+    callReturned();
   });
   getAudioFormat(item, function (validFormat) {
-    callsReturned++;
     _validFormat = validFormat;
-    if (callsReturned >= 2) {
-      cb(_duration, _restricted, _validFormat);
-    }
+    callReturned();
   });
 }
 
@@ -313,11 +321,7 @@ function getAudioFormat (item, cb) {
     url: `http://${NODE_SERVER_URL}/audioEncoding/${item.id.videoId}`,
     method: 'GET',
     dataType: 'JSON',
-    success (response) {
-      cb(response.validFormat);
-    },
-    error (err) {
-      cb(false);
-    }
+    success (response) { cb(response.validFormat); },
+    error (err) { cb(false); }
   });
 }
