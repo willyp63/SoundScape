@@ -5,9 +5,9 @@ const MAX_REQUESTS_OUT = 5;
 const MAX_ITEMS = 40;
 
 // SCORES CONSTS
-const AUTO_PASS_SCORE = 2.65;
+const AUTO_PASS_SCORE = 2.85;
 const GROUP_AUTO_PASS_SCORE = 2.0;
-const AUTO_PASS_GROUP_SIZE = 3;
+const AUTO_PASS_GROUP_SIZE = 4;
 const ACCEPTABLE_SCORE = 1.35;
 
 // ANY DURATION OFFSET LESS WILL SCORE 0.0
@@ -36,9 +36,7 @@ Searcher.prototype.search = function (foundResult) {
   this.startTime = new Date().getTime() / 1000;
   this.getItems(function () {
     // fire off initial round of scoring requests
-    this.callBacksWaiting = 0;
-    this.doneSearching = false;
-    this.returnedItem = false;
+    this.doneSearching = this.outOfItems = this.returnedItem = false;
     for (let i = 0; i < MAX_REQUESTS_OUT; i++) {
       this.nextItem();
     }
@@ -60,22 +58,27 @@ Searcher.prototype.getItems = function (hasItems) {
   gapi.client.youtube.search.list({
     part: 'snippet', q: query, maxResults: MAX_ITEMS
   }).execute(function (response) {
-    this.items = response.items;
-    this.groupAutoPasses = 0;
-    this.idx = 0;
-    this.scores = {};
     if (this.options.logs) {
       console.log('#############');
       console.log(`???Received Items @${this.timeDiff()}s`);
       console.log('#############');
     }
+    this.items = response.items;
+    this.idx = 0;
+    this.scores = {};
+    this.callBacksWaiting = 0;
+    this.groupAutoPasses = 0;
     hasItems();
   }.bind(this));
 };
 
 Searcher.prototype.nextItem = function () {
   if (this.doneSearching) {
-    // return best video if all API calls are back
+    if (!this.returnedItem) {
+      this.returnedItem = true;
+      this.returnBestItem();
+    }
+  } else if (this.outOfItems) {
     if (!this.returnedItem && !this.callBacksWaiting) {
       this.returnedItem = true;
       this.returnBestItem();
@@ -91,14 +94,14 @@ Searcher.prototype.scoreItem = function () {
   // stop search if out of items
   if (!item) {
     if (this.options.logs) { console.log(`!!!Stopping Search b/c: Out of Items @${this.timeDiff()}s!!!`); }
-    this.doneSearching = true;
+    this.outOfItems = true;
+    this.nextItem();
     return;
   }
 
   // init score object
   const score = {failMessage: null, titleScore: 0.0,
                 artistScore: 0.0, durationScore: 0.0, totalScore: 0.0};
-  this.scores[item.id.videoId] = score;
 
   // black/white checks (pass score so check can set failMessage)
   if (this.badYtid(item, score) ||
@@ -106,6 +109,7 @@ Searcher.prototype.scoreItem = function () {
       this.hasFilterWord(item, score)) {
         // fire next scoring request right away
         if (this.options.logs) { console.log(`***Item #${i} Failed b/c: ${score.failMessage} @${this.timeDiff()}s***`); }
+        this.scores[item.id.videoId] = score;
         this.nextItem();
   } else {
     // score title and artists
@@ -118,18 +122,22 @@ Searcher.prototype.scoreItem = function () {
     makeRemoteCalls(item, function (duration, restricted, validFormat) {
       if (this.options.logs) { console.log(`***Received Remote Response for Item #${i} @${this.timeDiff()}s***`); }
       this.callBacksWaiting--;
+      if (this.doneSearching) { return; }
 
       // black/white checks (set failMessage and reset artist/title score)
       if (restricted) {
         score.failMessage = 'RESTRICTED';
         score.titleScore = score.artistScore = 0.0;
+        this.scores[item.id.videoId] = score;
       } else if (!validFormat) {
         score.failMessage = 'INVALID FORMAT';
         score.titleScore = score.artistScore = 0.0;
+        this.scores[item.id.videoId] = score;
       } else {
         // score duration and total score
         score.durationScore = this.scoreDuration(duration);
         score.totalScore = score.titleScore + score.artistScore + score.durationScore;
+        this.scores[item.id.videoId] = score;
 
         // stop search if auto pass
         if (!this.doneSearching) {
@@ -154,10 +162,10 @@ Searcher.prototype.scoreItem = function () {
 Searcher.prototype.returnBestItem = function () {
   // get best scored item
   let bestItem, bestScore, bestI;
-  for (let i = 0; i < Math.min(this.idx, this.items.length); i++) {
+  for (let i = 0; i < Math.min(this.items.length, this.idx); i++) {
     const item = this.items[i];
     const score = this.scores[item.id.videoId];
-    if (!score) { break; }
+    if (!score) { continue; }
     if (!bestScore || score.totalScore > bestScore) {
       bestItem = item;
       bestScore = score.totalScore;
@@ -167,10 +175,10 @@ Searcher.prototype.returnBestItem = function () {
   }
   // return item if acceptable
   if (bestScore >= ACCEPTABLE_SCORE) {
-    if (this.options.logs) { console.log(`???Returned Result #${bestI}???`); }
+    if (this.options.logs) { console.log(`???Returned Result #${bestI} @${this.timeDiff()}s???`); }
     this.foundResult(bestItem);
   } else {
-    if (this.options.logs) { console.log(`???Returned NULL???`); }
+    if (this.options.logs) { console.log(`???Returned NULL @${this.timeDiff()}s???`); }
     this.foundResult(null);
   }
 };
