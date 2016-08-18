@@ -19,7 +19,7 @@ module.exports = {
        cleanedTitle += title[i];
      }
     }
-    return cleanedTitle;
+    return cleanedTitle.trim();
   },
   dropLeadingWords (str) {
     return str.replace(new RegExp("^the |^an |^a ", "ig"), "");
@@ -69,5 +69,24 @@ module.exports = {
         return new RegExp(this.formatForRegExp(word), 'i');
       });
     });
+  },
+  countNumSpaces (string) {
+    let count = 0;
+    for (let i = 0; i < string.length; i++) {
+      if (string[i] === ' ') {
+        count++;
+      }
+    }
+    return count;
+  },
+  spaceIndecies (string) {
+    let indecies = [0];
+    for (let i = 0; i < string.length - 1; i++) {
+      if (string[i] === ' ') {
+        indecies.push(i + 1);
+      }
+    }
+    indecies.push(string.length + 1);
+    return indecies;
   }
 };

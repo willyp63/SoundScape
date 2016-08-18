@@ -1,4 +1,5 @@
 const SearchStringUtil = require('./search_string_util');
+const StringScorer = require('./string_scorer');
 const NODE_SERVER_URL = 'thawing-bastion-97540.herokuapp.com';
 
 // REQUEST CONSTS
@@ -28,7 +29,10 @@ const FILTER_WORDS = ["live", "cover", "parody", "parodie", "karaoke", "remix",
 const Searcher = function (track, options) {
   this.track = track;
   this.options = options;
-  this.trackTitleWordRegExps = SearchStringUtil.titleWordRegExps(track.title);
+  this.cleanedTitle = SearchStringUtil.cleanSpotifyTitle(track.title);
+  this.numTitleWords = SearchStringUtil.countNumSpaces(this.cleanedTitle) + 1;
+  this.StringScorer = new StringScorer(this.cleanedTitle);
+  // this.trackTitleWordRegExps = SearchStringUtil.titleWordRegExps(track.title);
   this.trackArtistRegExps = SearchStringUtil.artistRegExps(track.artists);
 };
 
@@ -228,14 +232,17 @@ Searcher.prototype.hasFilterWord = function (item, score) {
 
 // SCORING
 Searcher.prototype.scoreTitle = function (item) {
-  const itemTitle = item.snippet.title;
-  let score = 0.0;
-  this.trackTitleWordRegExps.forEach(wordRegExp => {
-    if (itemTitle.match(wordRegExp)) {
-      score += 1.0 / this.trackTitleWordRegExps.length;
+  const itemTitle = item.snippet.title.trim();
+  const indecies = SearchStringUtil.spaceIndecies(itemTitle);
+  let bestScore = 0.0;
+  for (let i = 0, j = this.numTitleWords; j < indecies.length; i++, j++) {
+    const subTitle = itemTitle.slice(indecies[i], indecies[j] - 1);
+    const score = this.StringScorer.scoreString(subTitle, bestScore);
+    if (score > bestScore) {
+      bestScore = score;
     }
-  });
-  return score;
+  }
+  return bestScore;
 };
 
 Searcher.prototype.scoreArtists = function (item) {
