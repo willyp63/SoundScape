@@ -12,6 +12,12 @@ const GROUP_AUTO_PASS_SCORE = 2.05;
 const AUTO_PASS_GROUP_SIZE = 4;
 const ACCEPTABLE_SCORE = 1.35;
 
+// SCORE WEIGHTS
+const TITLE_SCORE_WEIGHT = 1.0;
+const ARTISTS_SCORE_WEIGHT = 1.0;
+const DURATION_SCORE_WEIGHT = 0.66;
+const POPULARITY_SCORE_WEIGHT = 0.5;
+
 // ANY DURATION OFFSET LESS WILL SCORE 0.0
 const MAX_DURATION_OFFSET = 90;
 
@@ -31,9 +37,10 @@ const Searcher = function (track, options) {
   this.options = options;
   this.cleanedTitle = StringUtil.cleanSpotifyTitle(this.track.title);
   this.numTitleWords = StringUtil.countNumSpaces(this.cleanedTitle) + 1;
+  this.numArtistsWords = this.track.artists.map(artist => {
+    return StringUtil.countNumSpaces(artist) + 1;
+  });
   this.StringScorer = new StringScorer();
-  // this.trackTitleWordRegExps = StringUtil.titleWordRegExps(track.title);
-  this.trackArtistRegExps = StringUtil.artistRegExps(track.artists);
 };
 
 Searcher.prototype.search = function (foundResult) {
@@ -103,7 +110,7 @@ Searcher.prototype.scoreItem = function () {
   }
 
   // init score object
-  const score = {failMessage: null, titleScore: 0.0,
+  const score = {failMessage: null, titleScore: 0.0, popularityScore: 0.0,
                 artistScore: 0.0, durationScore: 0.0, totalScore: 0.0};
 
   // black/white checks (pass score so check can set failMessage)
@@ -115,10 +122,6 @@ Searcher.prototype.scoreItem = function () {
         // fire next scoring request right away
         this.nextItem();
   } else {
-    // score title and artists
-    score.titleScore = this.scoreTitle(item);
-    score.artistScore = this.scoreArtists(item);
-
     // make API calls and increment/decrement counter
     if (this.options.logs) { console.log(`***Making Remote Calls for Item #${i} @${this.timeDiff()}s***`); }
     this.callBacksWaiting++;
@@ -132,12 +135,17 @@ Searcher.prototype.scoreItem = function () {
       // black/white checks (set failMessage and reset artist/title score)
       if (restricted || !validFormat) {
         score.failMessage = (restricted ? 'RESTRICTED' : 'INVALID FORMAT');
-        score.titleScore = score.artistScore = 0.0;
         this.scores[item.id.videoId] = score;
       } else {
-        // score duration and total score
+        // score title, artists, duration and total score
+        score.titleScore = this.scoreTitle(item);
+        score.artistScore = this.scoreArtists(item);
         score.durationScore = this.scoreDuration(duration);
-        score.totalScore = score.titleScore + score.artistScore + score.durationScore;
+        score.popularityScore = 1 - (i / (MAX_ITEMS - 1));
+        score.totalScore = (score.titleScore * TITLE_SCORE_WEIGHT) +
+                           (score.artistScore * ARTISTS_SCORE_WEIGHT) +
+                           (score.durationScore * DURATION_SCORE_WEIGHT) +
+                           (score.popularityScore * POPULARITY_SCORE_WEIGHT);
         this.scores[item.id.videoId] = score;
 
         // stop search if auto pass
@@ -195,10 +203,11 @@ Searcher.prototype.logScore = function (i) {
   if (score.failMessage) {
     console.log(`Failed b/c: ${score.failMessage}`);
   } else {
-    console.log(`TitleScore: ${score.titleScore}`);
-    console.log(`ArtistScore: ${score.artistScore}`);
-    console.log(`DurationScore: ${score.durationScore}`);
-    console.log(`TotalScore: ${score.totalScore}`);
+    console.log(`TitleScore: ${score.titleScore * TITLE_SCORE_WEIGHT} / ${TITLE_SCORE_WEIGHT}`);
+    console.log(`ArtistScore: ${score.artistScore * ARTISTS_SCORE_WEIGHT} / ${ARTISTS_SCORE_WEIGHT}`);
+    console.log(`DurationScore: ${score.durationScore * DURATION_SCORE_WEIGHT} / ${DURATION_SCORE_WEIGHT}`);
+    console.log(`PopularityScore: ${score.popularityScore * POPULARITY_SCORE_WEIGHT} / ${POPULARITY_SCORE_WEIGHT}`);
+    console.log(`TotalScore: ${score.totalScore} / ${TITLE_SCORE_WEIGHT + ARTISTS_SCORE_WEIGHT + DURATION_SCORE_WEIGHT + POPULARITY_SCORE_WEIGHT}`);
   }
   console.log('#############');
 };
@@ -232,36 +241,43 @@ Searcher.prototype.hasFilterWord = function (item, score) {
 
 // SCORING
 Searcher.prototype.scoreTitle = function (item) {
-  const itemTitle = item.snippet.title.trim();
-  const indecies = StringUtil.spaceIndecies(itemTitle);
+  const itemTitle = StringUtil.removeSeperatorsAndExtraSpaces(item.snippet.title);
   const wordDiff = this.numTitleWords === 1 ? 1 : Math.floor(this.numTitleWords / 2);
+  return this.scoreStrings(this.cleanedTitle, this.numTitleWords, itemTitle, wordDiff);
+};
+
+Searcher.prototype.scoreArtists = function (item) {
+  const itemTitle = StringUtil.removeSeperatorsAndExtraSpaces(item.snippet.title);
+  const channelTitle = StringUtil.removeSeperatorsAndExtraSpaces(item.snippet.channelTitle);
+
+  let lastScore = 0;
+  for (let i = 0; i < this.track.artists.length; i++) {
+    const factor = 1.0 / (i + 1); const nextFactor = 1.0 / (i + 2);
+    const wordDiff = this.numArtistsWords[i] === 1 ? 1 : Math.floor(this.numArtistsWords[i] / 2);
+    let score = factor * Math.max(
+      this.scoreStrings(this.track.artists[i], this.numArtistsWords[i], itemTitle, wordDiff),
+      this.scoreStrings(this.track.artists[i], this.numArtistsWords[i], channelTitle, wordDiff));
+    lastScore = score = Math.max(lastScore, score);
+    if (score >= nextFactor) {
+      return score;
+    }
+  }
+  return lastScore;
+};
+
+Searcher.prototype.scoreStrings = function (baseString, numBaseWords, compString, wordDiff) {
+  const indecies = StringUtil.spaceIndecies(compString);
   let bestScore = 0.5;
-  for (let i = 0, j = this.numTitleWords - wordDiff; j < indecies.length; i++, j++) {
+  for (let i = 0, j = numBaseWords - wordDiff; j < indecies.length; i++, j++) {
     for (let k = 0; k < (wordDiff * 2) + 1; k++) {
       if (i === j + k) { continue; }
       if (j + k >= indecies.length) { break; }
       const compI = indecies[i]; const compJ = indecies[j + k] - 1;
-      const score = this.StringScorer.scoreStrings(this.cleanedTitle, itemTitle, compI, compJ, bestScore);
+      const score = this.StringScorer.scoreStrings(baseString, compString, compI, compJ, bestScore);
       if (score > bestScore) { bestScore = score; }
     }
   }
   return bestScore;
-};
-
-Searcher.prototype.scoreArtists = function (item) {
-  // 1.0/(number of artists) points for each matching artist
-  const itemTitle = item.snippet.title;
-  const channelTitle = item.snippet.channelTitle;
-  for (let i = 0; i < this.trackArtistRegExps.length; i++) {
-    const factor = 1.0 / (i + 1);
-    const nextFactor = 1.0 / (i + 2);
-    const artistRegExps = this.trackArtistRegExps[i];
-    const score = this.scoreArtist(itemTitle, channelTitle, artistRegExps);
-    if (score * factor >= 1.0 * nextFactor) {
-      return score;
-    }
-  }
-  return 0.0;
 };
 
 Searcher.prototype.scoreArtist = function (itemTitle, channelTitle, artistRegExps) {

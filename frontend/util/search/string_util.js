@@ -1,5 +1,3 @@
-const DROP_FROM_REG_EXP = [" ", "+", "^", "$", "*", "&", "#", "'"];
-
 module.exports = {
   cleanSpotifyTitle (title) {
     // only take what is before ' -|: ' and not in parens '(.*)'
@@ -21,27 +19,6 @@ module.exports = {
     }
     return cleanedTitle.trim();
   },
-  dropLeadingWords (str) {
-    return str.replace(new RegExp("^the |^an |^a ", "ig"), "");
-  },
-  formatForRegExp (str) {
-    let returnStr = "";
-    let spaceOrStar = false;
-    for (var i = 0; i < str.length; i++) {
-      if (DROP_FROM_REG_EXP.includes(str[i])) {
-        if (spaceOrStar) {
-          continue;
-        } else {
-          returnStr += ".*";
-          spaceOrStar = true;
-        }
-      } else {
-        returnStr += str[i];
-        spaceOrStar = false;
-      }
-    }
-    return returnStr;
-  },
   extractDuration (str) {
     const minutesMatch = str.match(new RegExp('PT(.*)M.*'));
     if (!minutesMatch) {
@@ -56,19 +33,6 @@ module.exports = {
   },
   formatQuery (track) {
     return `${track.artists[0]} ${this.cleanSpotifyTitle(track.title)}`;
-  },
-  titleWordRegExps (trackTitle) {
-    const cleanTitle = this.cleanSpotifyTitle(trackTitle);
-    return cleanTitle.split(' ').map(word => {
-      return new RegExp(this.formatForRegExp(word), 'i');
-    });
-  },
-  artistRegExps (artists) {
-    return artists.map(artist => {
-      return this.dropLeadingWords(artist).split(' ').map(word => {
-        return new RegExp(this.formatForRegExp(word), 'i');
-      });
-    });
   },
   countNumSpaces (string) {
     let count = 0;
@@ -86,7 +50,33 @@ module.exports = {
         indecies.push(i + 1);
       }
     }
-    indecies.push(string.length);
+    indecies.push(string.length + 1);
     return indecies;
+  },
+  removeSeperatorsAndExtraSpaces (string) {
+    string = string.trim();
+    let atSpace = false;
+    let returnString = '';
+    for (let i = 0; i < string.length; i++) {
+      if (['(', ')', '[', ']', '-', '"'].includes(string[i])) {
+        if (i !== 0 && i !== string.length - 1) {
+          if (!atSpace) {
+            returnString += ' ';
+          }
+          atSpace = true;
+        } else {
+          atSpace = false;
+        }
+      } else if (string[i] === ' ') {
+        if (!atSpace) {
+          returnString += string[i];
+        }
+        atSpace = true;
+      } else {
+        returnString += string[i];
+        atSpace = false;
+      }
+    }
+    return returnString;
   }
 };

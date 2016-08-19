@@ -21,16 +21,17 @@ StringScorer.prototype.resizeGrid = function (newHeight, newWidth) {
 
 StringScorer.prototype.scoreStrings = function (baseString, compString, compI, compJ, bestScore) {
   const compLength = compJ - compI;
+  const maxDist = Math.max(baseString.length, compLength);
 
   // levenstien score if zero length
   if (!baseString.length) {
-    return 1 - (compLength / baseString.length);
+    return 1 - (compLength / maxDist);
   } else if (!compLength) {
-    return 1 - (baseString.length / baseString.length);
+    return 1 - (baseString.length / maxDist);
   }
 
   // check lengths against bestScore
-  const lengthScore = 1 - (Math.abs(baseString.length - compLength) / baseString.length);
+  const lengthScore = 1 - (Math.abs(baseString.length - compLength) / maxDist);
   if (lengthScore <= bestScore) { return lengthScore; }
 
   // resize grid if need be
@@ -50,13 +51,13 @@ StringScorer.prototype.scoreStrings = function (baseString, compString, compI, c
                                  this.grid[i - 1][j - 1] + cost);
       // check to see if score has already fallen below best score
       if (i === j) {
-        const score = 1 - (this.grid[i][j] / baseString.length);
+        const score = 1 - (this.grid[i][j] / maxDist);
         if (score <= bestScore) { return score; }
       }
     }
   }
   const dist = this.grid[baseString.length][compLength];
-  return 1 - (dist / baseString.length);
+  return 1 - (dist / maxDist);
 };
 
 module.exports = StringScorer;

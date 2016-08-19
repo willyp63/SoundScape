@@ -4,7 +4,6 @@ const ReportActions = require('./report_actions');
 
 module.exports = {
   searchYoutube (track, options = {'blacklistIds': [], 'logs': false}) {
-    options.logs = true;
     YtApiUtil.searchYoutube(track, options, function (ytid) {
       dispatcher.dispatch({
         actionType: 'RECIEVE_YTID',
