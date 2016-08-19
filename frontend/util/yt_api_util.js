@@ -1,4 +1,4 @@
-const Searcher = require('./searcher');
+const Searcher = require('./search/searcher');
 const NODE_SERVER_URL = 'thawing-bastion-97540.herokuapp.com';
 
 // store requests until gapi has loaded
@@ -63,6 +63,7 @@ function searchTrack (track, options, cb) {
     if (bestItem && !options['blacklistIds'].length) {
       cacheYtid(track, bestItem.id.videoId);
     }
+    // return ytid
     cb(bestItem ? bestItem.id.videoId : null);
   });
 }

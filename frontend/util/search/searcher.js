@@ -1,4 +1,4 @@
-const SearchStringUtil = require('./search_string_util');
+const StringUtil = require('./string_util');
 const StringScorer = require('./string_scorer');
 const NODE_SERVER_URL = 'thawing-bastion-97540.herokuapp.com';
 
@@ -29,11 +29,11 @@ const FILTER_WORDS = ["live", "cover", "parody", "parodie", "karaoke", "remix",
 const Searcher = function (track, options) {
   this.track = track;
   this.options = options;
-  this.cleanedTitle = SearchStringUtil.cleanSpotifyTitle(track.title);
-  this.numTitleWords = SearchStringUtil.countNumSpaces(this.cleanedTitle) + 1;
-  this.StringScorer = new StringScorer(this.cleanedTitle);
-  // this.trackTitleWordRegExps = SearchStringUtil.titleWordRegExps(track.title);
-  this.trackArtistRegExps = SearchStringUtil.artistRegExps(track.artists);
+  this.cleanedTitle = StringUtil.cleanSpotifyTitle(this.track.title);
+  this.numTitleWords = StringUtil.countNumSpaces(this.cleanedTitle) + 1;
+  this.StringScorer = new StringScorer();
+  // this.trackTitleWordRegExps = StringUtil.titleWordRegExps(track.title);
+  this.trackArtistRegExps = StringUtil.artistRegExps(track.artists);
 };
 
 Searcher.prototype.search = function (foundResult) {
@@ -51,7 +51,7 @@ Searcher.prototype.search = function (foundResult) {
 
 Searcher.prototype.getItems = function (hasItems) {
   // search YT for video items matching the track
-  const query = SearchStringUtil.formatQuery(this.track);
+  const query = StringUtil.formatQuery(this.track);
   if (this.options.logs) {
     console.log('#############');
     console.log(`???Getting Items for Query: (${query}) @${this.timeDiff()}s`);
@@ -233,13 +233,16 @@ Searcher.prototype.hasFilterWord = function (item, score) {
 // SCORING
 Searcher.prototype.scoreTitle = function (item) {
   const itemTitle = item.snippet.title.trim();
-  const indecies = SearchStringUtil.spaceIndecies(itemTitle);
-  let bestScore = 0.0;
-  for (let i = 0, j = this.numTitleWords; j < indecies.length; i++, j++) {
-    const subTitle = itemTitle.slice(indecies[i], indecies[j] - 1);
-    const score = this.StringScorer.scoreString(subTitle, bestScore);
-    if (score > bestScore) {
-      bestScore = score;
+  const indecies = StringUtil.spaceIndecies(itemTitle);
+  const wordDiff = this.numTitleWords === 1 ? 1 : Math.floor(this.numTitleWords / 2);
+  let bestScore = 0.5;
+  for (let i = 0, j = this.numTitleWords - wordDiff; j < indecies.length; i++, j++) {
+    for (let k = 0; k < (wordDiff * 2) + 1; k++) {
+      if (i === j + k) { continue; }
+      if (j + k >= indecies.length) { break; }
+      const compI = indecies[i]; const compJ = indecies[j + k] - 1;
+      const score = this.StringScorer.scoreStrings(this.cleanedTitle, itemTitle, compI, compJ, bestScore);
+      if (score > bestScore) { bestScore = score; }
     }
   }
   return bestScore;
@@ -316,7 +319,7 @@ function getYtInfo (item, cb) {
     part: 'contentDetails', id: item.id.videoId
   }).execute(function (response) {
     const details = response.items[0].contentDetails;
-    const duration = SearchStringUtil.extractDuration(details.duration);
+    const duration = StringUtil.extractDuration(details.duration);
     const restricted = (details.contentRating && details.contentRating.ytRating === "ytAgeRestricted");
     cb(duration, restricted);
   });

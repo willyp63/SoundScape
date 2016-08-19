@@ -2,7 +2,7 @@ const DROP_FROM_REG_EXP = [" ", "+", "^", "$", "*", "&", "#", "'"];
 
 module.exports = {
   cleanSpotifyTitle (title) {
-    // only take what is before ' - ' and not in parens '(...)'
+    // only take what is before ' -|: ' and not in parens '(.*)'
     let cleanedTitle = "";
     let betweenParens = false;
     let dashPoint = title.indexOf("-") + 1 || title.length + 1;
@@ -86,7 +86,7 @@ module.exports = {
         indecies.push(i + 1);
       }
     }
-    indecies.push(string.length + 1);
+    indecies.push(string.length);
     return indecies;
   }
 };

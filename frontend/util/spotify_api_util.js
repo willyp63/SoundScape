@@ -1,6 +1,6 @@
 const dispatcher = require('../dispatcher');
 const SessionStore = require('../stores/session_store');
-const SearchStringUtil = require('./search_string_util');
+const SearchStringUtil = require('./search/string_util');
 
 module.exports = {
   searchTracks (callBack, query, limit, offset, attempts) {
