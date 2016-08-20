@@ -4,14 +4,14 @@ const StringScorer = require('./string_scorer');
 const NODE_SERVER_URL = 'thawing-bastion-97540.herokuapp.com';
 
 // REQUEST CONSTS
-const MAX_REQUESTS_OUT = 8;
+const MAX_REQUESTS_OUT = 6;
 const MAX_ITEMS = 40;
 
 // SCORES CONSTS
-const AUTO_PASS_SCORE = 0.9125;
-const GROUP_AUTO_PASS_SCORE = 0.7825;
+const AUTO_PASS_SCORE = 0.942;
+const GROUP_AUTO_PASS_SCORE = 0.815;
 const AUTO_PASS_GROUP_SIZE = 4;
-const ACCEPTABLE_SCORE = 0.3525;
+const ACCEPTABLE_SCORE = 0.357;
 
 // SCORE WEIGHTS
 const TITLE_SCORE_WEIGHT = 1.0;
