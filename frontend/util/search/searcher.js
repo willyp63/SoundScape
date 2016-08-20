@@ -4,7 +4,7 @@ const StringScorer = require('./string_scorer');
 const NODE_SERVER_URL = 'thawing-bastion-97540.herokuapp.com';
 
 // REQUEST CONSTS
-const MAX_REQUESTS_OUT = 6;
+const MAX_REQUESTS_OUT = 8;
 const MAX_ITEMS = 40;
 
 // SCORES CONSTS
@@ -16,8 +16,11 @@ const ACCEPTABLE_SCORE = 0.357;
 // SCORE WEIGHTS
 const TITLE_SCORE_WEIGHT = 1.0;
 const ARTISTS_SCORE_WEIGHT = 1.0;
-const DURATION_SCORE_WEIGHT = 0.5;
-const POPULARITY_SCORE_WEIGHT = 0.66;
+const DURATION_SCORE_WEIGHT = 0.66;
+const POPULARITY_SCORE_WEIGHT = 0.5;
+
+// min levenstien score for string scoring
+const MIN_STRING_SCORE = 0.5;
 
 // ANY DURATION OFFSET LESS WILL SCORE 0.0
 const MAX_DURATION_OFFSET = 120;
@@ -29,9 +32,9 @@ const REJECTED_CHANNELS = ["gabriella9797", "guitarlessons365song", "thedaily411
                       "hollywiretv", "anderxv nightcore"];
 
 const FILTER_WORDS = ["live", "cover", "parody", "parodie", "karaoke", "remix",
-                  "full album", "español", "concert", "tutorial", "mashup",
+                  "full album", "español", "concert", "tutorial", "mashup", "interview",
                   "acoustic", "instrumental", "karaote", "guitar", "mix", "fitness routine",
-                  "ukulele", "drum", "piano", "tablature", "lesson", "version",
+                  "ukulele", "drum", "piano", "tablature", "lesson", "version", "pepsi smash",
                   "how to really play", "how to play", "busking", "tutorial", "rehearsal"];
 
 const Searcher = function (track, options) {
@@ -265,7 +268,7 @@ Searcher.prototype.scoreArtists = function (item) {
 
 Searcher.prototype.scoreStrings = function (baseString, numBaseWords, compString, wordDiff) {
   const indecies = StringUtil.spaceIndecies(compString);
-  let bestScore = 0.5;
+  let bestScore = MIN_STRING_SCORE;
   for (let i = 0, j = numBaseWords - wordDiff; j < indecies.length; i++, j++) {
     for (let k = 0; k < (wordDiff * 2) + 1; k++) {
       if (i === j + k) { continue; }
@@ -275,7 +278,8 @@ Searcher.prototype.scoreStrings = function (baseString, numBaseWords, compString
       if (score > bestScore) { bestScore = score; }
     }
   }
-  return bestScore;
+  bestScore = bestScore - MIN_STRING_SCORE;
+  return bestScore > 0.0 ? bestScore / (1 - MIN_STRING_SCORE) : 0.0;
 };
 
 Searcher.prototype.scoreDuration = function (duration) {
