@@ -1,4 +1,5 @@
 const StringScorer = function () {
+  // used for levenstien calcs
   this.grid = [[0]];
 };
 
@@ -6,11 +7,13 @@ StringScorer.prototype.gridHeight = function () { return this.grid.length - 1; }
 StringScorer.prototype.gridWidth = function () { return this.grid[0].length - 1; };
 
 StringScorer.prototype.resizeGrid = function (newHeight, newWidth) {
+  // resize width of grid
   for (let i = this.gridWidth() + 1; i < newWidth + 1; i++) {
     for (let j = 0; j < this.gridHeight() + 1; j++) {
       this.grid[j].push(j === 0 ? i : null);
     }
   }
+  // resize height of grid
   for (let i = this.gridHeight() + 1; i < newHeight + 1; i++) {
     this.grid.push([i]);
     for (let j = 0; j < this.gridWidth(); j++) {
@@ -20,17 +23,17 @@ StringScorer.prototype.resizeGrid = function (newHeight, newWidth) {
 };
 
 StringScorer.prototype.scoreStrings = function (baseString, compString, compI, compJ, bestScore) {
-  const compLength = compJ - compI;
-  const maxDist = Math.max(baseString.length, compLength);
+  const compLength = compJ - compI; // length of subCompString
+  const maxDist = Math.max(baseString.length, compLength); // max levenstien dist
 
-  // levenstien score if zero length
+  // levenstien score if either string is zero length
   if (!baseString.length) {
     return 1 - (compLength / maxDist);
   } else if (!compLength) {
     return 1 - (baseString.length / maxDist);
   }
 
-  // check lengths against bestScore
+  // return best-case score based on length if it is less than bestScore
   const lengthScore = 1 - (Math.abs(baseString.length - compLength) / maxDist);
   if (lengthScore <= bestScore) { return lengthScore; }
 
@@ -39,7 +42,7 @@ StringScorer.prototype.scoreStrings = function (baseString, compString, compI, c
     this.resizeGrid(baseString.length, compLength);
   }
 
-  // levenstien
+  // levenstien calc
   let cost;
   for (let i = 1; i < baseString.length + 1; i++) {
     const char1 = baseString[i - 1];
@@ -49,13 +52,15 @@ StringScorer.prototype.scoreStrings = function (baseString, compString, compI, c
       this.grid[i][j] = Math.min(this.grid[i - 1][j] + 1,
                                  this.grid[i][j - 1] + 1,
                                  this.grid[i - 1][j - 1] + cost);
-      // check to see if score has already fallen below best score
+      // return current score if it has fallen below bestScore
       if (i === j) {
         const score = 1 - (this.grid[i][j] / maxDist);
         if (score <= bestScore) { return score; }
       }
     }
   }
+
+  // return levenstien score
   const dist = this.grid[baseString.length][compLength];
   return 1 - (dist / maxDist);
 };

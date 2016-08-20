@@ -43,6 +43,9 @@ module.exports = {
     }
     return count;
   },
+  numWords (string) {
+    return this.countNumSpaces(string) + 1;
+  },
   spaceIndecies (string) {
     let indecies = [0];
     for (let i = 0; i < string.length - 1; i++) {
@@ -52,6 +55,9 @@ module.exports = {
     }
     indecies.push(string.length + 1);
     return indecies;
+  },
+  dropPeriods (string) {
+    return string.replace(new RegExp('\\.', 'g'), '');
   },
   removeSeperatorsAndExtraSpaces (string) {
     string = string.trim();

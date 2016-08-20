@@ -57,8 +57,7 @@ function checkCache (track, options, cb) {
 }
 
 function searchTrack (track, options, cb) {
-  const searcher = new Searcher(track, options);
-  searcher.search(function (bestItem) {
+  new Searcher(track, options).search(function (bestItem) {
     // cache ytid in server only if first search attempt
     if (bestItem && !options['blacklistIds'].length) {
       cacheYtid(track, bestItem.id.videoId);
