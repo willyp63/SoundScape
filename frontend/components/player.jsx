@@ -220,7 +220,7 @@ module.exports = React.createClass({
         track ?
           <nav className="audio-player-bar">
             {this.state.playUrl ?
-              <audio controls preload="none" autoplay id="audio-player">
+              <audio controls autoplay id="audio-player">
                 <source src={track.audio_url || this.state.playUrl} type="audio/mpeg"/>
               </audio> : ""}
             <div className="playing-image">
