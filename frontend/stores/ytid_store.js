@@ -1,10 +1,11 @@
 const Store = require('flux/utils').Store;
 const dispatcher = require('../dispatcher');
 
-const NODE_SERVER_URL = 'thawing-bastion-97540.herokuapp.com';
-const YTDL_URL_PREFIX = `http://${NODE_SERVER_URL}/stream/`;
+const NODE_SERVER_URL = 'localhost:8080';
+const YTDL_URL_PREFIX = `http://${NODE_SERVER_URL}/stream`;
 const _ids = {};
 const _blacklist = {};
+const REQUIRED_ENCODING = getRequiredEncoding();
 
 const YtidStore = new Store(dispatcher);
 
@@ -17,7 +18,7 @@ YtidStore.getId = function (track) {
 };
 
 YtidStore.getUrl = function (track) {
-  return YTDL_URL_PREFIX + _ids[track.storeId];
+  return `${YTDL_URL_PREFIX}?ytid=${_ids[track.storeId]}&encoding=${REQUIRED_ENCODING}`;
 };
 
 YtidStore.getBlacklist = function (track) {
@@ -42,3 +43,13 @@ YtidStore.__onDispatch = function (payload) {
 };
 
 module.exports = YtidStore;
+
+function getRequiredEncoding () {
+  const audio = document.createElement('audio');
+  if (audio.canPlayType('audio/mp4;codecs="aac"')) {
+    return 'aac';
+  } else if (audio.canPlayType('audio/ogg;codecs="opus"')) {
+    return 'opus';
+  }
+  return null;
+}

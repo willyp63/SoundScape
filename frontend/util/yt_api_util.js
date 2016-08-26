@@ -1,5 +1,5 @@
 const Searcher = require('./search/searcher');
-const NODE_SERVER_URL = 'thawing-bastion-97540.herokuapp.com';
+const NODE_SERVER_URL = 'localhost:8080';
 
 // store requests until gapi has loaded
 let _gapiLoaded = false;
@@ -41,19 +41,21 @@ function processRequest (track, options, cb) {
 }
 
 function checkCache (track, options, cb) {
-  $.ajax({
-    url: `http://${NODE_SERVER_URL}/ytid/${track.spotify_id}`,
-    method: 'GET',
-    dataType: 'JSON',
-    success (response) {
-      // return ytid from cache or do search
-      if (response.ytid && !options['blacklistIds'].includes(response.ytid)) {
-        cb(response.ytid);
-      } else {
-        searchTrack(track, options, cb);
-      }
-    }
-  });
+  // @@@ DONT CHECK CAHCHE @@@
+  searchTrack(track, options, cb);
+  // $.ajax({
+  //   url: `http://${NODE_SERVER_URL}/ytid/${track.spotify_id}`,
+  //   method: 'GET',
+  //   dataType: 'JSON',
+  //   success (response) {
+  //     // return ytid from cache or do search
+  //     if (response.ytid && !options['blacklistIds'].includes(response.ytid)) {
+  //       cb(response.ytid);
+  //     } else {
+  //       searchTrack(track, options, cb);
+  //     }
+  //   }
+  // });
 }
 
 function searchTrack (track, options, cb) {

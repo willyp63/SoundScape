@@ -1,7 +1,7 @@
 const StringUtil = require('./string_util');
 const StringScorer = require('./string_scorer');
 
-const NODE_SERVER_URL = 'thawing-bastion-97540.herokuapp.com';
+const NODE_SERVER_URL = 'localhost:8080';
 
 // REQUEST CONSTS
 const MAX_REQUESTS_OUT = 8;
@@ -54,6 +54,14 @@ const Searcher = function (track, options) {
 };
 
 Searcher.prototype.search = function (foundResult) {
+  // check browser for perfered encoding
+  this.requiredEncoding = getRequiredEncoding();
+  if (!this.requiredEncoding) {
+    console.log('no mathcing encoding!!!!!');
+    foundResult(null);
+    return;
+  }
+
   this.foundResult = foundResult;
   this.startTimer(); // start timer for time-stamped logs
 
@@ -129,7 +137,7 @@ Searcher.prototype.scoreItem = function () {
     // make API calls and increment/decrement counter
     if (this.options.logs) { console.log(`***Making Remote Calls for Item #${i} @${this.timeDiff()}s***`); }
     this.callBacksWaiting++;
-    makeApiRequests(item, function (duration, restricted, validFormat) {
+    makeApiRequests(item, this.requiredEncoding, function (duration, restricted, validFormat) {
       if (this.options.logs) { console.log(`***Received Remote Response for Item #${i} @${this.timeDiff()}s***`); }
       this.callBacksWaiting--;
 
@@ -317,7 +325,7 @@ Searcher.prototype.timeDiff = function () {
 module.exports = Searcher;
 
 // API CALLS
-function makeApiRequests (item, cb) {
+function makeApiRequests (item, encoding, cb) {
   // make both API calls and then callback after both have returned
   let _callsReturned = 0;
   let _duration, _restricted, _validFormat;
@@ -330,7 +338,7 @@ function makeApiRequests (item, cb) {
     _duration = duration; _restricted = restricted;
     callReturned();
   });
-  getAudioFormat(item, function (validFormat) {
+  getAudioFormat(item, encoding, function (validFormat) {
     _validFormat = validFormat;
     callReturned();
   });
@@ -348,14 +356,23 @@ function getYtInfo (item, cb) {
   });
 }
 
-function getAudioFormat (item, cb) {
-  cb(true);
+function getAudioFormat (item, encoding, cb) {
   // return validAudioFormat from Node server
-  // $.ajax({
-  //   url: `http://${NODE_SERVER_URL}/audioEncoding/${item.id.videoId}`,
-  //   method: 'GET',
-  //   dataType: 'JSON',
-  //   success (response) { cb(response.validFormat); },
-  //   error (err) { cb(false); }
-  // });
+  $.ajax({
+    url: `http://${NODE_SERVER_URL}/audioEncoding?ytid=${item.id.videoId}&encoding=${encoding}`,
+    method: 'GET',
+    dataType: 'JSON',
+    success (response) { cb(response.validFormat); },
+    error (err) { cb(false); }
+  });
+}
+
+function getRequiredEncoding () {
+  const audio = document.createElement('audio');
+  if (audio.canPlayType('audio/mp4;codecs="aac"')) {
+    return 'aac';
+  } else if (audio.canPlayType('audio/ogg;codecs="opus"')) {
+    return 'opus';
+  }
+  return null;
 }

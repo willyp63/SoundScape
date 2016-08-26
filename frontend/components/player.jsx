@@ -224,7 +224,7 @@ module.exports = React.createClass({
           <nav className="audio-player-bar">
             {this.state.playUrl ?
               <audio controls id="audio-player">
-                <source src={track.audio_url || this.state.playUrl} type="audio/mpeg"/>
+                <source src={track.audio_url || this.state.playUrl} type="audio/mp4"/>
               </audio> : ""}
             <div className="playing-image">
               <i className="glyphicon glyphicon-remove" onClick={this._closePlayer}/>

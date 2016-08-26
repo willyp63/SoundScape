@@ -11,9 +11,12 @@ module.exports = {
     _loaded = false;
 
     const audio = this.audio();
-    audio.addEventListener("canplaythrough", this.canplay, false);
+    audio.addEventListener("canplaythrough", this.canplay.bind(this), false);
     audio.addEventListener("ended", _onEnd, false);
     audio.addEventListener("timeupdate", _onUpdate, false);
+    audio.addEventListener("error", function (err) {
+      console.log(err);
+    }, false);
 
     // fix for safari
     audio.addEventListener("seeking", function (err) { audio.pause(); }, false);
@@ -85,3 +88,13 @@ module.exports = {
     _updating = true;
   }
 };
+
+function getRequiredEncoding () {
+  const audio = document.createElement('audio');
+  if (audio.canPlayType('audio/mp4;codecs="aac"')) {
+    return 'aac';
+  } else if (audio.canPlayType('audio/ogg;codecs="opus"')) {
+    return 'opus';
+  }
+  return null;
+}
