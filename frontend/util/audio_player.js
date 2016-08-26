@@ -11,7 +11,7 @@ module.exports = {
     _loaded = false;
 
     const audio = this.audio();
-    audio.addEventListener("canplay", this.canplay, false);
+    audio.addEventListener("canplaythrough", this.canplay, false);
     audio.addEventListener("ended", _onEnd, false);
     audio.addEventListener("timeupdate", _onUpdate, false);
 
@@ -33,7 +33,7 @@ module.exports = {
   removeListeners () {
     const audio = this.audio();
     if (!audio) { return; }
-    audio.removeEventListener("canplay", this.canplay);
+    audio.removeEventListener("canplaythrough", this.canplay);
     audio.removeEventListener("ended", _onEnd);
     audio.removeEventListener("timeupdate", _onUpdate);
     $(window).off("resize", this.timeUpdate.bind(this));
