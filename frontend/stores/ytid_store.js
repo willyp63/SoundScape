@@ -1,7 +1,7 @@
 const Store = require('flux/utils').Store;
 const dispatcher = require('../dispatcher');
 
-const NODE_SERVER_URL = 'localhost:8080';
+const NODE_SERVER_URL = 'thawing-bastion-97540.herokuapp.com';
 const YTDL_URL_PREFIX = `http://${NODE_SERVER_URL}/stream`;
 const _ids = {};
 const _blacklist = {};
