@@ -12,9 +12,6 @@ module.exports = {
 
     const audio = this.audio();
     audio.addEventListener("canplaythrough", this.canplay, false);
-    audio.addEventListener("loadeddata", function () {
-      audio.play();
-    }, false);
     audio.addEventListener("ended", _onEnd, false);
     audio.addEventListener("timeupdate", _onUpdate, false);
 
