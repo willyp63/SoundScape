@@ -1,7 +1,7 @@
 const StringUtil = require('./string_util');
 const StringScorer = require('./string_scorer');
 
-const NODE_SERVER_URL = 'localhost:8080';
+const NODE_SERVER_URL = 'thawing-bastion-97540.herokuapp.com';
 
 // REQUEST CONSTS
 const MAX_REQUESTS_OUT = 8;
