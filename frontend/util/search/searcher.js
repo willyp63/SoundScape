@@ -1,7 +1,7 @@
 const StringUtil = require('./string_util');
 const StringScorer = require('./string_scorer');
 
-const NODE_SERVER_URL = 'thawing-bastion-97540.herokuapp.com';
+const NODE_SERVER_URL = 'localhost:8080';
 
 // REQUEST CONSTS
 const MAX_REQUESTS_OUT = 8;
@@ -349,12 +349,13 @@ function getYtInfo (item, cb) {
 }
 
 function getAudioFormat (item, cb) {
+  cb(true);
   // return validAudioFormat from Node server
-  $.ajax({
-    url: `http://${NODE_SERVER_URL}/audioEncoding/${item.id.videoId}`,
-    method: 'GET',
-    dataType: 'JSON',
-    success (response) { cb(response.validFormat); },
-    error (err) { cb(false); }
-  });
+  // $.ajax({
+  //   url: `http://${NODE_SERVER_URL}/audioEncoding/${item.id.videoId}`,
+  //   method: 'GET',
+  //   dataType: 'JSON',
+  //   success (response) { cb(response.validFormat); },
+  //   error (err) { cb(false); }
+  // });
 }

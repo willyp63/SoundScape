@@ -14,6 +14,11 @@ module.exports = {
     audio.addEventListener("canplay", this.canplay, false);
     audio.addEventListener("ended", _onEnd, false);
     audio.addEventListener("timeupdate", _onUpdate, false);
+
+    // fix for safari
+    audio.addEventListener("seeking", function (err) { audio.pause(); }, false);
+    audio.addEventListener("seeked", function (err) { audio.play(); }, false);
+
     audio.load();
     _updating = true;
     $(window).on("resize", this.timeUpdate.bind(this));

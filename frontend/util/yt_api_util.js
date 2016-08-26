@@ -1,5 +1,5 @@
 const Searcher = require('./search/searcher');
-const NODE_SERVER_URL = 'thawing-bastion-97540.herokuapp.com';
+const NODE_SERVER_URL = 'localhost:8080';
 
 // store requests until gapi has loaded
 let _gapiLoaded = false;

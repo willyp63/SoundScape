@@ -220,7 +220,7 @@ module.exports = React.createClass({
         track ?
           <nav className="audio-player-bar">
             {this.state.playUrl ?
-              <audio controls id="audio-player">
+              <audio controls preload="none" id="audio-player">
                 <source src={track.audio_url || this.state.playUrl} type="audio/mpeg"/>
               </audio> : ""}
             <div className="playing-image">
@@ -230,7 +230,7 @@ module.exports = React.createClass({
                   <div className="retry-button disabled">
                     RETRY
                   </div>
-                </div>:
+                </div> :
                 <div className="retry-button-container">
                   <div className="retry-button" onClick={this._retrySearch}>
                     RETRY
