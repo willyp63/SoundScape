@@ -87,6 +87,9 @@ module.exports = React.createClass({
     this.setState({duration: AudioPlayer.duration(), loadingTrack: false, playing: true}, function () {
       takeDownSpinner();
       AudioPlayer.play();
+      if (AudioPlayer.paused()) {
+        this.setState({playing: false});
+      }
     });
   },
   _timeUpdate () {

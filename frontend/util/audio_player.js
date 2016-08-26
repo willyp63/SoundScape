@@ -50,6 +50,9 @@ module.exports = {
   pause () {
     this.audio().pause();
   },
+  paused () {
+    return this.audio().paused;
+  },
   stepBack () {
     this.audio().currentTime = 0;
   },
