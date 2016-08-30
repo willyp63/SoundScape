@@ -10,10 +10,11 @@ module.exports = {
     const callBack = offset ? TrackActions.appendTracks : TrackActions.receiveTracks;
     SpotifyApiUtil.searchTracks(callBack, query, limit, offset);
   },
-  receiveResults (tracks) {
+  receiveResults (tracks, idx) {
     dispatcher.dispatch({
       actionType: 'RECEIVE_RESULTS',
-      results: tracks
+      results: tracks,
+      idx: idx
     });
   },
   hideResults () {

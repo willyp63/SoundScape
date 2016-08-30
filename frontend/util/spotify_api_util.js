@@ -2,6 +2,8 @@ const dispatcher = require('../dispatcher');
 const SessionStore = require('../stores/session_store');
 const SearchStringUtil = require('./search/string_util');
 
+let _resultsIdx = 0;
+
 module.exports = {
   searchTracks (callBack, query, limit, offset, attempts) {
     $.ajax({
@@ -12,10 +14,10 @@ module.exports = {
         tracks = uniqueTracks(tracks);
         if (SessionStore.loggedIn()) {
           this.buildLikedTracks(function (builtTracks) {
-            callBack(builtTracks);
+            callBack(builtTracks, _resultsIdx++);
           }, tracks);
         } else {
-          callBack(tracks);
+          callBack(tracks, _resultsIdx++);
         }
       }.bind(this),
       error: function (data) {
