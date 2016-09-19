@@ -22,7 +22,7 @@ const routes = (
   </Route>
 );
 
-function _ensureLoggedIn (nextState, replace) {
+function _ensureLoggedIn (Por) {
   if (!SessionStore.currentUser()) {
     replace('/');
   }
