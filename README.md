@@ -7,7 +7,9 @@ SoundScape is a free music-streaming web application. You can search for and pla
 
 ## Implementation
 
-SoundScape utilizes Ruby on Rails backend with PostgreSQL database and React.js frontend with Flux architecture. A secondary Express.js server is used for streaming audio.
+SoundScape utilizes Ruby on Rails backend with PostgreSQL database and React.js frontend with Flux architecture. A secondary Express.js server ([ss-ytdl-server][dl-server]) is used for streaming audio.
+
+[dl-server]: https://github.com/willyp63/ss_ytdl_server
 
 ![splash]
 
