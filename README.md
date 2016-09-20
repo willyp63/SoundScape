@@ -1,9 +1,9 @@
 # SoundScape
 
-[live link][heroku]
+[SoundScape Live][heroku]
 [heroku]: http://www.soundsscape.com/
 
-SoundScape utilizes Ruby on Rails and React.js with a Flux design. A secondary Node.js server is used for streaming audio.
+SoundScape utilizes Ruby on Rails backend with PostgreSQL database and React.js frontend with Flux architecture. A secondary Express.js server is used for streaming audio.
 
 SoundScape is a great place to explore new music. You can search for and play millions of popular songs! While navigating the site add songs to your player's queue, or like the song to add it to your personal collection. Users can even upload and manage their own songs!
 
@@ -11,7 +11,7 @@ SoundScape is a great place to explore new music. You can search for and play mi
 
 ## Where do the Songs Come from?
 
-By integrating with two powerful APIs, SoundScape is able to deliver high-quality audio for millions of popular songs. SoundScape's search results come from Spotify API. When a user wants to play a song returned from Spotify, a search request is made to the Youtube API. SoundScape's algorithm analyzes each result returned from Youtube and makes its best guess at what video contains the desired audio. Once the video is located, SoundScape's Node.js server opens an audio stream and pipes it back to the client.
+By integrating with some powerful APIs, SoundScape is able to deliver high-quality audio for millions of popular songs! SoundScape's search results come from Spotify API. When a user wants to play a song returned from Spotify, results are pulled from a different API and analyzed. SoundScape's algorithm looks at each result and makes its best guess as to which contains the desired audio. Once the file is located, SoundScape's Express.js server opens an audio stream and pipes it back to the client.
 
 ![search]
 
@@ -29,7 +29,7 @@ Any logged in user can post their own songs. The only requirement is that the au
 
 ## Infinite Scroll
 
-All pages have infinite scroll. This is especially important for pages that may have to display hundreds of tracks, like the search result page. Only a small number of tracks are requested and rendered to begin with. As the user scrolls down the page, more tracks will be requested and appended.
+All pages have infinite scroll. This is especially important for pages that may have to display hundreds of tracks, like the search result page. Only a small number of tracks are requested and rendered to begin with. When the user nears the bottom of the page, an action is fired to make an offset request and render more tracks.
 
 ## Future Direction
 
