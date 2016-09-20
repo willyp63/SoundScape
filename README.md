@@ -3,9 +3,11 @@
 [SoundScape Live][heroku]
 [heroku]: http://www.soundsscape.com/
 
-SoundScape utilizes Ruby on Rails backend with PostgreSQL database and React.js frontend with Flux architecture. A secondary Express.js server is used for streaming audio.
+SoundScape is a free music-streaming web application. You can search for and play millions of popular songs! While navigating the site add songs to your player's queue, or like the song to add it to your personal collection. Users can even upload and manage their own songs!
 
-SoundScape is a great place to explore new music. You can search for and play millions of popular songs! While navigating the site add songs to your player's queue, or like the song to add it to your personal collection. Users can even upload and manage their own songs!
+## Implementation
+
+SoundScape utilizes Ruby on Rails backend with PostgreSQL database and React.js frontend with Flux architecture. A secondary Express.js server is used for streaming audio.
 
 ![splash]
 
