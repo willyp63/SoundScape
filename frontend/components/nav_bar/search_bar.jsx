@@ -31,12 +31,24 @@ module.exports = React.createClass({
   },
   _onChange (e) {
     _query = e.target.value;
-    if (e.target.value) {
-      SearchActions.showResults();
-      SearchActions.searchTracks(e.target.value, NUM_RESULTS);
-    } else {
+    if (!_query) {
       SearchActions.hideResults();
+    } else if (!this.recentRequest){
+      this._makeSearchRequest(_query);
     }
+  },
+  _makeSearchRequest (query) {
+    SearchActions.showResults();
+    SearchActions.searchTracks(query, NUM_RESULTS);
+    console.log('request made!');
+
+    this.recentRequest = true;
+    setTimeout(function () {
+      this.recentRequest = false;
+      if (_query && _query !== query) {
+        this._makeSearchRequest(_query);
+      }
+    }.bind(this), 750);
   },
   _onClick (e) {
     if ($('#search-input').val()) {
