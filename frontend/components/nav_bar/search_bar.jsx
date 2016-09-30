@@ -35,15 +35,15 @@ module.exports = React.createClass({
   },
   _onChange (e) {
     _query = e.target.value;
-    if (!_query) {
-      SearchActions.hideResults();
-    } else {
-      this._debouncedSearch(_query);
-    }
+    this._debouncedSearch(_query);
   },
   _makeSearchRequest (query) {
-    SearchActions.showResults();
-    SearchActions.searchTracks(query, NUM_RESULTS);
+    if (!query) {
+      SearchActions.hideResults();
+    } else {
+      SearchActions.showResults();
+      SearchActions.searchTracks(query, NUM_RESULTS);
+    }
   },
   _onClick (e) {
     if ($('#search-input').val()) {
@@ -55,6 +55,7 @@ module.exports = React.createClass({
   _onSubmit (e) {
     e.preventDefault();
     $('#search-input').val("");
+    this._debouncedSearch("");
     SearchActions.hideResults();
     hashHistory.push(`/results/${_query}`);
   },
