@@ -22,13 +22,10 @@ SearchResultStore.results = function () {
 SearchResultStore.__onDispatch = function (payload) {
   switch (payload.actionType) {
     case "RECEIVE_RESULTS":
-    console.log(payload.idx);
       if (!_latestIdx || payload.idx > _latestIdx) {
         _latestIdx = payload.idx;
         setResults(payload.results);
         this.__emitChange();
-      } else {
-        console.log('skipped');
       }
       break;
     case "HIDE_RESULTS":

@@ -3,6 +3,7 @@ const PlayerActions = require('../../actions/player_actions');
 const SearchResultStore = require('../../stores/search_result_store');
 const SearchResult = require('./search_result');
 const hashHistory = require('react-router').hashHistory;
+const debounce = require('../../util/debounce');
 
 const NUM_RESULTS = 10;
 
@@ -18,6 +19,9 @@ module.exports = React.createClass({
   componentWillMount () {
     window.addEventListener('resize', this._handleResize);
     _listeners.push(SearchResultStore.addListener(this._resultsChange));
+
+    // create debounced search function
+    this._debouncedSearch = debounce(this._makeSearchRequest, 750);
   },
   componentDidMount () {
     this.setState({resultTextWidth: resultTextWidth()});
@@ -33,22 +37,13 @@ module.exports = React.createClass({
     _query = e.target.value;
     if (!_query) {
       SearchActions.hideResults();
-    } else if (!this.recentRequest){
-      this._makeSearchRequest(_query);
+    } else {
+      this._debouncedSearch(_query);
     }
   },
   _makeSearchRequest (query) {
     SearchActions.showResults();
     SearchActions.searchTracks(query, NUM_RESULTS);
-    console.log('request made!');
-
-    this.recentRequest = true;
-    setTimeout(function () {
-      this.recentRequest = false;
-      if (_query && _query !== query) {
-        this._makeSearchRequest(_query);
-      }
-    }.bind(this), 750);
   },
   _onClick (e) {
     if ($('#search-input').val()) {
